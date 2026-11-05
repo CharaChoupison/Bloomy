@@ -1,6 +1,6 @@
 // Structure de navigation (option C du Design System), partagée par la barre d'onglets,
 // la barre latérale et la page Plus pour qu'elles restent cohérentes.
-// Seuls les écrans qui existent sont listés : Vie scolaire et Compte viendront s'ajouter à MORE_ITEMS.
+// Seuls les écrans qui existent sont listés : Vie scolaire viendra s'ajouter à MORE_ITEMS.
 import {
   BookOpenIcon,
   CalendarIcon,
@@ -11,6 +11,7 @@ import {
   NewspaperIcon,
   SettingsIcon,
   SquareCheckIcon,
+  UserIcon,
 } from "@/components/icons";
 
 export type NavItem = {
@@ -34,6 +35,7 @@ export const MORE_ITEMS: NavItem[] = [
   { href: "/cours", label: "Contenu des cours", Icon: BookOpenIcon, hint: "Ce qui a été vu en classe" },
   { href: "/actualites", label: "Actualités", Icon: NewspaperIcon, hint: "Infos et sondages de l'établissement" },
   { href: "/messagerie", label: "Messagerie", Icon: MailIcon, hint: "Tes discussions avec les profs" },
+  { href: "/compte", label: "Compte", Icon: UserIcon, hint: "Identité, coordonnées, INE" },
   { href: "/reglages", label: "Réglages", Icon: SettingsIcon, hint: "Couleur, thème, déconnexion" },
 ];
 
