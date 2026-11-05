@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Réglages · Pronoti" };
 
 export default function SettingsPage() {
   return (
-    <Screen title="Réglages">
+    <Screen title="Réglages" back={{ href: "/plus", label: "Plus" }}>
       <div className="flex flex-col gap-8">
         <section aria-labelledby="apparence" className="flex flex-col gap-6">
           <h2 id="apparence" className="text-headline">

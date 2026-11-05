@@ -1,8 +1,21 @@
 import type { ClassItem, DayTimetable } from "@/lib/pronote/timetable";
 import { formatDay, formatTime } from "@/lib/format";
+import Link from "next/link";
+import { lessonAnchor, lessonContentHref } from "@/lib/lesson-anchor";
+import { BookOpenIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 
-function ClassRow({ c, columns }: { c: ClassItem; columns: boolean }) {
+function ClassRow({
+  c,
+  columns,
+  dayKey,
+  hasContent,
+}: {
+  c: ClassItem;
+  columns: boolean;
+  dayKey: string;
+  hasContent: boolean;
+}) {
   const details = [c.teachers.join(", "), c.rooms.join(", ")].filter(Boolean).join(" · ");
   // On n'affiche pas deux fois l'annulation (badge « Annulé » + statut Pronote « Cours annulé »).
   const status = c.status && !(c.canceled && /annul/i.test(c.status)) ? c.status : undefined;
@@ -34,6 +47,15 @@ function ClassRow({ c, columns }: { c: ClassItem; columns: boolean }) {
           {c.kind === "detention" ? `Retenue · ${c.title}` : c.title}
         </p>
         {details && <p className="mt-0.5 truncate text-caption text-ink-muted">{details}</p>}
+        {hasContent && !c.canceled && (
+          <Link
+            href={lessonContentHref(dayKey, c.start)}
+            className="mt-1 inline-flex min-h-6 items-center gap-1 rounded-sm text-caption font-medium text-accent underline-offset-2 hover:underline"
+          >
+            <BookOpenIcon size={14} />
+            Contenu du cours
+          </Link>
+        )}
         {hasBadges && (
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {c.canceled && <Badge tone="danger">Annulé</Badge>}
@@ -52,12 +74,19 @@ export function DayCard({
   isToday,
   title,
   columns = false,
+  contentAnchors,
 }: {
   day: DayTimetable;
   isToday: boolean;
   title?: string;
   /** La carte devient une colonne étroite à partir de 1024px (vue Semaine). */
   columns?: boolean;
+  /**
+   * Ancres des séances qui ont un contenu de cours (voir lib/lesson-anchor.ts) : ces séances
+   * affichent un lien « Contenu du cours ». On rapproche par l'heure de début, car Pronote
+   * ne renseigne pas toujours le lien depuis l'emploi du temps.
+   */
+  contentAnchors?: ReadonlySet<string>;
 }) {
   const label = title ?? formatDay(day.date);
   return (
@@ -78,7 +107,13 @@ export function DayCard({
       ) : (
         <ul className="divide-y divide-line">
           {day.classes.map((c) => (
-            <ClassRow key={c.id} c={c} columns={columns} />
+            <ClassRow
+              key={c.id}
+              c={c}
+              columns={columns}
+              dayKey={day.date}
+              hasContent={!!contentAnchors?.has(lessonAnchor(c.start))}
+            />
           ))}
         </ul>
       )}

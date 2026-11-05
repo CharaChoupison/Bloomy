@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
 import { getWeekTimetable, mondayKey, toDateKey } from "@/lib/pronote/timetable";
+import { getContentAnchors } from "@/lib/pronote/resources";
 import { formatWeekRange } from "@/lib/format";
 import { DayCard, DayCardSkeleton } from "@/components/day-card";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
@@ -32,6 +33,8 @@ async function Week({ searchParams }: Pick<PageProps<"/semaine">, "searchParams"
   const today = offset === 0 ? toDateKey(new Date()) : null;
 
   let week;
+  // Contenus de cours chargés en parallèle (non bloquant) pour les liens « Contenu du cours ».
+  const anchorsPromise = getContentAnchors(weekStart);
   try {
     week = await getWeekTimetable(weekStart);
   } catch (error) {
@@ -48,6 +51,7 @@ async function Week({ searchParams }: Pick<PageProps<"/semaine">, "searchParams"
 
   // Samedi et dimanche ne s'affichent que s'il y a cours.
   const days = week.days.filter((d, i) => i < 5 || d.classes.length > 0);
+  const contentAnchors = await anchorsPromise;
 
   return (
     <>
@@ -58,7 +62,13 @@ async function Week({ searchParams }: Pick<PageProps<"/semaine">, "searchParams"
         style={{ gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))` }}
       >
         {days.map((day) => (
-          <DayCard key={day.date} day={day} isToday={day.date === today} columns />
+          <DayCard
+            key={day.date}
+            day={day}
+            isToday={day.date === today}
+            columns
+            contentAnchors={contentAnchors}
+          />
         ))}
       </div>
     </>

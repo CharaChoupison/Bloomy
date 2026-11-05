@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
 import { getWeekTimetable, mondayKey, toDateKey } from "@/lib/pronote/timetable";
+import { getContentAnchors } from "@/lib/pronote/resources";
 import { DayCard, DayCardSkeleton } from "@/components/day-card";
 import { NextClass, type UpcomingClass } from "@/components/next-class";
 import { Screen } from "@/components/screen";
@@ -34,7 +35,7 @@ async function Today() {
   return (
     <div className="flex flex-col gap-3">
       <NextClass classes={data.upcoming} serverNow={data.now} />
-      {data.today && <DayCard day={data.today} isToday />}
+      {data.today && <DayCard day={data.today} isToday contentAnchors={data.contentAnchors} />}
     </div>
   );
 }
@@ -42,6 +43,7 @@ async function Today() {
 /** La journée en cours et les prochains cours non annulés. `null` si Pronote ne répond pas. */
 async function loadToday() {
   const now = Date.now();
+  const anchorsPromise = getContentAnchors(mondayKey(0)); // en parallèle, non bloquant
   let week;
   try {
     week = await getWeekTimetable(mondayKey(0));
@@ -69,7 +71,7 @@ async function loadToday() {
     }
   }
 
-  return { now, today, upcoming: upcoming.slice(0, 12) };
+  return { now, today, upcoming: upcoming.slice(0, 12), contentAnchors: await anchorsPromise };
 }
 
 function TodaySkeleton() {

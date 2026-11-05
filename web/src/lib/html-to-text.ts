@@ -32,9 +32,10 @@ export function htmlToText(html: string): string {
   return decodeEntities(
     html
       .replace(/<(script|style)[\s\S]*?<\/\1>/gi, "")
-      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<br[^>]*>/gi, "\n")
       .replace(/<li[^>]*>/gi, "\n• ")
-      .replace(/<\/(p|div|h[1-6]|tr|ul|ol)>/gi, "\n")
+      // Début et fin de bloc = retour à la ligne (les lignes vides en trop sont fusionnées plus bas).
+      .replace(/<\/?(p|div|h[1-6]|tr|ul|ol|blockquote)(\s[^>]*)?>/gi, "\n")
       .replace(/<[^>]*>/g, ""),
   )
     .replace(/[ \t ]+/g, " ")
