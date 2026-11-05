@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarIcon, HouseIcon, SettingsIcon } from "@/components/icons";
+import { CalendarIcon, ChartColumnIcon, HouseIcon, SettingsIcon } from "@/components/icons";
 
-// Destinations principales. Devoirs et Notes viendront s'insérer ici quand ces écrans existeront.
-// Au-delà de 5 onglets, Réglages deviendra « Plus » (Vie scolaire, Messagerie, Réglages).
+// Navigation retenue (option C du Design System) : Accueil, Semaine, Devoirs, Notes, Plus.
+// Seuls les écrans qui existent apparaissent : Devoirs viendra s'insérer avant Notes, et Réglages
+// deviendra « Plus » (Contenu des cours, Actualités, Messagerie, Vie scolaire, Compte, Réglages).
 const ITEMS = [
   { href: "/", label: "Accueil", Icon: HouseIcon },
   { href: "/semaine", label: "Semaine", Icon: CalendarIcon },
+  { href: "/notes", label: "Notes", Icon: ChartColumnIcon },
   { href: "/reglages", label: "Réglages", Icon: SettingsIcon },
 ] as const;
 
@@ -25,7 +27,10 @@ export function TabBar() {
       aria-label="Navigation principale"
       className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] shadow-float lg:hidden"
     >
-      <ul className="mx-auto grid h-tabbar max-w-content grid-cols-3 px-2">
+      <ul
+        className="mx-auto grid h-tabbar max-w-content px-2"
+        style={{ gridTemplateColumns: `repeat(${ITEMS.length}, minmax(0, 1fr))` }}
+      >
         {ITEMS.map(({ href, label, Icon }) => {
           const active = isActive(href);
           return (
