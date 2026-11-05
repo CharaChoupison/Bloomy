@@ -1,4 +1,4 @@
-# Filet de sécurité pour tout le dépôt (web/ et poc/ ont aussi leur propre .gitignore).
+# Filet de sécurité pour tout le dépôt (web/ a aussi son propre .gitignore).
 
 # Secrets et données locales : jamais versionnés
 .env*
@@ -13,3 +13,6 @@ node_modules/
 
 # Système
 .DS_Store
+
+# POC local, non versionné
+poc/

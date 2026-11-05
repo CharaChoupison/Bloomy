@@ -3,7 +3,7 @@ import { defaultFetcher, type Fetcher } from "@literate.ink/utilities";
 
 // Le serveur Pronote 2022 de l'école affiche sa version au format "PRONOTE 2022 - 0.4.0",
 // alors que Pawnote attend "PRONOTE 2022.0.4.0" (sinon : PageUnavailableError à la connexion).
-// On réécrit donc la réponse avant que Pawnote la lise. Voir poc/pronote-fetcher.ts.
+// On réécrit donc la réponse avant que Pawnote la lise.
 const OLD_VERSION_FORMAT = />PRONOTE (\d+) - (\d+)\.(\d+)\.(\d+)/g;
 
 export const pronoteFetcher: Fetcher = async (req) => {
