@@ -1,0 +1,15 @@
+# Filet de sécurité pour tout le dépôt (web/ et poc/ ont aussi leur propre .gitignore).
+
+# Secrets et données locales : jamais versionnés
+.env*
+!.env.example
+*token*.json
+.data/
+
+# Dépendances et fichiers générés
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Système
+.DS_Store
