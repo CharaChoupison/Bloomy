@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "hash-password": "node scripts/hash-password.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "postinstall": "node scripts/patch-pawnote.mjs"
   },
   "dependencies": {
     "@literate.ink/utilities": "1.0.0-10641118381.1",
