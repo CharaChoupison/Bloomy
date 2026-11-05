@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarIcon, ChartColumnIcon, HouseIcon, SettingsIcon } from "@/components/icons";
+import { CalendarIcon, ChartColumnIcon, HouseIcon, SettingsIcon, SquareCheckIcon } from "@/components/icons";
 
 // Navigation retenue (option C du Design System) : Accueil, Semaine, Devoirs, Notes, Plus.
-// Seuls les écrans qui existent apparaissent : Devoirs viendra s'insérer avant Notes, et Réglages
-// deviendra « Plus » (Contenu des cours, Actualités, Messagerie, Vie scolaire, Compte, Réglages).
+// Seuls les écrans qui existent apparaissent : Réglages deviendra « Plus »
+// (Contenu des cours, Actualités, Messagerie, Vie scolaire, Compte, Réglages).
 const ITEMS = [
   { href: "/", label: "Accueil", Icon: HouseIcon },
   { href: "/semaine", label: "Semaine", Icon: CalendarIcon },
+  { href: "/devoirs", label: "Devoirs", Icon: SquareCheckIcon },
   { href: "/notes", label: "Notes", Icon: ChartColumnIcon },
   { href: "/reglages", label: "Réglages", Icon: SettingsIcon },
 ] as const;
