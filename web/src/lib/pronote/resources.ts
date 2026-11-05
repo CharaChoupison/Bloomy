@@ -4,8 +4,9 @@ import { resourcesFromIntervals } from "pawnote";
 import { withPronote } from "./client";
 import { htmlToText } from "@/lib/html-to-text";
 import { lessonAnchor } from "@/lib/lesson-anchor";
+import { plainAttachments, type PlainAttachment } from "./attachments";
 
-export type LessonFile = { name: string; url: string; isLink: boolean };
+export type LessonFile = PlainAttachment;
 
 export type LessonContent = {
   id: string;
@@ -46,7 +47,6 @@ const CATEGORY_LABELS: Record<number, string> = {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const toKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const safeUrl = (url: string) => (/^https?:\/\//i.test(url) ? url : undefined);
 
 /**
  * Ancres des séances d'une semaine qui ont un contenu, pour les liens depuis l'emploi du temps.
@@ -93,10 +93,7 @@ export async function getLessonContents(weekStart: string): Promise<LessonSessio
           category: CATEGORY_LABELS[c.category] ?? c.categoryText?.trim() ?? "",
           title: c.title?.trim() ?? "",
           text: c.description ? htmlToText(c.description) : "",
-          files: c.files.flatMap((f) => {
-            const url = safeUrl(f.url);
-            return url ? [{ name: f.name || "Pièce jointe", url, isLink: f.kind === 0 }] : [];
-          }),
+          files: plainAttachments(c.files),
         }))
         .filter((c) => c.title || c.text || c.files.length > 0),
     }))

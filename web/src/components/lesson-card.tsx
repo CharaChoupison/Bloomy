@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { LessonSession } from "@/lib/pronote/resources";
 import { formatTime } from "@/lib/format";
-import { ExternalLinkIcon, PaperclipIcon, SquareCheckIcon } from "@/components/icons";
+import { AttachmentList } from "@/components/attachment-link";
+import { SquareCheckIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 
 /**
@@ -43,24 +44,7 @@ export function LessonCard({ s }: { s: LessonSession }) {
             {c.text && (
               <p className="mt-1.5 text-callout break-words whitespace-pre-line">{c.text}</p>
             )}
-            {c.files.length > 0 && (
-              <ul className="mt-2 flex min-w-0 flex-col">
-                {c.files.map((f) => (
-                  <li key={f.url} className="flex min-w-0">
-                    <a
-                      href={f.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex min-h-touch max-w-full items-center gap-1 rounded-sm text-caption font-medium text-accent underline-offset-2 hover:underline"
-                    >
-                      {f.isLink ? <ExternalLinkIcon size={16} /> : <PaperclipIcon size={16} />}
-                      <span className="truncate">{f.name}</span>
-                      <span className="sr-only"> (s&apos;ouvre dans un nouvel onglet)</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <AttachmentList files={c.files} className="mt-2" />
           </li>
         ))}
       </ul>

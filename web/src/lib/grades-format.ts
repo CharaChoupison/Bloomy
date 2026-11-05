@@ -52,7 +52,3 @@ export function spokenGrade(v?: GradeValue, outOf?: GradeValue): string {
   if (points !== undefined) return `${points}${max ? ` sur ${max}` : ""}${special ? `, ${special}` : ""}`;
   return special ?? "Pas de note";
 }
-
-const dateFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
-/** "4 nov." */
-export const formatGradeDate = (iso: string) => dateFmt.format(new Date(iso));

@@ -4,9 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isActive, isPlusActive, MAIN_ITEMS, MORE_ITEMS, PLUS_ITEM, type NavItem } from "@/lib/navigation";
 
+// Chaque barre existe en deux temps : la vue (sans hook, sert aussi de rendu d'attente)
+// et la version qui lit l'URL. Avec cacheComponents, usePathname() doit être sous <Suspense>
+// dès qu'une route a un segment dynamique (/messagerie/[id]) : voir app/(app)/layout.tsx.
+
 /** Barre d'onglets en bas de l'écran (téléphone et tablette, < 1024px) : 4 onglets + Plus. */
 export function TabBar() {
-  const pathname = usePathname();
+  return <TabBarView pathname={usePathname()} />;
+}
+
+/** Vue de la barre d'onglets ; pathname vide = aucun onglet actif (rendu d'attente). */
+export function TabBarView({ pathname }: { pathname: string }) {
   const tabs: [NavItem, boolean][] = [
     ...MAIN_ITEMS.map((item): [NavItem, boolean] => [item, isActive(pathname, item.href)]),
     [PLUS_ITEM, isPlusActive(pathname)],
@@ -42,7 +50,11 @@ export function TabBar() {
 
 /** Barre latérale (ordinateur, ≥ 1024px) : toutes les sections, sans menu Plus. */
 export function Sidebar() {
-  const pathname = usePathname();
+  return <SidebarView pathname={usePathname()} />;
+}
+
+/** Vue de la barre latérale ; pathname vide = aucune section active (rendu d'attente). */
+export function SidebarView({ pathname }: { pathname: string }) {
   const link = ({ href, label, Icon }: NavItem) => {
     const active = isActive(pathname, href);
     return (

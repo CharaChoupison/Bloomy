@@ -11,6 +11,10 @@ export function fromDateKey(key: string): Date {
 
 export const formatTime = (iso: string) => timeFmt.format(new Date(iso));
 
+const shortDateFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
+/** "4 nov." */
+export const formatShortDate = (iso: string) => shortDateFmt.format(new Date(iso));
+
 export const formatDay = (key: string) => {
   const s = dayFmt.format(fromDateKey(key));
   return s.charAt(0).toUpperCase() + s.slice(1);

@@ -3,7 +3,8 @@
 import { useOptimistic, useState, useTransition } from "react";
 import { setAssignmentDone } from "@/app/(app)/devoirs/actions";
 import type { AssignmentItem } from "@/lib/pronote/assignments";
-import { AlertCircleIcon, CheckIcon, ExternalLinkIcon, PaperclipIcon } from "@/components/icons";
+import { AttachmentLink } from "@/components/attachment-link";
+import { AlertCircleIcon, CheckIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 
 const RETURN_LABELS: Record<number, string> = {
@@ -97,17 +98,7 @@ export function AssignmentRow({ a }: { a: AssignmentItem }) {
             {a.length && <Badge tone="neutral">{formatLength(a.length)}</Badge>}
             {difficulty && <Badge tone="neutral">{difficulty}</Badge>}
             {a.attachments.map((f) => (
-              <a
-                key={f.url}
-                href={f.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-touch max-w-full items-center gap-1 rounded-sm text-caption font-medium text-accent underline-offset-2 hover:underline"
-              >
-                {f.isLink ? <ExternalLinkIcon size={16} /> : <PaperclipIcon size={16} />}
-                <span className="truncate">{f.name}</span>
-                <span className="sr-only"> (s&apos;ouvre dans un nouvel onglet)</span>
-              </a>
+              <AttachmentLink key={f.url} file={f} />
             ))}
           </div>
         )}

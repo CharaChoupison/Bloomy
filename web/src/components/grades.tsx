@@ -1,5 +1,6 @@
 import type { GradeItem, GradeValue, SubjectAverage } from "@/lib/pronote/grades";
-import { formatGradeDate, formatPoints, isNumeric, specialLabel, spokenGrade } from "@/lib/grades-format";
+import { formatPoints, isNumeric, specialLabel, spokenGrade } from "@/lib/grades-format";
+import { formatShortDate } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 
 // Pas de rouge / vert selon la note : on ne juge pas une note par une couleur.
@@ -58,7 +59,7 @@ function GradeRow({ g }: { g: GradeItem }) {
       <div className="min-w-0 flex-1">
         <p className="truncate text-body font-semibold">{g.subject}</p>
         <p className="mt-0.5 truncate text-caption text-ink-muted">
-          {formatGradeDate(g.date)}
+          {formatShortDate(g.date)}
           {g.comment && ` · ${g.comment}`}
         </p>
         {hasBadges && (

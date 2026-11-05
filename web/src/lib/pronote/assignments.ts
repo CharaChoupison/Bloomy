@@ -3,11 +3,12 @@ import { cacheLife, cacheTag } from "next/cache";
 import { assignmentsFromIntervals } from "pawnote";
 import { withPronote } from "./client";
 import { htmlToText } from "@/lib/html-to-text";
+import { plainAttachments, type PlainAttachment } from "./attachments";
 
 export const ASSIGNMENTS_TAG = "assignments";
 const DAYS_AHEAD = 28;
 
-export type AssignmentAttachment = { name: string; url: string; isLink: boolean };
+export type AssignmentAttachment = PlainAttachment;
 
 export type AssignmentItem = {
   id: string;
@@ -31,9 +32,6 @@ export type AssignmentItem = {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const toKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-
-// Seuls les liens http(s) sont gardés (jamais de javascript: ou autre schéma).
-const safeUrl = (url: string) => (/^https?:\/\//i.test(url) ? url : undefined);
 
 /**
  * Devoirs à rendre entre `fromKey` ("YYYY-MM-DD", inclus) et les 4 semaines suivantes, triés par échéance.
@@ -62,10 +60,7 @@ export async function getAssignments(fromKey: string): Promise<AssignmentItem[]>
       deadline: a.deadline.toISOString(),
       deadlineKey: toKey(a.deadline),
       done: a.done,
-      attachments: a.attachments.flatMap((f) => {
-        const url = safeUrl(f.url);
-        return url ? [{ name: f.name || "Pièce jointe", url, isLink: f.kind === 0 }] : [];
-      }),
+      attachments: plainAttachments(a.attachments),
       returnKind: a.return.kind,
       hasUploadedFile: !!a.return.uploaded,
       difficulty: a.difficulty,
