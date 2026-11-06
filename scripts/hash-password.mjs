@@ -39,9 +39,9 @@ function askHidden(question) {
   });
 }
 
-const password = await askHidden("Nouveau mot de passe d'accès à Pronoti (8 caractères minimum) : ");
-if (password.length < 8) {
-  console.error("❌ Trop court : 8 caractères minimum. Relance la commande.");
+const password = await askHidden("Nouveau mot de passe d'accès à Pronoti (12 caractères minimum) : ");
+if (password.length < 12) {
+  console.error("❌ Trop court : 12 caractères minimum. Relance la commande.");
   process.exit(1);
 }
 const confirmation = await askHidden("Retape-le pour confirmer : ");

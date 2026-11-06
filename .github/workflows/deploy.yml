@@ -1,0 +1,54 @@
+name: Vérification et déploiement
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint et typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      # next-env.d.ts n'est pas versionné : typegen le recrée avec les types des routes.
+      - run: npx next typegen
+      - run: npm run typecheck
+
+  deploy:
+    name: Déploiement sur le serveur
+    needs: verify
+    # Seulement sur main, et une fois le serveur configuré (variable DEPLOY_HOST définie).
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_HOST != ''
+    runs-on: ubuntu-latest
+    # Un déploiement à la fois ; le suivant attend au lieu d'annuler celui en cours.
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: https://${{ vars.DEPLOY_HOST }}
+    steps:
+      - name: Préparer la connexion SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Déployer ${{ github.sha }}
+        # La clé ne peut lancer que pronoti-deploy sur le serveur ; on lui passe le commit à mettre en ligne.
+        run: ssh -o BatchMode=yes -o StrictHostKeyChecking=yes pronoti@${{ vars.DEPLOY_HOST }} "$GITHUB_SHA"

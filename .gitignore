@@ -37,3 +37,6 @@ yarn-error.log*
 
 # Ancien emplacement de l'app (cache local)
 web/
+
+AGENTS.md
+CLAUDE.md

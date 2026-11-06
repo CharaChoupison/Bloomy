@@ -41,6 +41,10 @@ L'application est disponible sur [http://localhost:3000](http://localhost:3000).
 
 > `npm install` applique automatiquement un petit correctif à Pawnote (`scripts/patch-pawnote.mjs`).
 
+## Mise en ligne
+
+Pronoti s'héberge gratuitement sur un serveur Oracle Cloud, avec mise à jour automatique à chaque push sur `main` : voir [deploy/README.md](deploy/README.md).
+
 ## Données locales
 
 Les secrets (`.env.local`) et le jeton Pronote (`.data/`) restent sur la machine et ne sont jamais versionnés.

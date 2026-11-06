@@ -1,0 +1,20 @@
+# Installé dans /etc/caddy/Caddyfile par setup-server.sh (__DOMAIN__ est remplacé).
+# Caddy obtient et renouvelle le certificat HTTPS tout seul.
+
+__DOMAIN__ {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "same-origin"
+		X-Frame-Options "DENY"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	reverse_proxy 127.0.0.1:3000 {
+		# Laisse passer le streaming des pages (Suspense) sans mise en mémoire tampon.
+		flush_interval -1
+	}
+}

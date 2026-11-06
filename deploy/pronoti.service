@@ -1,0 +1,34 @@
+[Unit]
+Description=Pronoti (Next.js)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pronoti
+Group=pronoti
+# Lien vers la version en ligne. Le .data et le .env.local de chaque version pointent vers /opt/pronoti/shared.
+WorkingDirectory=/opt/pronoti/current
+Environment=NODE_ENV=production
+Environment=NEXT_TELEMETRY_DISABLED=1
+# Écoute uniquement en local : seul Caddy est exposé sur Internet.
+ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000
+Restart=always
+RestartSec=3
+
+# Durcissement : l'app ne peut écrire que dans /opt/pronoti et ne peut pas gagner de privilèges.
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/pronoti
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
