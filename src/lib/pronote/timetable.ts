@@ -4,6 +4,7 @@ import { parseTimetable, timetableFromIntervals } from "pawnote";
 import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
 import { viewerTag } from "./cache-tags";
+import { mergeConsecutive } from "@/lib/timetable-layout";
 
 // Ce qui sort d'ici est un objet "plat" et sérialisable (pas de Date, pas d'objet Pawnote),
 // pour pouvoir le passer aux composants et le renvoyer en JSON.
@@ -21,6 +22,11 @@ export type ClassItem = {
   exempted: boolean;
   test: boolean;
   color?: string;
+  /**
+   * Bloc de plusieurs séances identiques à la suite (voir lib/timetable-layout.ts) :
+   * début de chaque séance, pour retrouver leurs contenus de cours. Absent pour une séance seule.
+   */
+  sessionStarts?: string[];
 };
 
 export type DayTimetable = { date: string; classes: ClassItem[] }; // date : "YYYY-MM-DD"
@@ -122,6 +128,10 @@ export async function getWeekTimetableFor(viewerId: string, weekStart: string): 
     days.find((day) => day.date === toDateKey(c.startDate))?.classes.push(item);
   }
 
-  for (const day of days) day.classes.sort((a, b) => a.start.localeCompare(b.start));
+  for (const day of days) {
+    day.classes.sort((a, b) => a.start.localeCompare(b.start));
+    // Deux heures d'Audit à la suite = un seul bloc, partout (journée, semaine, prochain cours, widget).
+    day.classes = mergeConsecutive(day.classes);
+  }
   return { weekStart, days };
 }

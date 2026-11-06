@@ -4,17 +4,19 @@ import Link from "next/link";
 import { lessonAnchor, lessonContentHref } from "@/lib/lesson-anchor";
 import { BookOpenIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
+import { withBreaks, type DayEntry } from "@/lib/timetable-layout";
 
 function ClassRow({
   c,
   columns,
   dayKey,
-  hasContent,
+  contentStart,
 }: {
   c: ClassItem;
   columns: boolean;
   dayKey: string;
-  hasContent: boolean;
+  /** Début de la (première) séance du bloc qui a un contenu de cours, s'il y en a une. */
+  contentStart?: string;
 }) {
   const details = [c.teachers.join(", "), c.rooms.join(", ")].filter(Boolean).join(" · ");
   // On n'affiche pas deux fois l'annulation (badge « Annulé » + statut Pronote « Cours annulé »).
@@ -47,9 +49,9 @@ function ClassRow({
           {c.kind === "detention" ? `Retenue · ${c.title}` : c.title}
         </p>
         {details && <p className="mt-0.5 truncate text-caption text-ink-muted">{details}</p>}
-        {hasContent && !c.canceled && (
+        {contentStart && !c.canceled && (
           <Link
-            href={lessonContentHref(dayKey, c.start)}
+            href={lessonContentHref(dayKey, contentStart)}
             className="mt-1 inline-flex min-h-6 items-center gap-1 rounded-sm text-caption font-medium text-accent underline-offset-2 hover:underline"
           >
             <BookOpenIcon size={14} />
@@ -65,6 +67,30 @@ function ClassRow({
           </div>
         )}
       </div>
+    </li>
+  );
+}
+
+/**
+ * Pause entre deux cours : ligne basse et discrète, sans barre de matière, pour que la journée
+ * se lise d'un coup d'œil (trou du midi, interclasse). La durée est écrite, pas seulement suggérée.
+ */
+function BreakRow({ entry, columns }: { entry: Extract<DayEntry, { type: "break" }>; columns: boolean }) {
+  return (
+    <li className={`flex items-center gap-3 bg-bg/60 px-4 ${entry.lunch ? "py-2.5" : "py-1.5"}`}>
+      <div className={`w-11 shrink-0 ${columns ? "lg:hidden" : ""}`} aria-hidden />
+      <div className="w-1 shrink-0 self-stretch border-l-2 border-dotted border-line-strong/60" aria-hidden />
+      <p className="min-w-0 flex-1 text-caption text-ink-muted">
+        <span className={entry.lunch ? "font-semibold text-ink" : "font-medium"}>
+          {entry.lunch ? "Pause déjeuner" : "Pause"}
+        </span>
+        {" · "}
+        <span className="tabular-nums">{entry.duration}</span>
+        <span className="sr-only">
+          {", de "}
+          {formatTime(entry.start)} à {formatTime(entry.end)}
+        </span>
+      </p>
     </li>
   );
 }
@@ -106,15 +132,21 @@ export function DayCard({
         <p className="px-4 py-3 text-callout text-ink-muted">Pas de cours</p>
       ) : (
         <ul className="divide-y divide-line">
-          {day.classes.map((c) => (
-            <ClassRow
-              key={c.id}
-              c={c}
-              columns={columns}
-              dayKey={day.date}
-              hasContent={!!contentAnchors?.has(lessonAnchor(c.start))}
-            />
-          ))}
+          {withBreaks(day.classes).map((entry) =>
+            entry.type === "break" ? (
+              <BreakRow key={entry.key} entry={entry} columns={columns} />
+            ) : (
+              <ClassRow
+                key={entry.item.id}
+                c={entry.item}
+                columns={columns}
+                dayKey={day.date}
+                contentStart={(entry.item.sessionStarts ?? [entry.item.start]).find((start) =>
+                  contentAnchors?.has(lessonAnchor(start)),
+                )}
+              />
+            ),
+          )}
         </ul>
       )}
     </section>
