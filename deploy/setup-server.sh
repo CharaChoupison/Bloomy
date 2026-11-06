@@ -207,11 +207,15 @@ fi
 # ---------------------------------------------------------------------------
 step "Premier déploiement (le build prend quelques minutes)"
 SHA=$(git ls-remote "$REPO_URL" refs/heads/main | cut -f1)
-sudo -u "$APP_USER" -H /usr/local/bin/pronoti-deploy "$SHA"
-
-# ---------------------------------------------------------------------------
-printf '\n\033[1;32m✅ Pronoti est en ligne : https://%s\033[0m\n' "$DOMAIN"
-printf '   (le certificat HTTPS peut mettre une minute à arriver la première fois)\n'
+# Un échec ici ne doit pas interrompre le script : la clé de déploiement ci-dessous
+# n'est affichée qu'une fois, elle serait perdue.
+if sudo -u "$APP_USER" -H /usr/local/bin/pronoti-deploy "$SHA"; then
+  printf '\n\033[1;32m✅ Pronoti est en ligne : https://%s\033[0m\n' "$DOMAIN"
+  printf '   (le certificat HTTPS peut mettre une minute à arriver la première fois)\n'
+else
+  printf '\n\033[1;33m⚠ Le déploiement a échoué (détail ci-dessus). Le serveur est prêt quand même :\n'
+  printf '  configure GitHub ci-dessous, corrige le problème et pousse sur main pour redéployer.\033[0m\n'
+fi
 cat <<EOF
 
 ────────────────────────────────────────────────────────────────────

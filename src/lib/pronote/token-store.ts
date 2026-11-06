@@ -13,7 +13,9 @@ export type SavedToken = {
   navigatorIdentifier: string;
 };
 
-const TOKEN_FILE = path.join(process.cwd(), ".data", "pronote-token.json");
+// turbopackIgnore : ce fichier est lu à l'exécution, pas au build. Sans ça, Turbopack tente de
+// l'embarquer et plante en production, où .data est un lien vers /opt/pronoti/shared (hors du projet).
+const TOKEN_FILE = path.join(/* turbopackIgnore: true */ process.cwd(), ".data", "pronote-token.json");
 
 export async function readToken(): Promise<SavedToken | null> {
   try {
