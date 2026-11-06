@@ -29,13 +29,20 @@ type StoredSession = {
 // turbopackIgnore : dossier lu à l'exécution, pas au build. En production, .data est un lien
 // vers /opt/pronoti/shared (hors du projet) et Turbopack planterait en essayant de l'embarquer.
 const SESSIONS_DIR = path.join(/* turbopackIgnore: true */ process.cwd(), ".data", "sessions");
+/** Accès des widgets (voir widget-store.ts) : un fichier par session, supprimé avec elle. */
+export const WIDGETS_DIR = path.join(/* turbopackIgnore: true */ process.cwd(), ".data", "widgets");
 const HEX_ID = /^[0-9a-f]{64}$/;
 
-function fileOf(viewerId: string): string {
+/** Vrai si la valeur a la forme d'un viewerId (empreinte SHA-256 en hexadécimal). */
+export const isViewerId = (value: string) => HEX_ID.test(value);
+
+function fileOf(viewerId: string, dir = SESSIONS_DIR): string {
   // L'identifiant vient toujours de viewerIdOf(), mais on refuse tout ce qui pourrait sortir du dossier.
   if (!HEX_ID.test(viewerId)) throw new Error("Identifiant de session invalide");
-  return path.join(SESSIONS_DIR, `${viewerId}.json`);
+  return path.join(dir, `${viewerId}.json`);
 }
+
+export const widgetFileOf = (viewerId: string) => fileOf(viewerId, WIDGETS_DIR);
 
 function encrypt(viewerId: string, key: Buffer, credentials: PronoteCredentials) {
   const iv = randomBytes(12);
@@ -98,6 +105,11 @@ export async function readStoredSession(viewerId: string, key: Buffer): Promise<
   }
 }
 
+/** Date d'expiration de la session (ms), ou `null` si elle n'existe plus. */
+export async function storedSessionExpiry(viewerId: string): Promise<number | null> {
+  return (await read(viewerId))?.expiresAt ?? null;
+}
+
 /** Vrai si la session existe encore sur le serveur (pas déconnectée, pas expirée). Lecture légère pour proxy.ts. */
 export async function sessionExists(viewerId: string): Promise<boolean> {
   try {
@@ -107,8 +119,9 @@ export async function sessionExists(viewerId: string): Promise<boolean> {
   }
 }
 
+/** Supprime la session et l'accès widget qui en dépend (déconnexion, jeton refusé, expiration). */
 export async function deleteStoredSession(viewerId: string): Promise<void> {
-  await rm(fileOf(viewerId), { force: true });
+  await Promise.all([rm(fileOf(viewerId), { force: true }), rm(widgetFileOf(viewerId), { force: true })]);
 }
 
 /** Supprime les sessions expirées (appelé à chaque connexion, c'est assez fréquent). */

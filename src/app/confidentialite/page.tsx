@@ -15,7 +15,14 @@ const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: "Ce qui reste sur ton appareil",
     body: [
-      "Ton thème, ta couleur d'accent et tes thèmes personnalisés restent dans ton navigateur. Ils ne sont pas envoyés au serveur.",
+      "Ton thème, ta couleur d'accent et tes thèmes personnalisés restent dans ton navigateur. Seule exception : quand tu crées un widget, sa couleur d'accent est enregistrée avec lui.",
+    ],
+  },
+  {
+    title: "Widget iPhone",
+    body: [
+      "Si tu crées un widget (Réglages › Widget iPhone), Pronoti te donne un code d'accès en lecture seule : emploi du temps, devoirs et dernières notes. Il est rangé dans le trousseau de ton iPhone par l'app Scriptable.",
+      "Le serveur ne garde pas ce code, seulement de quoi le vérifier. Il s'arrête quand tu le désactives, quand tu en crées un nouveau, quand tu te déconnectes ou quand ta session expire.",
     ],
   },
   {

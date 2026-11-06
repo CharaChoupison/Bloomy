@@ -62,7 +62,8 @@ export async function getGrades(periodId?: string): Promise<GradesView> {
   return getGradesFor(viewer.id, periodId);
 }
 
-async function getGradesFor(viewerId: string, periodId?: string): Promise<GradesView> {
+/** Comme getGrades(), pour un élève déjà authentifié autrement (code d'accès du widget). */
+export async function getGradesFor(viewerId: string, periodId?: string): Promise<GradesView> {
   "use cache";
   cacheLife("minutes");
   cacheTag(viewerTag(viewerId));

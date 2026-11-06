@@ -3,7 +3,12 @@ import { sessionExists } from "@/lib/auth/session-store";
 import { decodeSessionCookie, SESSION_COOKIE, viewerIdOf } from "@/lib/auth/token";
 
 /** Pages accessibles sans être connecté. */
-const PUBLIC_PATHS = new Set(["/login", "/confidentialite"]);
+const PUBLIC_PATHS = new Set([
+  "/login",
+  "/confidentialite",
+  // Widget d'écran d'accueil : pas de cookie, la route vérifie elle-même son code d'accès.
+  "/api/widget",
+]);
 
 async function isLoggedIn(request: NextRequest): Promise<boolean> {
   const decoded = decodeSessionCookie(request.cookies.get(SESSION_COOKIE)?.value);

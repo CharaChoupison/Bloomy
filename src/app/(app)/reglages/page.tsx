@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AccentPicker, ThemePicker } from "@/components/appearance-pickers";
 import { CustomThemesSettings } from "@/components/custom-themes";
-import { LogOutIcon } from "@/components/icons";
+import { ChevronRightIcon, LogOutIcon, SmartphoneIcon } from "@/components/icons";
 import { ReloadAppButton } from "@/components/reload-app-button";
 import { Screen } from "@/components/screen";
 import { buttonClasses } from "@/components/ui/button";
@@ -33,6 +33,14 @@ export default function SettingsPage() {
           <h2 id="application" className="text-headline">
             Application
           </h2>
+          <Link href="/reglages/widget" className="flex min-h-touch items-center gap-3 card px-4 py-3 hover:bg-bg">
+            <SmartphoneIcon className="text-ink-muted" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-body font-medium">Widget iPhone</span>
+              <span className="block text-caption text-ink-muted">Ton prochain cours et tes devoirs sur l&apos;écran d&apos;accueil</span>
+            </span>
+            <ChevronRightIcon size={16} className="text-ink-muted" />
+          </Link>
           <ReloadAppButton />
           <p className="text-caption text-ink-muted">
             Récupère la dernière mise à jour, utile si l&apos;app est sur ton écran d&apos;accueil.

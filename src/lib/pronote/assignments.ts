@@ -44,7 +44,8 @@ export async function getAssignments(fromKey: string): Promise<AssignmentItem[]>
   return getAssignmentsFor(viewer.id, fromKey);
 }
 
-async function getAssignmentsFor(viewerId: string, fromKey: string): Promise<AssignmentItem[]> {
+/** Comme getAssignments(), pour un élève déjà authentifié autrement (code d'accès du widget). */
+export async function getAssignmentsFor(viewerId: string, fromKey: string): Promise<AssignmentItem[]> {
   "use cache";
   cacheLife("minutes");
   cacheTag(viewerTag(viewerId));

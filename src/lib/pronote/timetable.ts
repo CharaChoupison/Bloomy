@@ -47,7 +47,8 @@ export async function getWeekTimetable(weekStart: string): Promise<WeekTimetable
   return getWeekTimetableFor(viewer.id, weekStart);
 }
 
-async function getWeekTimetableFor(viewerId: string, weekStart: string): Promise<WeekTimetable> {
+/** Comme getWeekTimetable(), pour un élève déjà authentifié autrement (code d'accès du widget). */
+export async function getWeekTimetableFor(viewerId: string, weekStart: string): Promise<WeekTimetable> {
   "use cache";
   cacheLife("minutes");
   cacheTag(viewerTag(viewerId));

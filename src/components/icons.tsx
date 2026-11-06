@@ -241,3 +241,10 @@ export const Trash2Icon = (p: IconProps) => (
     <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
   </Icon>
 );
+
+export const SmartphoneIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+    <path d="M12 18h.01" />
+  </Icon>
+);
