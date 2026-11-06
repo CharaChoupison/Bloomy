@@ -33,7 +33,6 @@ export type ResourceLibrary = {
  * Fichiers des `weeks` dernières semaines de cours (jusqu'à aujourd'hui) et des devoirs à venir,
  * du plus récent au plus ancien (les devoirs, à venir, arrivent donc en tête).
  * Les deux sources sont lues en parallèle ; une erreur sur l'une fait échouer l'ensemble.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
  */
 export async function getResourceLibrary(todayKey: string, weeks: number): Promise<ResourceLibrary> {
   const [sessions, assignments] = await Promise.all([

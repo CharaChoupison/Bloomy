@@ -1,7 +1,9 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { account } from "pawnote";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
+import { viewerTag } from "./cache-tags";
 
 export type AccountView = {
   name: string;
@@ -27,13 +29,19 @@ function formatPhone(raw: string): string {
 
 /**
  * Infos du compte de l'élève.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getAccount(): Promise<AccountView> {
+  const viewer = await verifySession();
+  return getAccountFor(viewer.id);
+}
+
+async function getAccountFor(viewerId: string): Promise<AccountView> {
   "use cache";
   cacheLife("minutes");
+  cacheTag(viewerTag(viewerId));
 
-  return withPronote(async (session) => {
+  return withPronote(viewerId, async (session) => {
     const info = await account(session);
     const user = session.userResource;
     const photo = user.profilePicture?.url;

@@ -4,6 +4,8 @@ Une interface Pronote repensée : plus claire, plus rapide et agréable sur tél
 
 Pronoti se connecte à Pronote grâce à [Pawnote](https://github.com/LiterateInk/Pawnote) et affiche les informations de l'élève dans une application web moderne, avec thème clair/sombre et couleur d'accent personnalisable.
 
+Chaque élève se connecte avec **son propre identifiant et mot de passe Pronote**. Le mot de passe n'est jamais enregistré : il sert une fois à obtenir un jeton Pronote, conservé chiffré sur le serveur avec une clé qui n'existe que dans le cookie de l'appareil.
+
 ## Fonctionnalités
 
 - **Accueil** : le prochain cours en un coup d'œil
@@ -26,7 +28,7 @@ Pronoti se connecte à Pronote grâce à [Pawnote](https://github.com/LiterateIn
 ```bash
 npm install
 cp .env.example .env.local   # puis remplir les valeurs
-npm run hash-password        # définit le mot de passe d'accès à l'app
+npm run generate-secret      # ajoute le secret de signature des cookies
 npm run dev
 ```
 
@@ -45,6 +47,14 @@ L'application est disponible sur [http://localhost:3000](http://localhost:3000).
 
 Pronoti s'héberge gratuitement sur un serveur Oracle Cloud, avec mise à jour automatique à chaque push sur `main` : voir [deploy/README.md](deploy/README.md).
 
-## Données locales
+## Sécurité et données
 
-Les secrets (`.env.local`) et le jeton Pronote (`.data/`) restent sur la machine et ne sont jamais versionnés.
+| Protection | Où |
+| --- | --- |
+| Cookie de session signé (HMAC), `httpOnly`, révocable : la déconnexion supprime la session du serveur | `src/lib/auth/token.ts`, `src/lib/auth/session.ts` |
+| Jeton Pronote chiffré (AES-256-GCM), un fichier par appareil dans `.data/sessions/`, clé uniquement dans le cookie | `src/lib/auth/session-store.ts` |
+| Caches Next.js séparés par élève (identifiant non secret, jamais la clé) | `src/lib/pronote/*.ts`, `src/lib/pronote/cache-tags.ts` |
+| Établissements autorisés (`PRONOTI_ALLOWED_HOSTS`) et refus des adresses IP privées, redirections comprises (anti-SSRF) | `src/lib/pronote/network.ts`, `src/lib/pronote/fetcher.ts` |
+| Limite de tentatives par IP et par compte Pronote | `src/lib/auth/rate-limit.ts`, `src/app/login/actions.ts` |
+
+Les secrets (`.env.local`) et les sessions (`.data/`) restent sur la machine et ne sont jamais versionnés. Ce que voient les élèves : page `/confidentialite`.

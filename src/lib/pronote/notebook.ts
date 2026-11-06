@@ -1,7 +1,9 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { notebook, TabLocation } from "pawnote";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
+import { viewerTag } from "./cache-tags";
 
 // Vie scolaire, en lecture seule. Objets plats et sérialisables.
 // ⚠️ Nécessite le correctif scripts/patch-pawnote.mjs (motif vide → plantage dans Pawnote 1.6.2).
@@ -71,13 +73,19 @@ const newestFirst = <T extends { date?: string; start?: string }>(a: T, b: T) =>
 
 /**
  * Vie scolaire d'une période (par défaut : la période courante selon Pronote).
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getNotebook(periodId?: string): Promise<NotebookView> {
+  const viewer = await verifySession();
+  return getNotebookFor(viewer.id, periodId);
+}
+
+async function getNotebookFor(viewerId: string, periodId?: string): Promise<NotebookView> {
   "use cache";
   cacheLife("minutes");
+  cacheTag(viewerTag(viewerId));
 
-  return withPronote(async (session) => {
+  return withPronote(viewerId, async (session) => {
     const tab = session.userResource.tabs.get(TabLocation.Notebook);
     const periods = tab?.periods.length ? tab.periods : session.instance.periods;
     const period = periods.find((p) => p.id === periodId) ?? tab?.defaultPeriod ?? periods[0];

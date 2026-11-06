@@ -1,11 +1,12 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { assignmentsFromIntervals } from "pawnote";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
+import { assignmentsTag, viewerTag } from "./cache-tags";
 import { htmlToText } from "@/lib/html-to-text";
 import { plainAttachments, type PlainAttachment } from "./attachments";
 
-export const ASSIGNMENTS_TAG = "assignments";
 const DAYS_AHEAD = 28;
 
 export type AssignmentAttachment = PlainAttachment;
@@ -35,19 +36,25 @@ const toKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.
 
 /**
  * Devoirs à rendre entre `fromKey` ("YYYY-MM-DD", inclus) et les 4 semaines suivantes, triés par échéance.
- * Mis en cache quelques minutes ; vidé par l'action « fait » (tag ASSIGNMENTS_TAG).
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Mis en cache quelques minutes ; vidé par l'action « fait » (tag assignmentsTag).
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getAssignments(fromKey: string): Promise<AssignmentItem[]> {
+  const viewer = await verifySession();
+  return getAssignmentsFor(viewer.id, fromKey);
+}
+
+async function getAssignmentsFor(viewerId: string, fromKey: string): Promise<AssignmentItem[]> {
   "use cache";
   cacheLife("minutes");
-  cacheTag(ASSIGNMENTS_TAG);
+  cacheTag(viewerTag(viewerId));
+  cacheTag(assignmentsTag(viewerId));
 
   const [y, m, d] = fromKey.split("-").map(Number);
   const from = new Date(y, m - 1, d, 0, 0, 0, 0);
   const to = new Date(y, m - 1, d + DAYS_AHEAD, 23, 59, 59, 999);
 
-  const raw = await withPronote((session) => assignmentsFromIntervals(session, from, to));
+  const raw = await withPronote(viewerId, (session) => assignmentsFromIntervals(session, from, to));
 
   return raw
     .filter((a) => a.deadline >= from)

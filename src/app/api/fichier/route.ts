@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { hasValidSession } from "@/lib/auth/session";
 import { attachmentDisposition, fileNameFromUrl, pronoteFileUrl } from "@/lib/pronote/files";
+import { assertPublicUrl } from "@/lib/pronote/network";
 
 // GET /api/fichier?u=<URL Pronote>  → télécharge la pièce jointe (Content-Disposition: attachment).
 // Réservé à l'élève connecté, et limité aux fichiers de son instance Pronote (voir lib/pronote/files.ts).
@@ -20,6 +21,7 @@ export async function GET(request: NextRequest) {
 
   let upstream: Response;
   try {
+    await assertPublicUrl(url);
     upstream = await fetch(url, { redirect: "error", cache: "no-store", signal: AbortSignal.timeout(30_000) });
   } catch (error) {
     console.error("[pronote] fichier", error);

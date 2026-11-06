@@ -7,7 +7,7 @@
 # Pour utiliser ton propre nom de domaine plutôt que l'adresse sslip.io automatique :
 #   sudo DOMAIN=pronoti.mondomaine.fr bash Pronoti/deploy/setup-server.sh
 #
-# Le script peut être relancé sans risque : il ne redemande pas les secrets déjà enregistrés.
+# Le script peut être relancé sans risque : il ne redemande pas les réglages déjà enregistrés.
 
 set -euo pipefail
 
@@ -132,24 +132,17 @@ ok "Service pronoti prêt"
 # ---------------------------------------------------------------------------
 ENV_FILE="$BASE/shared/.env.local"
 if [[ ! -s "$ENV_FILE" ]]; then
-  step "Secrets de l'app (enregistrés uniquement sur ce serveur)"
-  while true; do
-    read -rsp "Mot de passe d'accès à Pronoti (12 caractères minimum) : " APP_PASSWORD </dev/tty; echo
-    if [[ ${#APP_PASSWORD} -lt 12 ]]; then echo "Trop court."; continue; fi
-    read -rsp "Retape-le pour confirmer : " APP_PASSWORD_CONFIRM </dev/tty; echo
-    [[ "$APP_PASSWORD" == "$APP_PASSWORD_CONFIRM" ]] && break
-    echo "Les deux mots de passe ne sont pas identiques."
-  done
-  read -rp "URL Pronote [http://nice.ilec.fr/mobile.eleve.html] : " PRONOTE_URL </dev/tty
-  PRONOTE_URL=${PRONOTE_URL:-http://nice.ilec.fr/mobile.eleve.html}
-  read -rp "Identifiant Pronote : " PRONOTE_USERNAME </dev/tty
-  read -rsp "Mot de passe Pronote : " PRONOTE_PASSWORD </dev/tty; echo
+  step "Réglages de l'app (enregistrés uniquement sur ce serveur)"
+  # Chaque élève se connecte avec son propre compte Pronote : aucun mot de passe n'est demandé ici.
+  read -rp "Adresse Pronote de l'établissement [http://nice.ilec.fr/mobile.eleve.html] : " PRONOTE_DEFAULT_URL </dev/tty
+  PRONOTE_DEFAULT_URL=${PRONOTE_DEFAULT_URL:-http://nice.ilec.fr/mobile.eleve.html}
+  echo "Établissements autorisés : laisse vide pour n'accepter que celui-ci, « * » pour tous,"
+  read -rp "ou une liste séparée par des virgules [vide] : " PRONOTI_ALLOWED_HOSTS </dev/tty
 
   # Les valeurs passent par l'environnement, jamais par la ligne de commande (visible dans `ps`).
   # Next.js interprète les `$` même entre apostrophes : on les échappe en `\$`.
   umask 077
-  APP_PASSWORD="$APP_PASSWORD" PRONOTE_URL="$PRONOTE_URL" PRONOTE_USERNAME="$PRONOTE_USERNAME" \
-    PRONOTE_PASSWORD="$PRONOTE_PASSWORD" node -e '
+  PRONOTE_DEFAULT_URL="$PRONOTE_DEFAULT_URL" PRONOTI_ALLOWED_HOSTS="$PRONOTI_ALLOWED_HOSTS" node -e '
     const c = require("node:crypto");
     const quote = (name) => {
       const value = process.env[name];
@@ -159,21 +152,16 @@ if [[ ! -s "$ENV_FILE" ]]; then
       }
       return `${name}=\x27${value.replaceAll("$", "\\$")}\x27`;
     };
-    const salt = c.randomBytes(16);
-    const hash = c.scryptSync(process.env.APP_PASSWORD, salt, 64);
-    console.log(`APP_PASSWORD_HASH=scrypt:${salt.toString("hex")}:${hash.toString("hex")}`);
     console.log(`APP_SESSION_SECRET=${c.randomBytes(32).toString("base64url")}`);
-    console.log(quote("PRONOTE_URL"));
-    console.log(quote("PRONOTE_USERNAME"));
-    console.log(quote("PRONOTE_PASSWORD"));
-  ' >"$ENV_FILE" || { rm -f "$ENV_FILE"; die "Secrets non enregistrés, relance le script."; }
+    console.log(quote("PRONOTE_DEFAULT_URL"));
+    console.log(quote("PRONOTI_ALLOWED_HOSTS"));
+  ' >"$ENV_FILE" || { rm -f "$ENV_FILE"; die "Réglages non enregistrés, relance le script."; }
   umask 022
-  unset APP_PASSWORD APP_PASSWORD_CONFIRM PRONOTE_PASSWORD
   chown "$APP_USER:$APP_USER" "$ENV_FILE"
   chmod 600 "$ENV_FILE"
-  ok "Secrets enregistrés dans $ENV_FILE"
+  ok "Réglages enregistrés dans $ENV_FILE"
 else
-  ok "Secrets déjà présents, conservés"
+  ok "Réglages déjà présents, conservés"
 fi
 
 # ---------------------------------------------------------------------------

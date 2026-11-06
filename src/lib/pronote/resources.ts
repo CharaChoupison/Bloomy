@@ -1,7 +1,9 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { resourcesFromIntervals } from "pawnote";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
+import { viewerTag } from "./cache-tags";
 import { htmlToText } from "@/lib/html-to-text";
 import { lessonAnchor } from "@/lib/lesson-anchor";
 import { addDays, fromDateKey } from "@/lib/format";
@@ -64,7 +66,6 @@ export async function getContentAnchors(weekStart: string): Promise<Set<string>>
 
 /**
  * Contenus de cours d'une semaine (à partir de son lundi "YYYY-MM-DD"), du plus récent au plus ancien.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
  */
 export async function getLessonContents(weekStart: string): Promise<LessonSession[]> {
   return getLessonContentsBetween(weekStart, addDays(weekStart, 6));
@@ -73,17 +74,23 @@ export async function getLessonContents(weekStart: string): Promise<LessonSessio
 /**
  * Contenus de cours entre deux jours "YYYY-MM-DD" (inclus), du plus récent au plus ancien.
  * Seules les séances qui ont un contenu sont gardées. Mis en cache quelques minutes.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getLessonContentsBetween(firstDay: string, lastDay: string): Promise<LessonSession[]> {
+  const viewer = await verifySession();
+  return getLessonContentsBetweenFor(viewer.id, firstDay, lastDay);
+}
+
+async function getLessonContentsBetweenFor(viewerId: string, firstDay: string, lastDay: string): Promise<LessonSession[]> {
   "use cache";
   cacheLife("minutes");
+  cacheTag(viewerTag(viewerId));
 
   const from = fromDateKey(firstDay);
   const end = fromDateKey(lastDay);
   const to = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59, 999);
 
-  const raw = await withPronote((session) => resourcesFromIntervals(session, from, to));
+  const raw = await withPronote(viewerId, (session) => resourcesFromIntervals(session, from, to));
 
   return raw
     .map((r) => ({

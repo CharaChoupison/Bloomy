@@ -18,8 +18,8 @@ Navigateur ──HTTPS──▶ Caddy (ports 80/443, certificat automatique)
 | --- | --- |
 | `/opt/pronoti/current` | Lien vers la version en ligne |
 | `/opt/pronoti/releases/<commit>` | Les 3 dernières versions, pour revenir en arrière |
-| `/opt/pronoti/shared/.env.local` | Secrets (mot de passe d'accès haché, identifiants Pronote) |
-| `/opt/pronoti/shared/.data/` | Token Pronote du serveur |
+| `/opt/pronoti/shared/.env.local` | Réglages : secret des cookies, établissement(s) autorisé(s) |
+| `/opt/pronoti/shared/.data/sessions/` | Une session par appareil connecté (jeton Pronote chiffré) |
 
 ## 1. Créer une clé SSH sur ton Mac
 
@@ -84,12 +84,12 @@ Le script :
 - active les mises à jour de sécurité automatiques ;
 - configure SSH par clé uniquement, fail2ban et le pare-feu ;
 - installe Node et Caddy ;
-- te demande ton **mot de passe d'accès** (12 caractères minimum ; une phrase de 4 mots ou plus, c'est idéal) et tes **identifiants Pronote** ;
+- te demande l'**adresse Pronote** de l'établissement et les **établissements autorisés** (vide : seulement celui-ci) ;
 - fait le premier déploiement.
 
 À la fin, il affiche l'adresse du site, par exemple `https://123-45-67-89.sslip.io`, et trois valeurs à copier dans GitHub.
 
-> Le serveur se connecte à Pronote avec ses propres identifiants et obtient **son propre token**. Ne copie pas ton `.data/pronote-token.json` local sur le serveur : le token change à chaque connexion, donc ton Mac et le serveur se l'invalideraient l'un l'autre.
+> Aucun identifiant Pronote n'est enregistré sur le serveur : chaque élève se connecte avec le sien, depuis le site.
 
 ## 6. Activer les mises à jour automatiques
 
@@ -124,9 +124,17 @@ Si un build échoue, la version en ligne ne change pas. Si la nouvelle version n
 2. Relance `sudo DOMAIN=pronoti.mondomaine.fr bash Pronoti/deploy/setup-server.sh`.
 3. Mets à jour `DEPLOY_HOST` et `DEPLOY_KNOWN_HOSTS` dans GitHub.
 
-### Retirer le mot de passe Pronote du serveur (facultatif)
+### Ouvrir Pronoti à d'autres établissements
 
-Une fois le site utilisé une première fois, le token est enregistré dans `/opt/pronoti/shared/.data/`. Tu peux alors vider la ligne `PRONOTE_PASSWORD` du `.env.local`. Il faudra la remettre si Pronote refuse un jour le token.
+Dans `/opt/pronoti/shared/.env.local`, `PRONOTI_ALLOWED_HOSTS` liste les établissements acceptés, séparés par des virgules (par exemple `nice.ilec.fr,0123456a.index-education.net`). `*` les accepte tous. Dès qu'il y en a plusieurs, l'écran de connexion demande l'adresse Pronote. Redémarre l'app après modification.
+
+### Passer de l'ancienne version (mot de passe d'accès unique)
+
+L'ancien `.env.local` fonctionne encore : `PRONOTE_URL` sert d'adresse par défaut, et seul cet établissement est accepté. Pour faire le ménage :
+
+1. `sudo -u pronoti nano /opt/pronoti/shared/.env.local` : supprime les lignes `APP_PASSWORD_HASH`, `PRONOTE_USERNAME` et `PRONOTE_PASSWORD`, et renomme `PRONOTE_URL` en `PRONOTE_DEFAULT_URL`.
+2. Supprime l'ancien jeton partagé : `sudo -u pronoti rm /opt/pronoti/shared/.data/pronote-token.json`.
+3. `sudo systemctl restart pronoti`. Tout le monde se reconnecte une fois, avec son compte Pronote.
 
 ### Si Oracle arrête la machine
 

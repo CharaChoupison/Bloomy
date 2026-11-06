@@ -1,7 +1,9 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { gradesOverview, TabLocation, type GradeValue as PawnoteGradeValue } from "pawnote";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
+import { viewerTag } from "./cache-tags";
 
 // Objets "plats" et sérialisables (pas de Date ni d'objet Pawnote), comme pour l'emploi du temps.
 
@@ -53,13 +55,19 @@ const plain = (v?: PawnoteGradeValue): GradeValue | undefined => (v ? { kind: v.
 /**
  * Notes d'une période (par défaut : la période en cours selon Pronote).
  * Mis en cache quelques minutes côté serveur.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getGrades(periodId?: string): Promise<GradesView> {
+  const viewer = await verifySession();
+  return getGradesFor(viewer.id, periodId);
+}
+
+async function getGradesFor(viewerId: string, periodId?: string): Promise<GradesView> {
   "use cache";
   cacheLife("minutes");
+  cacheTag(viewerTag(viewerId));
 
-  return withPronote(async (session) => {
+  return withPronote(viewerId, async (session) => {
     const tab = session.userResource.tabs.get(TabLocation.Grades);
     const periods = tab?.periods.length ? tab.periods : session.instance.periods;
     const period =

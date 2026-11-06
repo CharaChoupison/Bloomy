@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { AccentPicker, ThemePicker } from "@/components/appearance-pickers";
 import { CustomThemesSettings } from "@/components/custom-themes";
 import { LogOutIcon } from "@/components/icons";
@@ -49,6 +50,15 @@ export default function SettingsPage() {
               Se déconnecter
             </button>
           </form>
+          <p className="text-caption text-ink-muted">
+            Supprime ta session de Pronoti sur cet appareil.{" "}
+            <Link
+              href="/confidentialite"
+              className="rounded-sm font-medium text-accent underline underline-offset-2"
+            >
+              Données et confidentialité
+            </Link>
+          </p>
         </section>
       </div>
     </Screen>

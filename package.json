@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "hash-password": "node scripts/hash-password.mjs",
+    "generate-secret": "node scripts/generate-secret.mjs",
     "typecheck": "tsc --noEmit",
     "postinstall": "node scripts/patch-pawnote.mjs"
   },

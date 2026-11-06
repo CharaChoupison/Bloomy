@@ -1,7 +1,9 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { news } from "pawnote";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
+import { viewerTag } from "./cache-tags";
 import { plainAttachments, type PlainAttachment } from "./attachments";
 import { htmlToText } from "@/lib/html-to-text";
 
@@ -25,13 +27,19 @@ export type NewsEntry = {
 /**
  * Actualités et sondages, du plus récent au plus ancien. Lecture seule :
  * on ne marque rien comme lu, on n'accuse pas réception et on ne répond pas aux sondages.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getNews(): Promise<NewsEntry[]> {
+  const viewer = await verifySession();
+  return getNewsFor(viewer.id);
+}
+
+async function getNewsFor(viewerId: string): Promise<NewsEntry[]> {
   "use cache";
   cacheLife("minutes");
+  cacheTag(viewerTag(viewerId));
 
-  const result = await withPronote((session) => news(session));
+  const result = await withPronote(viewerId, (session) => news(session));
 
   return result.items
     .map((item): NewsEntry => {

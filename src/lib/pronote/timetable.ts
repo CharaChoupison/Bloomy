@@ -1,7 +1,9 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { parseTimetable, timetableFromIntervals } from "pawnote";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
+import { viewerTag } from "./cache-tags";
 
 // Ce qui sort d'ici est un objet "plat" et sérialisable (pas de Date, pas d'objet Pawnote),
 // pour pouvoir le passer aux composants et le renvoyer en JSON.
@@ -38,17 +40,23 @@ export function mondayKey(offset = 0): string {
 /**
  * Emploi du temps d'une semaine, à partir de son lundi ("YYYY-MM-DD").
  * Mis en cache quelques minutes côté serveur, pour ne pas solliciter Pronote à chaque affichage.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getWeekTimetable(weekStart: string): Promise<WeekTimetable> {
+  const viewer = await verifySession();
+  return getWeekTimetableFor(viewer.id, weekStart);
+}
+
+async function getWeekTimetableFor(viewerId: string, weekStart: string): Promise<WeekTimetable> {
   "use cache";
   cacheLife("minutes");
+  cacheTag(viewerTag(viewerId));
 
   const [y, m, d] = weekStart.split("-").map(Number);
   const monday = new Date(y, m - 1, d, 0, 0, 0, 0);
   const sunday = new Date(y, m - 1, d + 6, 23, 59, 59, 999);
 
-  const timetable = await withPronote(async (session) => {
+  const timetable = await withPronote(viewerId, async (session) => {
     const raw = await timetableFromIntervals(session, monday, sunday);
     // Applique la logique officielle de Pronote (fusion des cours, cours annulés superposés…).
     parseTimetable(session, raw, {

@@ -1,11 +1,12 @@
 import "server-only";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
 
 // Téléchargement des pièces jointes Pronote par le serveur de Pronoti.
 // Pourquoi passer par le serveur : un lien direct ouvre le fichier dans un onglet (le navigateur
 // ignore l'attribut `download` d'un autre domaine), et c'est la session Pronote du serveur qui a
 // produit l'URL. Pour ne jamais servir de relais vers autre chose (SSRF), on n'accepte que les
-// URLs « FichiersExternes » de l'instance Pronote de l'élève.
+// URLs « FichiersExternes » de l'instance Pronote de l'élève connecté (et la route revérifie l'IP).
 
 const FILES_SEGMENT = "/FichiersExternes/";
 
@@ -18,7 +19,8 @@ export async function pronoteFileUrl(raw: string | null): Promise<URL | null> {
   } catch {
     return null;
   }
-  const instance = new URL(await withPronote(async (session) => session.information.url));
+  const viewer = await verifySession();
+  const instance = new URL(await withPronote(viewer.id, async (session) => session.information.url));
   const prefix = instance.pathname.replace(/\/$/, "") + FILES_SEGMENT;
   if (url.origin !== instance.origin || !url.pathname.startsWith(prefix)) return null;
   if (url.username || url.password) return null;

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { defaultInstanceUrl, isSingleInstance } from "@/lib/pronote/network";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Connexion · Pronoti" };
@@ -11,9 +12,9 @@ export default function LoginPage() {
       <div className="w-full max-w-[440px] sm:rounded-xl sm:border sm:border-line sm:bg-surface sm:p-10">
         <h1 className="text-display">Pronoti</h1>
         <p className="mt-1 mb-8 text-body text-ink-muted">
-          Ton emploi du temps Pronote, en plus simple.
+          Connecte-toi avec ton compte Pronote.
         </p>
-        <LoginForm />
+        <LoginForm askUrl={!isSingleInstance()} defaultUrl={defaultInstanceUrl()} />
       </div>
     </main>
   );

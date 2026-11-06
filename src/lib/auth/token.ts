@@ -1,44 +1,62 @@
-// Jeton de session signé, stocké dans un cookie httpOnly.
-// Format : "<expiration en ms>.<signature HMAC-SHA256 en base64url>"
-// Utilise Web Crypto (crypto.subtle) : marche dans proxy.ts comme dans le reste du serveur.
+// Cookie de session : "<sid>.<clé>.<expiration en ms>.<signature HMAC-SHA256>", tout en base64url.
+// - sid : identifiant aléatoire de la session (256 bits). Le serveur ne le stocke jamais tel quel,
+//   seulement son empreinte SHA-256 (viewerId), qui nomme le fichier de session et sert de clé de cache.
+// - clé : clé AES-256 aléatoire qui chiffre le jeton Pronote de cette session sur le disque.
+//   Elle n'existe que dans ce cookie : une copie du disque du serveur est donc illisible seule.
+// - signature : empêche de fabriquer ou de modifier un cookie (secret APP_SESSION_SECRET).
+// Pas de "server-only" ici : proxy.ts importe ce fichier, et il est compilé à part.
+
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 export const SESSION_COOKIE = "pronoti_session";
 export const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
 
-const encoder = new TextEncoder();
+const VERSION = "v2"; // les cookies v1 (ancien mot de passe d'accès unique) deviennent invalides
+const B64 = /^[A-Za-z0-9_-]+$/;
 
-function getKey(): Promise<CryptoKey> {
-  const secret = process.env.APP_SESSION_SECRET;
-  if (!secret || secret.length < 32) {
+export type SessionCookie = { sid: string; key: Buffer; expiresAt: number };
+
+function secret(): string {
+  const value = process.env.APP_SESSION_SECRET;
+  if (!value || value.length < 32) {
     throw new Error("APP_SESSION_SECRET manquant ou trop court (32 caractères minimum) dans .env.local");
   }
-  return crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, [
-    "sign",
-    "verify",
-  ]);
+  return value;
 }
 
-const toBase64Url = (bytes: ArrayBuffer) => Buffer.from(bytes).toString("base64url");
+const sign = (payload: string) => createHmac("sha256", secret()).update(`${VERSION}.${payload}`).digest();
 
-export async function signSession(expiresAt: number): Promise<string> {
-  const signature = await crypto.subtle.sign("HMAC", await getKey(), encoder.encode(`v1.${expiresAt}`));
-  return `${expiresAt}.${toBase64Url(signature)}`;
+/** Empreinte non secrète d'une session : nom de son fichier et clé des caches Next.js. */
+export const viewerIdOf = (sid: string) => createHash("sha256").update(sid).digest("hex");
+
+export function newSessionCookie(): SessionCookie {
+  return {
+    sid: randomBytes(32).toString("base64url"),
+    key: randomBytes(32),
+    expiresAt: Date.now() + SESSION_DURATION_MS,
+  };
 }
 
-export async function isValidSession(value: string | undefined): Promise<boolean> {
-  if (!value) return false;
-  const [exp, signature] = value.split(".");
+export function encodeSessionCookie({ sid, key, expiresAt }: SessionCookie): string {
+  const payload = `${sid}.${key.toString("base64url")}.${expiresAt}`;
+  return `${payload}.${sign(payload).toString("base64url")}`;
+}
+
+/** Cookie décodé si sa signature est bonne et qu'il n'a pas expiré, sinon `null`. */
+export function decodeSessionCookie(value: string | undefined): SessionCookie | null {
+  if (!value || value.length > 300) return null;
+  const parts = value.split(".");
+  if (parts.length !== 4) return null;
+  const [sid, keyB64, exp, signature] = parts;
+  if (![sid, keyB64, signature].every((p) => B64.test(p))) return null;
+
+  const expected = sign(`${sid}.${keyB64}.${exp}`);
+  const actual = Buffer.from(signature, "base64url");
+  // Comparaison en temps constant : pas de fuite par mesure du temps de réponse.
+  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return null;
+
   const expiresAt = Number(exp);
-  if (!signature || !Number.isFinite(expiresAt) || expiresAt < Date.now()) return false;
-  try {
-    // crypto.subtle.verify compare en temps constant (pas de fuite par mesure du temps de réponse).
-    return await crypto.subtle.verify(
-      "HMAC",
-      await getKey(),
-      Buffer.from(signature, "base64url"),
-      encoder.encode(`v1.${expiresAt}`),
-    );
-  } catch {
-    return false;
-  }
+  const key = Buffer.from(keyB64, "base64url");
+  if (!Number.isFinite(expiresAt) || expiresAt < Date.now() || key.length !== 32) return null;
+  return { sid, key, expiresAt };
 }

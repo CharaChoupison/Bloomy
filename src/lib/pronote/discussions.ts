@@ -1,7 +1,9 @@
 import "server-only";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { discussionMessages, discussions, type Discussion } from "pawnote";
+import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
+import { viewerTag } from "./cache-tags";
 import { plainAttachments, type PlainAttachment } from "./attachments";
 import { htmlToText } from "@/lib/html-to-text";
 
@@ -49,13 +51,19 @@ function summary(d: Discussion): ConversationSummary {
 
 /**
  * Discussions (hors corbeille), de la plus récente à la plus ancienne.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getConversations(): Promise<ConversationSummary[]> {
+  const viewer = await verifySession();
+  return getConversationsFor(viewer.id);
+}
+
+async function getConversationsFor(viewerId: string): Promise<ConversationSummary[]> {
   "use cache";
   cacheLife("minutes");
+  cacheTag(viewerTag(viewerId));
 
-  const result = await withPronote((session) => discussions(session));
+  const result = await withPronote(viewerId, (session) => discussions(session));
   return result.items
     .filter(visible)
     .map(summary)
@@ -64,13 +72,19 @@ export async function getConversations(): Promise<ConversationSummary[]> {
 
 /**
  * Une discussion et ses messages, du plus ancien au plus récent. `null` si elle n'existe pas.
- * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ * Réservé à l'élève connecté : la session est vérifiée ici, et le cache est propre à chaque élève.
  */
 export async function getConversation(id: string): Promise<Conversation | null> {
+  const viewer = await verifySession();
+  return getConversationFor(viewer.id, id);
+}
+
+async function getConversationFor(viewerId: string, id: string): Promise<Conversation | null> {
   "use cache";
   cacheLife("minutes");
+  cacheTag(viewerTag(viewerId));
 
-  return withPronote(async (session) => {
+  return withPronote(viewerId, async (session) => {
     const list = await discussions(session);
     const discussion = list.items.find((d) => d.participantsMessageID === id && visible(d));
     if (!discussion) return null;
