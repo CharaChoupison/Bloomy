@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
+import { NEXT_PARAM, nextPathFromSearch } from "@/lib/auth/next-path";
 import { login, type LoginField, type LoginState } from "./actions";
 
 type LoginFormProps = {
@@ -16,13 +17,19 @@ type LoginFormProps = {
 export function LoginForm({ askUrl, defaultUrl }: LoginFormProps) {
   // useActionState : appelle la server action et récupère son retour (ici un éventuel message d'erreur).
   const [state, formAction, pending] = useActionState<LoginState, FormData>(login, {});
+  const submit = (formData: FormData) => {
+    const next = nextPathFromSearch(window.location.search);
+    if (next) formData.set(NEXT_PARAM, next);
+    formAction(formData);
+  };
   const errorFor = (field: LoginField) => (state.field === field ? state.error : undefined);
   // Le premier champ en erreur reçoit le focus ; sinon le premier champ à remplir.
   const focus: LoginField = state.field ?? (askUrl && !defaultUrl ? "url" : "username");
 
   return (
     // React vide le formulaire après chaque envoi : la clé le recrée avec les valeurs renvoyées par l'action.
-    <form key={JSON.stringify(state.values ?? {})} action={formAction} className="flex flex-col gap-6" noValidate>
+    // La page à rouvrir (?suivant=) est lue à l'envoi : pas de useSearchParams, la page reste statique.
+    <form key={JSON.stringify(state.values ?? {})} action={submit} className="flex flex-col gap-6" noValidate>
       {state.error && !state.field && <Banner>{state.error}</Banner>}
 
       {askUrl && (

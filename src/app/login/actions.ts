@@ -11,6 +11,7 @@ import { adoptSession, connectWithPassword, dropSession } from "@/lib/pronote/cl
 import { pronoteFetcher } from "@/lib/pronote/fetcher";
 import { defaultInstanceUrl, isAllowedInstance, isSingleInstance, parseInstanceUrl } from "@/lib/pronote/network";
 import { ONBOARDED_COOKIE } from "@/lib/preferences";
+import { NEXT_PARAM, safeNextPath } from "@/lib/auth/next-path";
 
 export type LoginField = "url" | "username" | "password";
 export type LoginState = {
@@ -88,9 +89,13 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   const viewer = await createSession(connection.credentials);
   adoptSession(viewer.id, connection.session);
 
-  // Première connexion sur cet appareil : on propose de choisir sa couleur et son apparence.
+  // Page demandée avant la connexion (revalidée ici : le champ vient du navigateur).
+  const next = safeNextPath(formData.get(NEXT_PARAM));
+  // Première connexion sur cet appareil : on propose de choisir sa couleur et son apparence,
+  // puis l'onboarding mène à la page demandée.
   const onboarded = (await cookies()).get(ONBOARDED_COOKIE)?.value === "1";
-  redirect(onboarded ? "/" : "/bienvenue");
+  if (onboarded) redirect(next ?? "/");
+  redirect(next ? `/bienvenue?${NEXT_PARAM}=${encodeURIComponent(next)}` : "/bienvenue");
 }
 
 export async function logout(): Promise<void> {

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { sessionExists } from "@/lib/auth/session-store";
 import { decodeSessionCookie, SESSION_COOKIE, viewerIdOf } from "@/lib/auth/token";
+import { NEXT_PARAM, safeNextPath } from "@/lib/auth/next-path";
 
 /** Pages accessibles sans être connecté. */
 const PUBLIC_PATHS = new Set([
@@ -25,13 +26,19 @@ export async function proxy(request: NextRequest) {
 
   let response: NextResponse;
   if (pathname === "/login" && loggedIn) {
-    response = NextResponse.redirect(new URL("/", request.url));
+    // Déjà connecté : on va directement à la page demandée (ou à l'Accueil).
+    const next = safeNextPath(request.nextUrl.searchParams.get(NEXT_PARAM)) ?? "/";
+    response = NextResponse.redirect(new URL(next, request.url));
   } else if (loggedIn || PUBLIC_PATHS.has(pathname)) {
     response = NextResponse.next();
   } else if (pathname.startsWith("/api/")) {
     response = NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   } else {
-    response = NextResponse.redirect(new URL("/login", request.url));
+    // On garde la page demandée (lien du widget, favori…) pour y revenir après la connexion.
+    const login = new URL("/login", request.url);
+    const next = safeNextPath(pathname + request.nextUrl.search);
+    if (next) login.searchParams.set(NEXT_PARAM, next);
+    response = NextResponse.redirect(login);
   }
 
   // Cookie présent mais invalide (expiré, falsifié, session supprimée) : on le retire.

@@ -8,6 +8,7 @@ import { ChevronLeftIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { markOnboarded } from "@/lib/preferences-client";
 import type { DayTimetable } from "@/lib/pronote/timetable";
+import { nextPathFromSearch } from "@/lib/auth/next-path";
 
 const TOTAL_STEPS = 3; // 1 connexion (déjà faite), 2 couleur, 3 apparence
 
@@ -50,7 +51,8 @@ export function Onboarding() {
 
   const finish = () => {
     markOnboarded();
-    router.replace("/");
+    // Page demandée avant la connexion (lien du widget…), sinon l'Accueil.
+    router.replace(nextPathFromSearch(window.location.search) ?? "/");
   };
   const next = () => (step === 2 ? setStep(3) : finish());
 
