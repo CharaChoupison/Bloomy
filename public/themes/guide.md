@@ -1,6 +1,6 @@
-# Créer un thème pour Pronoti
+# Créer un thème pour Bloomy
 
-Ce guide explique comment écrire un thème personnalisé pour Pronoti. Il s'adresse aussi bien à une personne qu'à une IA : tout ce qu'il faut savoir est sur cette page.
+Ce guide explique comment écrire un thème personnalisé pour Bloomy. Il s'adresse aussi bien à une personne qu'à une IA : tout ce qu'il faut savoir est sur cette page.
 
 Le principe est le même que les thèmes Vencord : **un thème est un simple fichier `.css`** avec un en-tête qui lui donne un nom. L'élève l'importe dans **Plus › Réglages › Thèmes personnalisés**, puis l'active ou le désactive d'un geste.
 
@@ -218,7 +218,7 @@ Outil pratique : https://webaim.org/resources/contrastchecker/
 
 Copie ce texte dans ton assistant IA en remplaçant la dernière ligne :
 
-> Tu écris un thème pour l'app web « Pronoti » en suivant le guide ci-dessous [colle ce guide].
+> Tu écris un thème pour l'app web « Bloomy » en suivant le guide ci-dessous [colle ce guide].
 > Contraintes : un seul fichier CSS ; commence par l'en-tête `/** @name … @author … @description … @version … */` ;
 > modifie surtout les tokens de la section 4 sur `:root` ; utilise `:root[data-scheme="light"]` et
 > `:root[data-scheme="dark"]` pour les deux modes (ou `color-scheme: dark` sur `:root` pour un thème toujours sombre,

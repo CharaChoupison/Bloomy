@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "Données et confidentialité · Pronoti" };
+export const metadata: Metadata = { title: "Données et confidentialité · Bloomy" };
 
 const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: "Ce qui est enregistré",
     body: [
       "Ton mot de passe Pronote n'est jamais enregistré. Il sert une seule fois, pour obtenir de Pronote un jeton de connexion.",
-      "Ce jeton est conservé sur le serveur de Pronoti, chiffré. La clé qui permet de le lire n'existe que dans le cookie de ton appareil : sans ton appareil, le fichier est illisible.",
+      "Ce jeton est conservé sur le serveur de Bloomy, chiffré. La clé qui permet de le lire n'existe que dans le cookie de ton appareil : sans ton appareil, le fichier est illisible.",
       "Tes notes, devoirs et autres informations ne sont pas enregistrées. Le serveur les garde en mémoire quelques minutes, pour aller plus vite.",
     ],
   },
@@ -21,7 +21,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: "Widget iPhone",
     body: [
-      "Si tu crées un widget (Réglages › Widget iPhone), Pronoti te donne un code d'accès en lecture seule : emploi du temps, devoirs et dernières notes. Il est rangé dans le trousseau de ton iPhone par l'app Scriptable.",
+      "Si tu crées un widget (Réglages › Widget iPhone), Bloomy te donne un code d'accès en lecture seule : emploi du temps, devoirs et dernières notes. Il est rangé dans le trousseau de ton iPhone par l'app Scriptable.",
       "Le serveur ne garde pas ce code, seulement de quoi le vérifier. Il s'arrête quand tu le désactives, quand tu en crées un nouveau, quand tu te déconnectes ou quand ta session expire.",
     ],
   },
@@ -33,10 +33,10 @@ const SECTIONS: { title: string; body: string[] }[] = [
     ],
   },
   {
-    title: "Ce que fait Pronoti dans Pronote",
+    title: "Ce que fait Bloomy dans Pronote",
     body: [
-      "Pronoti lit tes informations. La seule chose qu'il modifie, c'est la case « fait » d'un devoir, quand tu la coches.",
-      "Pronoti n'est pas une application officielle d'Index Éducation. Il utilise la bibliothèque libre Pawnote.",
+      "Bloomy lit tes informations. La seule chose qu'il modifie, c'est la case « fait » d'un devoir, quand tu la coches.",
+      "Bloomy n'est pas une application officielle d'Index Éducation. Il utilise la bibliothèque libre Pawnote.",
     ],
   },
 ];

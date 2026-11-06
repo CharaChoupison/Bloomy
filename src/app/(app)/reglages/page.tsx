@@ -8,7 +8,7 @@ import { Screen } from "@/components/screen";
 import { buttonClasses } from "@/components/ui/button";
 import { logout } from "../../login/actions";
 
-export const metadata: Metadata = { title: "Réglages · Pronoti" };
+export const metadata: Metadata = { title: "Réglages · Bloomy" };
 
 export default function SettingsPage() {
   return (
@@ -59,7 +59,7 @@ export default function SettingsPage() {
             </button>
           </form>
           <p className="text-caption text-ink-muted">
-            Supprime ta session de Pronoti sur cet appareil.{" "}
+            Supprime ta session de Bloomy sur cet appareil.{" "}
             <Link
               href="/confidentialite"
               className="rounded-sm font-medium text-accent underline underline-offset-2"

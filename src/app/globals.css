@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Design tokens Pronoti — source : le Design System « Pronoti » (tokens.json).
+ * Design tokens Bloomy — source : le Design System « Bloomy » (tokens.json).
  * - Thème : clair par défaut, sombre via prefers-color-scheme ou data-theme="dark" sur <html>
  *   (data-theme="light" force le clair). Posé avant l'affichage par le script de app/layout.tsx.
  * - Accent : choisi par l'élève via data-accent sur <html>. Le code n'utilise que

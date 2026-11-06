@@ -9,7 +9,7 @@ import { Screen } from "@/components/screen";
 import { Badge } from "@/components/ui/badge";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 
-export const metadata: Metadata = { title: "Vie scolaire · Pronoti" };
+export const metadata: Metadata = { title: "Vie scolaire · Bloomy" };
 
 // Lit ?periode=… (donnée de requête) : rendu derrière <Suspense>, comme l'exige cacheComponents.
 export default function SchoolLifePage({ searchParams }: PageProps<"/vie-scolaire">) {

@@ -4,6 +4,7 @@
 // Ce fichier est partagé serveur / client : pas d'API navigateur ici.
 // Guide pour écrire un thème : docs/THEMES.md.
 
+// Préfixe « pronoti » : ancien nom de l'app, conservé pour garder les thèmes déjà importés.
 export const CUSTOM_THEMES_KEY = "pronoti-custom-themes";
 /** <style> qui reçoit le CSS des thèmes actifs, toujours gardé en dernier dans <head>. */
 export const CUSTOM_STYLE_ID = "pronoti-custom-css";

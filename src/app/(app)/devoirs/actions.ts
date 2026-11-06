@@ -9,7 +9,7 @@ import { assignmentsTag } from "@/lib/pronote/cache-tags";
 export type SetDoneResult = { ok: true } | { ok: false; error: string };
 
 /**
- * Coche / décoche un devoir dans Pronote (seule écriture que Pronoti fait dans Pronote).
+ * Coche / décoche un devoir dans Pronote (seule écriture que Bloomy fait dans Pronote).
  * Une server action est un point d'entrée public : on revérifie la session et on valide l'entrée.
  */
 export async function setAssignmentDone(id: unknown, done: unknown): Promise<SetDoneResult> {

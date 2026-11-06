@@ -1,8 +1,8 @@
-# Pronoti
+# Bloomy
 
 Une interface Pronote repensée : plus claire, plus rapide et agréable sur téléphone comme sur ordinateur.
 
-Pronoti se connecte à Pronote grâce à [Pawnote](https://github.com/LiterateInk/Pawnote) et affiche les informations de l'élève dans une application web moderne, avec thème clair/sombre et couleur d'accent personnalisable.
+Bloomy se connecte à Pronote grâce à [Pawnote](https://github.com/LiterateInk/Pawnote) et affiche les informations de l'élève dans une application web moderne, avec thème clair/sombre et couleur d'accent personnalisable.
 
 Chaque élève se connecte avec **son propre identifiant et mot de passe Pronote**. Le mot de passe n'est jamais enregistré : il sert une fois à obtenir un jeton Pronote, conservé chiffré sur le serveur avec une clé qui n'existe que dans le cookie de l'appareil.
 
@@ -45,7 +45,7 @@ L'application est disponible sur [http://localhost:3000](http://localhost:3000).
 
 ## Mise en ligne
 
-Pronoti s'héberge gratuitement sur un serveur Oracle Cloud, avec mise à jour automatique à chaque push sur `main` : voir [deploy/README.md](deploy/README.md).
+Bloomy s'héberge gratuitement sur un serveur Oracle Cloud, avec mise à jour automatique à chaque push sur `main` : voir [deploy/README.md](deploy/README.md).
 
 ## Sécurité et données
 

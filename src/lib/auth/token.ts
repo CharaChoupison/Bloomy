@@ -8,6 +8,7 @@
 
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
+// Préfixe « pronoti » : ancien nom de l'app, conservé pour ne déconnecter personne.
 export const SESSION_COOKIE = "pronoti_session";
 export const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
 

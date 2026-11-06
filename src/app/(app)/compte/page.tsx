@@ -9,7 +9,7 @@ import { SensitiveField } from "@/components/sensitive-field";
 import { Badge } from "@/components/ui/badge";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 
-export const metadata: Metadata = { title: "Compte · Pronoti" };
+export const metadata: Metadata = { title: "Compte · Bloomy" };
 
 export default function AccountPage() {
   return (

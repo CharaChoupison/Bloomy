@@ -8,8 +8,8 @@ import { THEME_COLOR } from "@/lib/preferences";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "Pronoti",
-    short_name: "Pronoti",
+    name: "Bloomy",
+    short_name: "Bloomy",
     description: "Ton Pronote, en plus simple.",
     lang: "fr",
     dir: "ltr",

@@ -4,7 +4,7 @@ import { getAssignmentsFor } from "@/lib/pronote/assignments";
 import { getGradesFor } from "@/lib/pronote/grades";
 import { getWeekTimetableFor, mondayKey, toDateKey, type ClassItem } from "@/lib/pronote/timetable";
 
-// Contrat de GET /api/widget, lu par le script Scriptable (src/widget/pronoti.scriptable.js).
+// Contrat de GET /api/widget, lu par le script Scriptable (src/widget/bloomy.scriptable.js).
 // Volontairement minimal : seulement ce que le widget affiche. Toute évolution incompatible
 // doit incrémenter `v` (le script affiche alors « Mets à jour le script »).
 
@@ -15,7 +15,7 @@ export type WidgetClass = {
   room: string;
   canceled: boolean;
   test: boolean;
-  /** Libellé Pronoti du statut (« Prof. absent », « Cours modifié »…), s'il y en a un. */
+  /** Libellé Bloomy du statut (« Prof. absent », « Cours modifié »…), s'il y en a un. */
   status?: string;
 };
 

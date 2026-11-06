@@ -16,17 +16,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pronoti",
+  title: "Bloomy",
   description: "Ton Pronote, en plus simple.",
   robots: { index: false, follow: false },
-  applicationName: "Pronoti",
+  applicationName: "Bloomy",
   icons: {
     icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   // iOS (« Sur l'écran d'accueil ») : plein écran, nom court sous l'icône. Barre d'état « default » :
   // elle prend la couleur de theme-color et le contenu reste dessous (pas de safe-area-inset-top à gérer).
-  appleWebApp: { capable: true, title: "Pronoti", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "Bloomy", statusBarStyle: "default" },
   formatDetection: { telephone: false },
 };
 

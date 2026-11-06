@@ -4,7 +4,7 @@ import { ChevronRightIcon } from "@/components/icons";
 import { Screen } from "@/components/screen";
 import { MORE_ITEMS } from "@/lib/navigation";
 
-export const metadata: Metadata = { title: "Plus · Pronoti" };
+export const metadata: Metadata = { title: "Plus · Bloomy" };
 
 // Menu « Plus » du téléphone : les sections qui n'ont pas d'onglet.
 export default function MorePage() {

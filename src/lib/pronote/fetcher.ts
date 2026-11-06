@@ -11,7 +11,7 @@ const MAX_REDIRECTS = 5;
 
 /**
  * Fetcher de Pawnote : vérifie que chaque requête (et chaque redirection, suivie à la main)
- * vise un serveur public, pour que Pronoti ne serve jamais de relais vers le réseau interne.
+ * vise un serveur public, pour que Bloomy ne serve jamais de relais vers le réseau interne.
  */
 export const pronoteFetcher: Fetcher = async (req) => {
   let current: Request = req;

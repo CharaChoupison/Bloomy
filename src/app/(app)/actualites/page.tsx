@@ -8,7 +8,7 @@ import { Screen } from "@/components/screen";
 import { Badge } from "@/components/ui/badge";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 
-export const metadata: Metadata = { title: "Actualités · Pronoti" };
+export const metadata: Metadata = { title: "Actualités · Bloomy" };
 
 export default function NewsPage() {
   return (
@@ -60,7 +60,7 @@ function NewsCard({ n }: { n: NewsEntry }) {
       <div className="flex flex-wrap items-center gap-1.5">
         {n.kind === "survey" && <Badge tone="neutral">Sondage</Badge>}
         {n.category && <Badge tone="neutral">{n.category}</Badge>}
-        {/* Pronoti est en lecture seule : ces actions se font dans Pronote. */}
+        {/* Bloomy est en lecture seule : ces actions se font dans Pronote. */}
         {n.needsAcknowledgement && <Badge tone="warn">À confirmer dans Pronote</Badge>}
         {n.needsAnswer && <Badge tone="warn">Réponds dans Pronote</Badge>}
       </div>

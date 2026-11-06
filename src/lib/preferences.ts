@@ -26,6 +26,7 @@ export const THEMES = [
 export type ThemePreference = (typeof THEMES)[number]["id"];
 export const DEFAULT_THEME: ThemePreference = "auto";
 
+// Préfixe « pronoti » : ancien nom de l'app, conservé pour garder les réglages déjà enregistrés.
 export const ACCENT_COOKIE = "pronoti-accent";
 export const THEME_COOKIE = "pronoti-theme";
 export const ONBOARDED_COOKIE = "pronoti-onboarded";

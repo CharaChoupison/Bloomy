@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   const access = code ? await openWidgetAccess(code) : null;
   if (!access) {
     failuresByIp.record(ip);
-    return json({ error: "Code d'accès invalide ou désactivé. Crée-en un nouveau dans Pronoti › Réglages › Widget." }, 401);
+    return json({ error: "Code d'accès invalide ou désactivé. Crée-en un nouveau dans Bloomy › Réglages › Widget." }, 401);
   }
 
   // Le client Pronote reprend la clé de session dans le trousseau en mémoire, comme pour une page.
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     return json(await getWidgetData(access.viewerId, access.accent));
   } catch (error) {
     if ((error as Error).name === "PronoteSessionLostError") {
-      return json({ error: "Session Pronote expirée. Reconnecte-toi dans Pronoti, puis crée un nouveau code." }, 401);
+      return json({ error: "Session Pronote expirée. Reconnecte-toi dans Bloomy, puis crée un nouveau code." }, 401);
     }
     console.error("[widget]", error);
     return json({ error: "Pronote est indisponible pour le moment." }, 502);

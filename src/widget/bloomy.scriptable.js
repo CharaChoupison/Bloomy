@@ -4,13 +4,14 @@
 
 /* global ListWidget, Color, Font, Request, Keychain, Pasteboard, Alert, FileManager, Script, config */
 
-// Widget Pronoti pour l'app Scriptable (iPhone).
-// - Copié depuis Pronoti › Réglages › Widget : l'adresse du serveur ci-dessous y est remplie automatiquement.
+// Widget Bloomy pour l'app Scriptable (iPhone).
+// - Copié depuis Bloomy › Réglages › Widget : l'adresse du serveur ci-dessous y est remplie automatiquement.
 // - Le code d'accès n'est jamais écrit dans ce script : il est rangé dans le trousseau iOS (Keychain).
 // - Lance le script une fois dans Scriptable pour coller ton code, puis ajoute le widget sur l'écran d'accueil.
 // Données lues : GET /api/widget (contrat dans src/lib/widget/data.ts, version 1).
 
-const SERVER = "__PRONOTI_URL__";
+const SERVER = "__BLOOMY_URL__";
+// Préfixe « pronoti » : ancien nom de l'app, conservé pour que les widgets déjà installés gardent leur code.
 const KEYCHAIN_KEY = "pronoti-widget-code";
 const CACHE_FILE = "pronoti-widget.json";
 const API_VERSION = 1;
@@ -94,7 +95,7 @@ async function load(code) {
     body = JSON.parse(await req.loadString());
   } catch {
     const cached = readCache();
-    return cached ? { data: cached, stale: true } : { error: "Pronoti injoignable. Vérifie ta connexion." };
+    return cached ? { data: cached, stale: true } : { error: "Bloomy injoignable. Vérifie ta connexion." };
   }
   const status = req.response?.statusCode ?? 0;
   if (status !== 200) {
@@ -102,7 +103,7 @@ async function load(code) {
     const cached = status >= 500 ? readCache() : null;
     return cached ? { data: cached, stale: true } : { error: body?.error || `Erreur ${status}` };
   }
-  if (body.v !== API_VERSION) return { error: "Mets à jour le script depuis Pronoti › Réglages › Widget." };
+  if (body.v !== API_VERSION) return { error: "Mets à jour le script depuis Bloomy › Réglages › Widget." };
   fm.writeString(cachePath, JSON.stringify(body));
   return { data: body };
 }
@@ -215,7 +216,7 @@ function baseWidget() {
 
 function errorWidget(message) {
   const w = baseWidget();
-  text(w, "Pronoti", F.label, C.accent);
+  text(w, "Bloomy", F.label, C.accent);
   w.addSpacer(SPACE.sm);
   text(w, message, F.body, C.ink, 5);
   w.addSpacer();
@@ -318,7 +319,7 @@ function homeWidget(family, result, now) {
 
 async function buildWidget(family) {
   const code = Keychain.contains(KEYCHAIN_KEY) ? Keychain.get(KEYCHAIN_KEY) : null;
-  if (!code) return errorWidget("Lance ce script dans Scriptable pour coller ton code d'accès Pronoti.");
+  if (!code) return errorWidget("Lance ce script dans Scriptable pour coller ton code d'accès Bloomy.");
   const result = await load(code);
   if (result.error) return errorWidget(result.error);
 
@@ -342,8 +343,8 @@ async function info(title, message) {
 async function askCode() {
   const pasted = (Pasteboard.paste() || "").trim();
   const a = new Alert();
-  a.title = "Code d'accès Pronoti";
-  a.message = "Crée-le dans Pronoti › Réglages › Widget, copie-le, puis colle-le ici.";
+  a.title = "Code d'accès Bloomy";
+  a.message = "Crée-le dans Bloomy › Réglages › Widget, copie-le, puis colle-le ici.";
   a.addTextField("pw1.…", CODE_FORMAT.test(pasted) ? pasted : "");
   a.addAction("Enregistrer");
   a.addCancelAction("Annuler");
@@ -351,7 +352,7 @@ async function askCode() {
 
   const code = a.textFieldValue(0).trim();
   if (!CODE_FORMAT.test(code)) {
-    await info("Code incomplet", "Copie le code en entier depuis Pronoti, puis réessaie.");
+    await info("Code incomplet", "Copie le code en entier depuis Bloomy, puis réessaie.");
     return false;
   }
   const result = await load(code);
@@ -367,7 +368,7 @@ async function askCode() {
 async function settings() {
   if (!Keychain.contains(KEYCHAIN_KEY) && !(await askCode())) return;
   const a = new Alert();
-  a.title = "Widget Pronoti";
+  a.title = "Widget Bloomy";
   a.addAction("Aperçu petit");
   a.addAction("Aperçu moyen");
   a.addAction("Aperçu grand");

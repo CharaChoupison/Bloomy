@@ -12,7 +12,7 @@ import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
 
-export const metadata: Metadata = { title: "Contenu des cours · Pronoti" };
+export const metadata: Metadata = { title: "Contenu des cours · Bloomy" };
 
 // Parcours semaine par semaine, comme la page Calendrier.
 // ?semaine=-1 : décalage en semaines. ?jour=YYYY-MM-DD : ouvre la semaine de ce jour

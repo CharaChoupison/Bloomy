@@ -87,7 +87,7 @@ export function WidgetSetup({ status, script }: { status: WidgetStatus | null; s
       <p className="text-body text-ink-muted">
         Ton prochain cours, tes devoirs et ta dernière note sur l&apos;écran d&apos;accueil. Le widget passe par
         l&apos;app gratuite Scriptable. Il fonctionne sur l&apos;écran d&apos;accueil (petit, moyen,
-        grand) et sur l&apos;écran verrouillé. Toucher le widget ouvre Pronoti.
+        grand) et sur l&apos;écran verrouillé. Toucher le widget ouvre Bloomy.
       </p>
 
       {error && <Banner>{error}</Banner>}
@@ -110,11 +110,11 @@ export function WidgetSetup({ status, script }: { status: WidgetStatus | null; s
             </a>
           </Step>
 
-          <Step n={2} title="Ajoute le script Pronoti">
-            <CopyButton label="Copier le script" value={() => script.replace("__PRONOTI_URL__", window.location.origin)} />
+          <Step n={2} title="Ajoute le script Bloomy">
+            <CopyButton label="Copier le script" value={() => script.replace("__BLOOMY_URL__", window.location.origin)} />
             <p className="text-callout text-ink-muted">
               Dans Scriptable, touche <strong className="font-semibold text-ink">+</strong>, colle le script, puis
-              renomme-le « Pronoti » (touche le titre en haut).
+              renomme-le « Bloomy » (touche le titre en haut).
             </p>
           </Step>
 
@@ -151,7 +151,7 @@ export function WidgetSetup({ status, script }: { status: WidgetStatus | null; s
             <p className="text-callout text-ink-muted">
               Appui long sur l&apos;écran d&apos;accueil › <strong className="font-semibold text-ink">Modifier</strong> ›{" "}
               <strong className="font-semibold text-ink">Ajouter un widget</strong> › Scriptable, choisis une taille. Touche
-              ensuite le widget et choisis le script « Pronoti ».
+              ensuite le widget et choisis le script « Bloomy ».
             </p>
           </Step>
         </ol>
@@ -177,7 +177,7 @@ export function WidgetSetup({ status, script }: { status: WidgetStatus | null; s
               <dd>{dateFmt.format(status.sessionExpiresAt)}</dd>
             </dl>
             <p className="text-caption text-ink-muted">
-              Le widget dépend de ta connexion à Pronoti sur cet appareil : il s&apos;arrête si tu te déconnectes ou
+              Le widget dépend de ta connexion à Bloomy sur cet appareil : il s&apos;arrête si tu te déconnectes ou
               quand la session expire. Reconnecte-toi puis crée un nouveau code.
             </p>
             {confirmDisable ? (

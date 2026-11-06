@@ -54,7 +54,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
 
   const url = isSingleInstance() ? defaultInstanceUrl() : parseInstanceUrl(rawUrl);
   if (!url) return fail("Colle l'adresse de la page Pronote de ton établissement.", "url");
-  if (!isAllowedInstance(url)) return fail("Pronoti n'est pas encore ouvert à cet établissement.", "url");
+  if (!isAllowedInstance(url)) return fail("Bloomy n'est pas encore ouvert à cet établissement.", "url");
   if (!username || username.length > 100) return fail("Saisis ton identifiant Pronote.", "username");
   if (!password || password.length > 200) return fail("Saisis ton mot de passe Pronote.", "password");
 

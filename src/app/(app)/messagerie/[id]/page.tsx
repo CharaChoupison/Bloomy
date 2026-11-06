@@ -8,7 +8,7 @@ import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { formatShortDate, formatTime } from "@/lib/format";
 
-export const metadata: Metadata = { title: "Discussion · Pronoti" };
+export const metadata: Metadata = { title: "Discussion · Bloomy" };
 
 // L'identifiant de la discussion vient de l'URL (donnée de requête) : rendu derrière <Suspense>.
 export default function ConversationPage({ params }: PageProps<"/messagerie/[id]">) {
@@ -77,7 +77,7 @@ async function ConversationView({ params }: Pick<PageProps<"/messagerie/[id]">, 
       <p className="mt-6 text-center text-caption text-ink-muted">
         {conversation.closed
           ? "Cette discussion est fermée."
-          : "Pour répondre, utilise Pronote : Pronoti affiche la messagerie en lecture seule."}
+          : "Pour répondre, utilise Pronote : Bloomy affiche la messagerie en lecture seule."}
       </p>
     </Screen>
   );

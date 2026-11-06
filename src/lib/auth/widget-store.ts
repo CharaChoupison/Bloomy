@@ -23,7 +23,7 @@ type StoredWidget = {
   v: 1;
   createdAt: number;
   lastUsedAt?: number;
-  /** Couleur d'accent choisie dans Pronoti au moment de la création, reprise par le widget. */
+  /** Couleur d'accent choisie dans Bloomy au moment de la création, reprise par le widget. */
   accent: string;
   iv: string;
   tag: string;

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { formatShortDate } from "@/lib/format";
 
-export const metadata: Metadata = { title: "Messagerie · Pronoti" };
+export const metadata: Metadata = { title: "Messagerie · Bloomy" };
 
 export default function MessagesPage() {
   return (

@@ -11,7 +11,7 @@ import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
 import { WeekPicker } from "@/components/week-picker";
 
-export const metadata: Metadata = { title: "Calendrier · Pronoti" };
+export const metadata: Metadata = { title: "Calendrier · Bloomy" };
 
 // Lit ?semaine=… (donnée de requête) : rendu derrière <Suspense>, comme l'exige cacheComponents.
 export default function WeekPage({ searchParams }: PageProps<"/semaine">) {

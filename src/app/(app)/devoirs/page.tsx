@@ -9,7 +9,7 @@ import { AssignmentRow } from "@/components/assignment-row";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 
-export const metadata: Metadata = { title: "Devoirs · Pronoti" };
+export const metadata: Metadata = { title: "Devoirs · Bloomy" };
 
 export default function AssignmentsPage() {
   return (

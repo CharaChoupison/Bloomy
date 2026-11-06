@@ -8,7 +8,7 @@ import { PeriodPicker } from "@/components/period-picker";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 
-export const metadata: Metadata = { title: "Notes · Pronoti" };
+export const metadata: Metadata = { title: "Notes · Bloomy" };
 
 // Lit ?periode=… (donnée de requête) : rendu derrière <Suspense>, comme l'exige cacheComponents.
 export default function GradesPage({ searchParams }: PageProps<"/notes">) {

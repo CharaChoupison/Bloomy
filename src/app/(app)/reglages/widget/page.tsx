@@ -7,7 +7,7 @@ import { widgetStatus } from "@/lib/auth/widget-store";
 import { Screen } from "@/components/screen";
 import { WidgetSetup } from "./widget-setup";
 
-export const metadata: Metadata = { title: "Widget iPhone · Pronoti" };
+export const metadata: Metadata = { title: "Widget iPhone · Bloomy" };
 
 export default function WidgetPage() {
   return (
@@ -22,7 +22,7 @@ export default function WidgetPage() {
 /** Script Scriptable, lu sur le disque (il reste un vrai fichier .js, lisible et modifiable). */
 async function scriptTemplate(): Promise<string> {
   "use cache";
-  return readFile(path.join(/* turbopackIgnore: true */ process.cwd(), "src", "widget", "pronoti.scriptable.js"), "utf8");
+  return readFile(path.join(/* turbopackIgnore: true */ process.cwd(), "src", "widget", "bloomy.scriptable.js"), "utf8");
 }
 
 async function WidgetSettings() {

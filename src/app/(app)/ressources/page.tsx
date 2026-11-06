@@ -13,7 +13,7 @@ import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
 
-export const metadata: Metadata = { title: "Ressources · Pronoti" };
+export const metadata: Metadata = { title: "Ressources · Bloomy" };
 
 // Tous les fichiers et liens des profs, au même endroit : ceux des devoirs à venir,
 // puis ceux du contenu des cours, du plus récent au plus ancien.

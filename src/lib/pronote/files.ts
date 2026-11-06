@@ -2,7 +2,7 @@ import "server-only";
 import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
 
-// Téléchargement des pièces jointes Pronote par le serveur de Pronoti.
+// Téléchargement des pièces jointes Pronote par le serveur de Bloomy.
 // Pourquoi passer par le serveur : un lien direct ouvre le fichier dans un onglet (le navigateur
 // ignore l'attribut `download` d'un autre domaine), et c'est la session Pronote du serveur qui a
 // produit l'URL. Pour ne jamais servir de relais vers autre chose (SSRF), on n'accepte que les

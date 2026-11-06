@@ -7,7 +7,7 @@ import { assertPublicUrl } from "@/lib/pronote/network";
 // Réservé à l'élève connecté, et limité aux fichiers de son instance Pronote (voir lib/pronote/files.ts).
 export async function GET(request: NextRequest) {
   if (!(await hasValidSession())) {
-    return text("Connecte-toi à Pronoti pour télécharger ce fichier.", 401);
+    return text("Connecte-toi à Bloomy pour télécharger ce fichier.", 401);
   }
 
   let url: URL | null;
