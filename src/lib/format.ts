@@ -1,5 +1,10 @@
-// Formatage des dates en français (heure locale du serveur).
-const timeFmt = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" });
+import { SCHOOL_TIME_ZONE } from "./time-zone";
+
+// Formatage des dates en français.
+// - Instants (heure d'un cours, date d'une note) : dans le fuseau de l'établissement, pour que serveur
+//   et navigateur affichent la même chose (voir lib/time-zone.ts).
+// - Clés "YYYY-MM-DD" : dates du calendrier, sans fuseau (minuit local, formaté en local).
+const timeFmt = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: SCHOOL_TIME_ZONE });
 const dayFmt = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" });
 const dayMonthFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long" });
 
@@ -11,7 +16,7 @@ export function fromDateKey(key: string): Date {
 
 export const formatTime = (iso: string) => timeFmt.format(new Date(iso));
 
-const shortDateFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
+const shortDateFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", timeZone: SCHOOL_TIME_ZONE });
 /** "4 nov." */
 export const formatShortDate = (iso: string) => shortDateFmt.format(new Date(iso));
 

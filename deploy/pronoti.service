@@ -11,6 +11,9 @@ Group=pronoti
 WorkingDirectory=/opt/pronoti/current
 Environment=NODE_ENV=production
 Environment=NEXT_TELEMETRY_DISABLED=1
+# Fuseau de l'établissement : Pawnote lit les horaires Pronote dans l'heure locale du processus.
+# (src/instrumentation.ts le pose aussi au démarrage ; ceci le garantit dès le lancement de Node.)
+Environment=TZ=Europe/Paris
 # Écoute uniquement en local : seul Caddy est exposé sur Internet.
 ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000
 Restart=always

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import type { ClassItem } from "@/lib/pronote/timetable";
 import { formatTime } from "@/lib/format";
+import { SCHOOL_TIME_ZONE } from "@/lib/time-zone";
 import { ChevronRightIcon } from "@/components/icons";
 
 export type UpcomingClass = ClassItem & { weekOffset: number };
@@ -20,13 +21,16 @@ function subscribeClock(onChange: () => void) {
   return () => window.clearInterval(id);
 }
 
-const dayKey = (t: number) => new Date(t).toDateString();
-const weekdayFmt = new Intl.DateTimeFormat("fr-FR", { weekday: "long" });
+// Jours comparés dans le fuseau de l'établissement, comme les heures affichées.
+const dayKeyFmt = new Intl.DateTimeFormat("fr-CA", { timeZone: SCHOOL_TIME_ZONE }); // "2026-11-06"
+const dayKey = (t: number) => dayKeyFmt.format(t);
+const weekdayFmt = new Intl.DateTimeFormat("fr-FR", { weekday: "long", timeZone: SCHOOL_TIME_ZONE });
 
 function dayLabel(start: number, now: number): string {
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  if (dayKey(start) === dayKey(tomorrow.getTime())) return "Demain";
+  // Lendemain calculé sur le calendrier (pas « +24 h », faux les jours de changement d'heure).
+  const [y, m, d] = dayKey(now).split("-").map(Number);
+  const tomorrow = new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
+  if (dayKey(start) === tomorrow) return "Demain";
   const s = weekdayFmt.format(start);
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
