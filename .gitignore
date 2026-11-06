@@ -1,5 +1,7 @@
 # Secrets et données locales : jamais versionnés
 .env*
+# Modèle sans aucune valeur secrète, à copier en .env.local
+!.env.example
 .data/
 *token*.json
 *.pem
