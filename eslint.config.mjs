@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Dossiers locaux non versionnés (POC, ancien emplacement de l'app)
+    "poc/**",
+    "web/**",
   ]),
 ]);
 

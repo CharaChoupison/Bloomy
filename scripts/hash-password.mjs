@@ -1,6 +1,6 @@
 // Définit le mot de passe d'accès à Pronoti.
 // Usage : npm run hash-password   → tape ton mot de passe deux fois (rien ne s'affiche).
-// Le script écrit APP_PASSWORD_HASH dans web/.env.local (et un APP_SESSION_SECRET s'il manque).
+// Le script écrit APP_PASSWORD_HASH dans .env.local (et un APP_SESSION_SECRET s'il manque).
 // Le mot de passe en clair n'est stocké nulle part. Redémarre `npm run dev` ensuite.
 import { randomBytes, scrypt } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -74,5 +74,5 @@ if (!/^APP_SESSION_SECRET=.{32,}$/m.test(env)) {
 }
 writeFileSync(ENV_PATH, env.replace(/^\n+/, ""), { mode: 0o600 });
 
-console.log("✅ Mot de passe enregistré dans web/.env.local.");
+console.log("✅ Mot de passe enregistré dans .env.local.");
 console.log("   Redémarre le serveur (npm run dev) puis connecte-toi avec ce mot de passe.");
