@@ -7,6 +7,7 @@ import {
   ChartColumnIcon,
   ClipboardListIcon,
   EllipsisIcon,
+  FolderOpenIcon,
   HouseIcon,
   MailIcon,
   NewspaperIcon,
@@ -34,6 +35,7 @@ export const MAIN_ITEMS: NavItem[] = [
 /** Rangés dans « Plus » sur téléphone ; listés directement dans la barre latérale sur ordinateur. */
 export const MORE_ITEMS: NavItem[] = [
   { href: "/cours", label: "Contenu des cours", Icon: BookOpenIcon, hint: "Ce qui a été vu en classe" },
+  { href: "/ressources", label: "Ressources", Icon: FolderOpenIcon, hint: "Fichiers et liens des profs, à télécharger" },
   { href: "/actualites", label: "Actualités", Icon: NewspaperIcon, hint: "Infos et sondages de l'établissement" },
   { href: "/messagerie", label: "Messagerie", Icon: MailIcon, hint: "Tes discussions avec les profs" },
   { href: "/vie-scolaire", label: "Vie scolaire", Icon: ClipboardListIcon, hint: "Absences, retards, observations" },

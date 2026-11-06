@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 // La comparaison avec la classe se lit en texte (et sur la réglette, point = toi, trait = classe).
 
 /** Barre de couleur de la matière (couleur Pronote), avec un contour pour les couleurs très claires. */
-function SubjectBar({ color }: { color?: string }) {
+export function SubjectBar({ color }: { color?: string }) {
   return (
     <div
       className="w-1 shrink-0 self-stretch rounded-full bg-line ring-1 ring-line ring-inset"
@@ -18,7 +18,7 @@ function SubjectBar({ color }: { color?: string }) {
 }
 
 /** "14,5 /20", ou le mot du cas particulier ("Absent·e"). */
-function GradeFigure({ value, outOf, size = "md" }: { value?: GradeValue; outOf?: GradeValue; size?: "md" | "lg" }) {
+export function GradeFigure({ value, outOf, size = "md" }: { value?: GradeValue; outOf?: GradeValue; size?: "md" | "lg" }) {
   const points = formatPoints(value);
   const max = formatPoints(outOf);
   if (points === undefined) {
@@ -47,7 +47,7 @@ export function OverallCard({ overall, classOverall }: { overall?: GradeValue; c
   );
 }
 
-function GradeRow({ g }: { g: GradeItem }) {
+export function GradeRow({ g }: { g: GradeItem }) {
   const cls = formatPoints(g.classAverage);
   const special = specialLabel(g.value);
   const showSpecialBadge = special && isNumeric(g.value); // "Absent·e" compté 0 : on montre le 0 et le mot

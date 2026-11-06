@@ -28,3 +28,19 @@ export function formatWeekRange(weekStart: string): string {
   const startLabel = start.getMonth() === end.getMonth() ? String(start.getDate()) : dayMonthFmt.format(start);
   return `${startLabel} – ${endLabel}`;
 }
+
+const pad = (n: number) => String(n).padStart(2, "0");
+const keyOf = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+/** "YYYY-MM-DD" décalé de `days` jours. */
+export function addDays(key: string, days: number): string {
+  const d = fromDateKey(key);
+  return keyOf(new Date(d.getFullYear(), d.getMonth(), d.getDate() + days));
+}
+
+/** Échéance d'un devoir : "Pour aujourd'hui", "Pour demain", "Pour vendredi 7 novembre". */
+export function deadlineLabel(key: string, todayKey: string): string {
+  if (key === todayKey) return "Pour aujourd'hui";
+  if (key === addDays(todayKey, 1)) return "Pour demain";
+  return `Pour ${dayFmt.format(fromDateKey(key))}`;
+}

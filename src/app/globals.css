@@ -204,6 +204,8 @@
   --spacing-tabbar: 64px;
   --spacing-sidebar: 240px;
   --container-content: 720px;
+  /* Écrans en grille sur ordinateur (Accueil, Notes). */
+  --container-wide: 1040px;
 
   /* Mouvement. */
   --ease-enter: cubic-bezier(0.2, 0, 0, 1);

@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Notes · Pronoti" };
 // Lit ?periode=… (donnée de requête) : rendu derrière <Suspense>, comme l'exige cacheComponents.
 export default function GradesPage({ searchParams }: PageProps<"/notes">) {
   return (
-    <Screen title="Notes" wide>
+    <Screen title="Notes" width="wide">
       <Suspense fallback={<GradesSkeleton />}>
         <Grades searchParams={searchParams} />
       </Suspense>
@@ -34,7 +34,7 @@ async function Grades({ searchParams }: Pick<PageProps<"/notes">, "searchParams"
   } catch (error) {
     console.error("[pronote]", error);
     return (
-      <div className="mx-auto max-w-content">
+      <div>
         <Banner action={<Link href={href(periodId)} className={bannerActionClasses}>Réessayer</Link>}>
           Impossible de récupérer tes notes depuis Pronote. Réessaie dans un instant.
         </Banner>
@@ -43,7 +43,7 @@ async function Grades({ searchParams }: Pick<PageProps<"/notes">, "searchParams"
   }
 
   return (
-    <div className="mx-auto flex max-w-content flex-col gap-6 lg:max-w-[1040px]">
+    <div className="flex flex-col gap-6">
       <PeriodPicker periods={view.periods} currentId={view.period.id} basePath="/notes" />
       {view.grades.length === 0 && view.subjects.length === 0 ? (
         <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
@@ -64,7 +64,7 @@ async function Grades({ searchParams }: Pick<PageProps<"/notes">, "searchParams"
 
 function GradesSkeleton() {
   return (
-    <div className="mx-auto flex max-w-content flex-col gap-6" aria-busy="true" aria-label="Chargement">
+    <div className="flex flex-col gap-6" aria-busy="true" aria-label="Chargement">
       <div className="h-11 w-72 animate-pulse rounded-md bg-surface-sunken" />
       <div className="h-24 animate-pulse rounded-lg bg-surface-sunken" />
       <div className="h-64 animate-pulse rounded-lg bg-surface-sunken" />

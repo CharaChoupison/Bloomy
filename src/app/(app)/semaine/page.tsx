@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Semaine · Pronoti" };
 // Lit ?semaine=… (donnée de requête) : rendu derrière <Suspense>, comme l'exige cacheComponents.
 export default function WeekPage({ searchParams }: PageProps<"/semaine">) {
   return (
-    <Screen title="Semaine" wide>
+    <Screen title="Semaine" width="full">
       <Suspense fallback={<WeekSkeleton />}>
         <Week searchParams={searchParams} />
       </Suspense>

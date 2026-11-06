@@ -4,7 +4,7 @@ import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
 import { getAssignments, type AssignmentItem } from "@/lib/pronote/assignments";
 import { toDateKey } from "@/lib/pronote/timetable";
-import { fromDateKey } from "@/lib/format";
+import { deadlineLabel } from "@/lib/format";
 import { AssignmentRow } from "@/components/assignment-row";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
@@ -73,17 +73,6 @@ function groupByDeadline(items: AssignmentItem[]): [string, AssignmentItem[]][] 
   const map = new Map<string, AssignmentItem[]>();
   for (const a of items) map.set(a.deadlineKey, [...(map.get(a.deadlineKey) ?? []), a]);
   return [...map.entries()];
-}
-
-const dayFmt = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-
-/** "Pour aujourd'hui", "Pour demain", "Pour vendredi 7 novembre". */
-function deadlineLabel(key: string, todayKey: string): string {
-  const today = fromDateKey(todayKey);
-  const tomorrow = toDateKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
-  if (key === todayKey) return "Pour aujourd'hui";
-  if (key === tomorrow) return "Pour demain";
-  return `Pour ${dayFmt.format(fromDateKey(key))}`;
 }
 
 function AssignmentsSkeleton() {

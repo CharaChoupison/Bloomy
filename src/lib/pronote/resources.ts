@@ -4,6 +4,7 @@ import { resourcesFromIntervals } from "pawnote";
 import { withPronote } from "./client";
 import { htmlToText } from "@/lib/html-to-text";
 import { lessonAnchor } from "@/lib/lesson-anchor";
+import { addDays, fromDateKey } from "@/lib/format";
 import { plainAttachments, type PlainAttachment } from "./attachments";
 
 export type LessonFile = PlainAttachment;
@@ -63,18 +64,26 @@ export async function getContentAnchors(weekStart: string): Promise<Set<string>>
 
 /**
  * Contenus de cours d'une semaine (à partir de son lundi "YYYY-MM-DD"), du plus récent au plus ancien.
- * Seules les séances qui ont un contenu sont gardées. Mis en cache quelques minutes.
  * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
  */
 export async function getLessonContents(weekStart: string): Promise<LessonSession[]> {
+  return getLessonContentsBetween(weekStart, addDays(weekStart, 6));
+}
+
+/**
+ * Contenus de cours entre deux jours "YYYY-MM-DD" (inclus), du plus récent au plus ancien.
+ * Seules les séances qui ont un contenu sont gardées. Mis en cache quelques minutes.
+ * ⚠️ Pas de vérification d'accès ici : à appeler uniquement après `verifySession()`.
+ */
+export async function getLessonContentsBetween(firstDay: string, lastDay: string): Promise<LessonSession[]> {
   "use cache";
   cacheLife("minutes");
 
-  const [y, m, d] = weekStart.split("-").map(Number);
-  const monday = new Date(y, m - 1, d, 0, 0, 0, 0);
-  const sunday = new Date(y, m - 1, d + 6, 23, 59, 59, 999);
+  const from = fromDateKey(firstDay);
+  const end = fromDateKey(lastDay);
+  const to = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59, 999);
 
-  const raw = await withPronote((session) => resourcesFromIntervals(session, monday, sunday));
+  const raw = await withPronote((session) => resourcesFromIntervals(session, from, to));
 
   return raw
     .map((r) => ({
