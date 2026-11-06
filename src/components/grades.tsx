@@ -143,7 +143,6 @@ export function GradeRow({ g }: { g: GradeItem }) {
 
   return (
     <li className="flex items-start gap-3 px-4 py-3">
-      <SubjectToken subject={g.subject} color={g.color} />
       <div className="min-w-0 flex-1">
         <p className="truncate text-body font-semibold">{g.subject}</p>
         <p className="mt-0.5 truncate text-caption text-ink-muted">
@@ -232,7 +231,6 @@ function SubjectRow({ s }: { s: SubjectAverage }) {
 
   return (
     <li className="flex items-start gap-3 px-4 py-3">
-      <SubjectToken subject={s.subject} color={s.color} />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-3">
           <p className="min-w-0 truncate text-body font-semibold">{s.subject}</p>
