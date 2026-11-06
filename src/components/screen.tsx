@@ -24,7 +24,7 @@ export function Screen({
   back?: { href: string; label: string };
   /**
    * Largeur sur ordinateur : colonne de lecture (par défaut), grille (`wide` : Accueil, Notes)
-   * ou toute la largeur (`full` : vue Semaine). Sur téléphone, toujours la colonne de lecture.
+   * ou toute la largeur (`full` : Calendrier). Sur téléphone, toujours la colonne de lecture.
    */
   width?: "content" | "wide" | "full";
   children: React.ReactNode;

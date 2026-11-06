@@ -4,19 +4,19 @@ import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
 import { getWeekTimetable, mondayKey, toDateKey } from "@/lib/pronote/timetable";
 import { getContentAnchors } from "@/lib/pronote/resources";
-import { formatWeekRange } from "@/lib/format";
 import { DayCard, DayCardSkeleton } from "@/components/day-card";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
+import { WeekPicker } from "@/components/week-picker";
 
-export const metadata: Metadata = { title: "Semaine · Pronoti" };
+export const metadata: Metadata = { title: "Calendrier · Pronoti" };
 
 // Lit ?semaine=… (donnée de requête) : rendu derrière <Suspense>, comme l'exige cacheComponents.
 export default function WeekPage({ searchParams }: PageProps<"/semaine">) {
   return (
-    <Screen title="Semaine" width="full">
+    <Screen title="Calendrier" width="full">
       <Suspense fallback={<WeekSkeleton />}>
         <Week searchParams={searchParams} />
       </Suspense>
@@ -83,8 +83,8 @@ function WeekNav({ offset, weekStart }: { offset: number; weekStart: string }) {
       <Link href={href(offset - 1)} className={buttonClasses("icon")} aria-label="Semaine précédente">
         <ChevronLeftIcon />
       </Link>
-      <div className="text-center">
-        <p className="text-body font-semibold">{formatWeekRange(weekStart)}</p>
+      <div className="flex flex-col items-center">
+        <WeekPicker weekStart={weekStart} offset={offset} hrefFor="/semaine" />
         {offset === 0 ? (
           <p className="text-caption text-ink-muted">Cette semaine</p>
         ) : (

@@ -30,7 +30,7 @@ export default function Home() {
           <DashboardSection
             id="accueil-journee"
             title="Ta journée"
-            more={{ href: "/semaine", label: "Semaine" }}
+            more={{ href: "/semaine", label: "Calendrier" }}
             className="order-0 lg:order-none"
           >
             <Suspense fallback={<TodaySkeleton />}>

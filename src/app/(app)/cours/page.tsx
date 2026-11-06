@@ -14,7 +14,7 @@ import { buttonClasses } from "@/components/ui/button";
 
 export const metadata: Metadata = { title: "Contenu des cours · Pronoti" };
 
-// Parcours semaine par semaine, comme la page Semaine.
+// Parcours semaine par semaine, comme la page Calendrier.
 // ?semaine=-1 : décalage en semaines. ?jour=YYYY-MM-DD : ouvre la semaine de ce jour
 // (lien « Contenu du cours » depuis l'emploi du temps, avec l'ancre de la séance).
 export default function LessonContentsPage({ searchParams }: PageProps<"/cours">) {

@@ -27,7 +27,7 @@ export type NavItem = {
 /** Onglets principaux (téléphone) et haut de la barre latérale (ordinateur). */
 export const MAIN_ITEMS: NavItem[] = [
   { href: "/", label: "Accueil", Icon: HouseIcon },
-  { href: "/semaine", label: "Semaine", Icon: CalendarIcon },
+  { href: "/semaine", label: "Calendrier", Icon: CalendarIcon },
   { href: "/devoirs", label: "Devoirs", Icon: SquareCheckIcon },
   { href: "/notes", label: "Notes", Icon: ChartColumnIcon },
 ];

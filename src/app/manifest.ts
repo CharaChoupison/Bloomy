@@ -28,7 +28,7 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     // Appui long sur l'icône (Android, Windows, macOS) : accès direct aux écrans les plus consultés.
     shortcuts: [
-      { name: "Semaine", short_name: "Semaine", description: "Ton emploi du temps", url: "/semaine" },
+      { name: "Calendrier", short_name: "Calendrier", description: "Ton emploi du temps", url: "/semaine" },
       { name: "Devoirs", short_name: "Devoirs", description: "Ce qu'il reste à faire", url: "/devoirs" },
       { name: "Notes", short_name: "Notes", description: "Tes dernières notes et moyennes", url: "/notes" },
       { name: "Messagerie", short_name: "Messages", description: "Tes discussions avec les profs", url: "/messagerie" },

@@ -39,7 +39,7 @@ function ClassRow({
         aria-hidden
       />
       <div className="min-w-0 flex-1">
-        {/* Vue en colonnes (Semaine sur ordinateur) : l'horaire passe au-dessus pour laisser la largeur au nom. */}
+        {/* Vue en colonnes (Calendrier sur ordinateur) : l'horaire passe au-dessus pour laisser la largeur au nom. */}
         {columns && (
           <p className="mb-0.5 hidden font-mono text-caption font-medium tabular-nums lg:block">
             {formatTime(c.start)} <span className="text-ink-muted">– {formatTime(c.end)}</span>
@@ -105,7 +105,7 @@ export function DayCard({
   day: DayTimetable;
   isToday: boolean;
   title?: string;
-  /** La carte devient une colonne étroite à partir de 1024px (vue Semaine). */
+  /** La carte devient une colonne étroite à partir de 1024px (Calendrier). */
   columns?: boolean;
   /**
    * Ancres des séances qui ont un contenu de cours (voir lib/lesson-anchor.ts) : ces séances
