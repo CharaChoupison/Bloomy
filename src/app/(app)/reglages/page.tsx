@@ -5,7 +5,6 @@ import { ReloadAppButton } from "@/components/reload-app-button";
 import { Screen } from "@/components/screen";
 import { buttonClasses } from "@/components/ui/button";
 import { logout } from "../../login/actions";
-import packageJson from "../../../../package.json";
 
 export const metadata: Metadata = { title: "Réglages · Pronoti" };
 
@@ -29,7 +28,7 @@ export default function SettingsPage() {
           <p className="text-caption text-ink-muted">
             Récupère la dernière mise à jour, utile si l&apos;app est sur ton écran d&apos;accueil.
           </p>
-          <p className="text-caption text-ink-muted tabular-nums">Version v{packageJson.version}</p>
+          <p className="text-caption text-ink-muted tabular-nums">Version v{process.env.APP_VERSION}</p>
         </section>
 
         <section aria-labelledby="compte" className="flex flex-col gap-3">

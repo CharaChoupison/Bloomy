@@ -32,7 +32,8 @@ if [[ ! -f "$RELEASE/.next/BUILD_ID" ]]; then
   echo "▶ Récupération de ${SHA:0:7}"
   rm -rf "$RELEASE"
   git init -q "$RELEASE"
-  git -C "$RELEASE" fetch -q --depth 1 "$REPO_URL" "$SHA"
+  # Historique complet : le nombre de commits sert de numéro de version (voir next.config.ts).
+  git -C "$RELEASE" fetch -q "$REPO_URL" "$SHA"
   git -C "$RELEASE" checkout -q FETCH_HEAD
 
   # Secrets et token Pronote partagés entre les versions, jamais dans Git.
