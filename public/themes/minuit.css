@@ -1,0 +1,38 @@
+/**
+ * @name Minuit
+ * @author Pronoti
+ * @description Noir profond et violet, pensé pour les écrans OLED. Toujours sombre, quel que soit le réglage Thème.
+ * @version 1.0.0
+ */
+
+/* Thème toujours sombre : on remplit TOUS les tokens de couleur (y compris les états),
+   sinon les couleurs du mode clair resteraient quand l'appareil est en clair. */
+:root {
+  color-scheme: dark;
+
+  --bg: #000000;
+  --surface: #0e0c14;
+  --surface-sunken: #1a1724;
+  --ink: #f3f0fa;
+  --ink-muted: #a49fb5;
+  --line: #26222f;
+  --line-strong: #6f6880;
+  --overlay: rgba(0, 0, 0, 0.7);
+
+  --accent: #b69cff;
+  --accent-soft: #241a3d;
+  --on-accent: #0b0612;
+
+  --danger: #ffa071;
+  --danger-soft: #3d1a0c;
+  --warn: #f5c46b;
+  --warn-soft: #3a2a0a;
+  --test: #c9b6ff;
+  --test-soft: #2b1f4d;
+  --success: #6fdc95;
+  --success-soft: #10301c;
+  --neutral: #b4b4bd;
+  --neutral-soft: #27272b;
+
+  --shadow-float-value: 0 0 0 1px #26222f, 0 8px 24px rgba(0, 0, 0, 0.6);
+}

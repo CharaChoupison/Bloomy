@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AccentPicker, ThemePicker } from "@/components/appearance-pickers";
+import { CustomThemesSettings } from "@/components/custom-themes";
 import { LogOutIcon } from "@/components/icons";
 import { ReloadAppButton } from "@/components/reload-app-button";
 import { Screen } from "@/components/screen";
@@ -18,6 +19,13 @@ export default function SettingsPage() {
           </h2>
           <AccentPicker />
           <ThemePicker />
+        </section>
+
+        <section aria-labelledby="themes-perso" className="flex flex-col gap-3">
+          <h2 id="themes-perso" className="text-headline">
+            Thèmes personnalisés
+          </h2>
+          <CustomThemesSettings />
         </section>
 
         <section aria-labelledby="application" className="flex flex-col gap-3">

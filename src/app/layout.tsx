@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+import { CustomCssPathGuard } from "@/components/custom-themes";
 import { preferencesBootScript, THEME_COLOR } from "@/lib/preferences";
 import "./globals.css";
 
@@ -29,17 +31,22 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    // suppressHydrationWarning : data-accent / data-theme sont posés par le script avant React.
+    // suppressHydrationWarning : data-accent / data-theme / data-scheme sont posés par le script avant React.
     <html
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
-        {/* Couleur et thème choisis appliqués avant le premier affichage (pas de flash). */}
+        {/* Couleur, thème et thèmes personnalisés appliqués avant le premier affichage (pas de flash). */}
         <script dangerouslySetInnerHTML={{ __html: preferencesBootScript }} />
       </head>
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {children}
+        <Suspense fallback={null}>
+          <CustomCssPathGuard />
+        </Suspense>
+      </body>
     </html>
   );
 }

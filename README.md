@@ -14,7 +14,7 @@ Pronoti se connecte à Pronote grâce à [Pawnote](https://github.com/LiterateIn
 - **Vie scolaire** : absences, retards et punitions
 - **Actualités** et **Messagerie** (lecture seule)
 - **Compte** : les informations de l'élève, valeurs sensibles masquées
-- **Réglages** : thème et couleur d'accent
+- **Réglages** : thème, couleur d'accent et thèmes personnalisés (fichiers `.css`, à la Vencord) : voir le [guide pour créer un thème](public/themes/guide.md), aussi servi par l'app sur `/themes/guide.md`
 
 ## Stack
 

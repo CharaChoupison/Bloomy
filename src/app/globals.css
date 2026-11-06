@@ -7,52 +7,96 @@
  * - Accent : choisi par l'élève via data-accent sur <html>. Le code n'utilise que
  *   accent / accent-soft / on-accent, jamais accent-violet & co directement.
  */
-:root {
-  color-scheme: light;
-  --bg: #f5f5f7;
-  --surface: #ffffff;
-  --surface-sunken: #ececf0;
-  --ink: #1c1c1e;
-  --ink-muted: #6b6b73;
-  --line: #e4e4e9;
-  --line-strong: #8a8a93;
-  --overlay: rgba(11, 11, 13, 0.4);
-  --on-accent: #ffffff;
+/*
+ * Les tokens vivent dans la couche « tokens ». Les thèmes personnalisés sont injectés dans des couches
+ * déclarées après (voir lib/custom-themes.ts et public/themes/guide.md) : ils les remplacent
+ * quelle que soit leur spécificité.
+ */
+@layer tokens {
+  :root {
+    color-scheme: light;
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --surface-sunken: #ececf0;
+    --ink: #1c1c1e;
+    --ink-muted: #6b6b73;
+    --line: #e4e4e9;
+    --line-strong: #8a8a93;
+    --overlay: rgba(11, 11, 13, 0.4);
+    --on-accent: #ffffff;
 
-  --accent-bleu: #2156d9;
-  --accent-bleu-soft: #e9effd;
-  --accent-violet: #6d3fd6;
-  --accent-violet-soft: #efeafc;
-  --accent-framboise: #b8205f;
-  --accent-framboise-soft: #fbe8f0;
-  --accent-ocean: #0b6f8c;
-  --accent-ocean-soft: #e0f1f6;
-  --accent-sapin: #0f766e;
-  --accent-sapin-soft: #e0f3f0;
-  --accent-graphite: #3f3f46;
-  --accent-graphite-soft: #ececef;
+    --accent-bleu: #2156d9;
+    --accent-bleu-soft: #e9effd;
+    --accent-violet: #6d3fd6;
+    --accent-violet-soft: #efeafc;
+    --accent-framboise: #b8205f;
+    --accent-framboise-soft: #fbe8f0;
+    --accent-ocean: #0b6f8c;
+    --accent-ocean-soft: #e0f1f6;
+    --accent-sapin: #0f766e;
+    --accent-sapin-soft: #e0f3f0;
+    --accent-graphite: #3f3f46;
+    --accent-graphite-soft: #ececef;
 
-  --danger: #b4380a;
-  --danger-soft: #fdece2;
-  --warn: #8a4b00;
-  --warn-soft: #fdf1d8;
-  --test: #5b2dbf;
-  --test-soft: #efe9fd;
-  --success: #16733a;
-  --success-soft: #e4f4e9;
-  --neutral: #52525b;
-  --neutral-soft: #ececef;
+    --danger: #b4380a;
+    --danger-soft: #fdece2;
+    --warn: #8a4b00;
+    --warn-soft: #fdf1d8;
+    --test: #5b2dbf;
+    --test-soft: #efe9fd;
+    --success: #16733a;
+    --success-soft: #e4f4e9;
+    --neutral: #52525b;
+    --neutral-soft: #ececef;
 
-  --shadow-float-value: 0 1px 2px rgba(11, 11, 13, 0.06), 0 8px 24px rgba(11, 11, 13, 0.08);
+    --shadow-float-value: 0 1px 2px rgba(11, 11, 13, 0.06), 0 8px 24px rgba(11, 11, 13, 0.08);
 
-  /* Accent par défaut : Bleu. */
-  --accent: var(--accent-bleu);
-  --accent-soft: var(--accent-bleu-soft);
-}
+    /* Accent par défaut : Bleu. */
+    --accent: var(--accent-bleu);
+    --accent-soft: var(--accent-bleu-soft);
+  }
 
-/* Sombre : suit l'appareil sauf si l'élève a forcé le clair… */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  /* Sombre : suit l'appareil sauf si l'élève a forcé le clair… */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0b0b0d;
+      --surface: #17171a;
+      --surface-sunken: #222226;
+      --ink: #f2f2f4;
+      --ink-muted: #9a9aa3;
+      --line: #2a2a30;
+      --line-strong: #70707a;
+      --overlay: rgba(0, 0, 0, 0.6);
+      --on-accent: #0b0b0d;
+      --accent-bleu: #86aefc;
+      --accent-bleu-soft: #172440;
+      --accent-violet: #b9a2fb;
+      --accent-violet-soft: #231b3c;
+      --accent-framboise: #f58fbc;
+      --accent-framboise-soft: #3a1526;
+      --accent-ocean: #5cc8e6;
+      --accent-ocean-soft: #0d2832;
+      --accent-sapin: #4fd1be;
+      --accent-sapin-soft: #0f2b28;
+      --accent-graphite: #d4d4d8;
+      --accent-graphite-soft: #27272b;
+      --danger: #ffa071;
+      --danger-soft: #3d1a0c;
+      --warn: #f5c46b;
+      --warn-soft: #3a2a0a;
+      --test: #c9b6ff;
+      --test-soft: #2b1f4d;
+      --success: #6fdc95;
+      --success-soft: #10301c;
+      --neutral: #b4b4bd;
+      --neutral-soft: #27272b;
+      --shadow-float-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  /* …ou si l'élève a choisi « Sombre ». (Mêmes valeurs que ci-dessus.) */
+  :root[data-theme="dark"] {
     color-scheme: dark;
     --bg: #0b0b0d;
     --surface: #17171a;
@@ -87,52 +131,15 @@
     --neutral-soft: #27272b;
     --shadow-float-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
   }
-}
 
-/* …ou si l'élève a choisi « Sombre ». (Mêmes valeurs que ci-dessus.) */
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #0b0b0d;
-  --surface: #17171a;
-  --surface-sunken: #222226;
-  --ink: #f2f2f4;
-  --ink-muted: #9a9aa3;
-  --line: #2a2a30;
-  --line-strong: #70707a;
-  --overlay: rgba(0, 0, 0, 0.6);
-  --on-accent: #0b0b0d;
-  --accent-bleu: #86aefc;
-  --accent-bleu-soft: #172440;
-  --accent-violet: #b9a2fb;
-  --accent-violet-soft: #231b3c;
-  --accent-framboise: #f58fbc;
-  --accent-framboise-soft: #3a1526;
-  --accent-ocean: #5cc8e6;
-  --accent-ocean-soft: #0d2832;
-  --accent-sapin: #4fd1be;
-  --accent-sapin-soft: #0f2b28;
-  --accent-graphite: #d4d4d8;
-  --accent-graphite-soft: #27272b;
-  --danger: #ffa071;
-  --danger-soft: #3d1a0c;
-  --warn: #f5c46b;
-  --warn-soft: #3a2a0a;
-  --test: #c9b6ff;
-  --test-soft: #2b1f4d;
-  --success: #6fdc95;
-  --success-soft: #10301c;
-  --neutral: #b4b4bd;
-  --neutral-soft: #27272b;
-  --shadow-float-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+  /* Accent choisi (voir lib/preferences.ts pour la liste). */
+  :root[data-accent="bleu"] { --accent: var(--accent-bleu); --accent-soft: var(--accent-bleu-soft); }
+  :root[data-accent="violet"] { --accent: var(--accent-violet); --accent-soft: var(--accent-violet-soft); }
+  :root[data-accent="framboise"] { --accent: var(--accent-framboise); --accent-soft: var(--accent-framboise-soft); }
+  :root[data-accent="ocean"] { --accent: var(--accent-ocean); --accent-soft: var(--accent-ocean-soft); }
+  :root[data-accent="sapin"] { --accent: var(--accent-sapin); --accent-soft: var(--accent-sapin-soft); }
+  :root[data-accent="graphite"] { --accent: var(--accent-graphite); --accent-soft: var(--accent-graphite-soft); }
 }
-
-/* Accent choisi (voir lib/preferences.ts pour la liste). */
-:root[data-accent="bleu"] { --accent: var(--accent-bleu); --accent-soft: var(--accent-bleu-soft); }
-:root[data-accent="violet"] { --accent: var(--accent-violet); --accent-soft: var(--accent-violet-soft); }
-:root[data-accent="framboise"] { --accent: var(--accent-framboise); --accent-soft: var(--accent-framboise-soft); }
-:root[data-accent="ocean"] { --accent: var(--accent-ocean); --accent-soft: var(--accent-ocean-soft); }
-:root[data-accent="sapin"] { --accent: var(--accent-sapin); --accent-soft: var(--accent-sapin-soft); }
-:root[data-accent="graphite"] { --accent: var(--accent-graphite); --accent-soft: var(--accent-graphite-soft); }
 
 /* Utilitaires Tailwind : bg-surface, text-ink-muted, border-line, bg-accent, text-on-accent… */
 @theme inline {
@@ -161,13 +168,14 @@
   --color-neutral: var(--neutral);
   --color-neutral-soft: var(--neutral-soft);
 
-  --font-sans: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
-
   --shadow-float: var(--shadow-float-value);
 }
 
 @theme {
+  /* Polices : hors de « inline » pour qu'un thème personnalisé puisse les remplacer. */
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
   /* Échelle typographique (en rem pour respecter le zoom du texte). */
   --text-display: 1.75rem;
   --text-display--line-height: 2.125rem;
@@ -212,14 +220,22 @@
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 
-html {
-  background: var(--bg);
-}
+/* Dans la couche « base » de Tailwind : un thème personnalisé (couche déclarée après) peut les remplacer. */
+@layer base {
+  html {
+    background: var(--bg);
+  }
 
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }
 
 /* Changement d'accent ou de thème : fondu de 200 ms pour que l'élève voie son choix s'appliquer. */
@@ -238,11 +254,6 @@ html.theme-transition *::after {
     opacity: 0;
     transform: translateX(24px);
   }
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
