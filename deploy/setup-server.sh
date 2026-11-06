@@ -2,16 +2,16 @@
 # Installation de Pronoti sur un serveur Ubuntu neuf (pensé pour Oracle Cloud Always Free, ARM ou x86).
 #
 # Usage, une seule fois, connecté en SSH avec l'utilisateur par défaut (ubuntu) :
-#   git clone https://github.com/CharaChoupison/Pronoti.git && sudo bash Pronoti/deploy/setup-server.sh
+#   git clone https://github.com/CharaChoupison/Bloomy.git && sudo bash Bloomy/deploy/setup-server.sh
 #
 # Pour utiliser ton propre nom de domaine plutôt que l'adresse sslip.io automatique :
-#   sudo DOMAIN=pronoti.mondomaine.fr bash Pronoti/deploy/setup-server.sh
+#   sudo DOMAIN=pronoti.mondomaine.fr bash Bloomy/deploy/setup-server.sh
 #
 # Le script peut être relancé sans risque : il ne redemande pas les réglages déjà enregistrés.
 
 set -euo pipefail
 
-REPO_URL="https://github.com/CharaChoupison/Pronoti.git"
+REPO_URL="https://github.com/CharaChoupison/Bloomy.git"
 NODE_MAJOR=24
 APP_USER=pronoti
 BASE=/opt/pronoti

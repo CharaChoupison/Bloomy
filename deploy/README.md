@@ -75,7 +75,7 @@ ssh ubuntu@123.45.67.89
 Puis, sur le serveur :
 
 ```bash
-git clone https://github.com/CharaChoupison/Pronoti.git && sudo bash Pronoti/deploy/setup-server.sh
+git clone https://github.com/CharaChoupison/Bloomy.git && sudo bash Bloomy/deploy/setup-server.sh
 ```
 
 Le script :
@@ -121,7 +121,7 @@ Si un build échoue, la version en ligne ne change pas. Si la nouvelle version n
 ### Utiliser ton propre nom de domaine
 
 1. Fais pointer un enregistrement DNS `A` vers l'IP du serveur.
-2. Relance `sudo DOMAIN=pronoti.mondomaine.fr bash Pronoti/deploy/setup-server.sh`.
+2. Relance `sudo DOMAIN=pronoti.mondomaine.fr bash Bloomy/deploy/setup-server.sh`.
 3. Mets à jour `DEPLOY_HOST` et `DEPLOY_KNOWN_HOSTS` dans GitHub.
 
 ### Ouvrir Pronoti à d'autres établissements

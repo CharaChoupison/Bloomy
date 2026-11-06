@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-REPO_URL="https://github.com/CharaChoupison/Pronoti.git"
+REPO_URL="https://github.com/CharaChoupison/Bloomy.git"
 BASE=/opt/pronoti
 KEEP_RELEASES=3
 HEALTH_URL="http://127.0.0.1:3000/login"
