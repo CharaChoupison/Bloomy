@@ -79,7 +79,7 @@ async function Resources({ searchParams }: Pick<PageProps<"/ressources">, "searc
       )}
 
       {items.length === 0 ? (
-        <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+        <p className="card px-4 py-3 text-callout text-ink-muted">
           Aucun fichier ni lien déposé sur {period}, ni dans tes devoirs à venir.
         </p>
       ) : (
@@ -121,7 +121,7 @@ function ResourceSection({
       <h2 id={id} className="text-callout font-semibold">
         {title}
       </h2>
-      <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+      <ul className="divide-y divide-line overflow-hidden card">
         {items.map((item) => (
           <ResourceRow key={item.key} item={item} showSubject={showSubject} />
         ))}

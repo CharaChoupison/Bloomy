@@ -36,5 +36,5 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   // Tout sauf les fichiers statiques de Next.js, les icônes et les thèmes d'exemple + leur guide (public/themes).
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|themes/|.*\\.(?:png|svg|ico|webmanifest)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|icons/|themes/|.*\\.(?:png|svg|ico|webmanifest)$).*)"],
 };

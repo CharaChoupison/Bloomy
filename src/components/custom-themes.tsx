@@ -156,7 +156,7 @@ export function CustomThemesSettings() {
       )}
 
       {themes.length > 0 ? (
-        <ul aria-label="Thèmes installés" className="flex flex-col divide-y divide-line rounded-lg border border-line bg-surface">
+        <ul aria-label="Thèmes installés" className="flex flex-col divide-y divide-line card">
           {themes.map((theme) => (
             <ThemeRow key={theme.id} theme={theme} onRemove={() => remove(theme)} />
           ))}
@@ -234,7 +234,7 @@ function ExampleThemes({
       </h3>
       <ul className="flex flex-col gap-2">
         {available.map((t) => (
-          <li key={t.file} className="flex items-center gap-3 rounded-lg border border-line bg-surface py-2 pr-2 pl-4">
+          <li key={t.file} className="flex items-center gap-3 card py-2 pr-2 pl-4">
             <div className="min-w-0 flex-1">
               <p className="text-body font-semibold">{t.name}</p>
               <p className="text-caption text-ink-muted">{t.description}</p>
@@ -291,7 +291,7 @@ function QuickCssEditor({ value }: { value: string }) {
 
   return (
     <details
-      className="rounded-lg border border-line bg-surface"
+      className="card"
       open={open}
       onToggle={(e) => setOpen(e.currentTarget.open)}
     >

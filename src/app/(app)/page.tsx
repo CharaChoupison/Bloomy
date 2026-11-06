@@ -13,6 +13,7 @@ import { GradesWidget } from "@/components/dashboard/grades-widget";
 import { InboxWidget } from "@/components/dashboard/inbox-widget";
 import { LessonsWidget } from "@/components/dashboard/lessons-widget";
 import { DashboardSection, DashboardSkeleton } from "@/components/dashboard/section";
+import { QuickActions } from "@/components/dashboard/quick-actions";
 
 // Accueil en tableau de bord. Chaque bloc a son propre <Suspense> : il s'affiche dès que
 // sa donnée arrive, et une erreur Pronote sur un bloc ne masque pas les autres.
@@ -62,18 +63,20 @@ async function Today() {
   const data = await loadToday();
   if (!data) {
     return (
-      <div>
+      <div className="flex flex-col gap-4">
         <Banner action={<Link href="/" className={bannerActionClasses}>Réessayer</Link>}>
           Impossible de joindre Pronote. Réessaie dans un instant.
         </Banner>
+        <QuickActions />
       </div>
     );
   }
 
   const isToday = data.day?.date === data.todayKey;
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <NextClass classes={data.upcoming} serverNow={data.now} />
+      <QuickActions />
       {data.day && (
         <DayCard
           day={data.day}
@@ -131,8 +134,9 @@ async function loadToday() {
 
 function TodaySkeleton() {
   return (
-    <div className="flex flex-col gap-3" aria-busy="true" aria-label="Chargement">
-      <div className="h-[72px] animate-pulse rounded-lg bg-surface-sunken" />
+    <div className="flex flex-col gap-4">
+      <div className="h-[164px] animate-pulse rounded-xl bg-surface-sunken" aria-busy="true" aria-label="Chargement" />
+      <QuickActions />
       <DayCardSkeleton />
     </div>
   );

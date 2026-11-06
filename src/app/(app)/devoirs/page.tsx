@@ -39,7 +39,7 @@ async function Assignments() {
 
   if (assignments.length === 0) {
     return (
-      <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+      <p className="card px-4 py-3 text-callout text-ink-muted">
         Aucun devoir pour les 4 prochaines semaines.
       </p>
     );
@@ -58,7 +58,7 @@ async function Assignments() {
           <h2 id={`pour-${key}`} className="text-callout font-semibold">
             {deadlineLabel(key, todayKey)}
           </h2>
-          <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+          <ul className="divide-y divide-line overflow-hidden card">
             {items.map((a) => (
               <AssignmentRow key={a.id} a={a} />
             ))}

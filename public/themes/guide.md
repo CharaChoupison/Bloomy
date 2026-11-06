@@ -135,9 +135,11 @@ Chaque état a une couleur de texte et un fond `-soft` sur lequel ce texte doit 
 | ---------------------- | -------------------------------------------- | ----------------- |
 | `--radius-sm`          | Petits éléments (pastilles, liens)           | `8px`             |
 | `--radius-md`          | Boutons, champs, bandeaux                    | `12px`            |
-| `--radius-lg`          | Cartes                                       | `16px`            |
-| `--radius-xl`          | Grandes surfaces                             | `24px`            |
-| `--shadow-float-value` | Ombre des éléments flottants (barre d'onglets, segment actif) | voir globals.css |
+| `--radius-lg`          | Cartes                                       | `20px`            |
+| `--radius-xl`          | Grandes surfaces, carte « hero »             | `28px`            |
+| `--shadow-float-value` | Ombre des éléments flottants (segment actif, pastille d'interrupteur) | voir globals.css |
+| `--shadow-card-value`  | Relief des cartes : ombre douce en clair, filet `--line` en sombre | voir globals.css |
+| `--hero-sheen`         | Reflet posé sur l'accent de la carte « hero » (chiffre clé d'un écran). `none` pour un aplat. | dégradé blanc léger |
 | `--font-sans`          | Police de toute l'interface                  | Geist, puis police système |
 | `--font-mono`          | Police à chasse fixe                         | Geist Mono        |
 
@@ -151,7 +153,7 @@ Pour changer la police :
 }
 ```
 
-Les tailles de texte (`--text-display`, `--text-title`, `--text-body`, etc.) existent aussi, mais **évite de les réduire** : elles sont calculées pour la lisibilité et le zoom.
+Les tailles de texte (`--text-hero`, `--text-display`, `--text-title`, `--text-body`, etc.) existent aussi, mais **évite de les réduire** : elles sont calculées pour la lisibilité et le zoom.
 
 ---
 
@@ -190,7 +192,7 @@ Un thème est du CSS qui s'exécute dans l'app de l'élève : il doit rester **l
 - `--ink` sur `--bg`, `--surface` et `--surface-sunken` : contraste **≥ 4,5:1**.
 - `--ink-muted` sur `--bg`, `--surface` et `--surface-sunken` : **≥ 4,5:1** (c'est du texte, même s'il est secondaire).
 - `--accent` sur `--surface` et sur `--accent-soft` : **≥ 4,5:1** (liens, onglet actif).
-- `--on-accent` sur `--accent` : **≥ 4,5:1** (texte des boutons principaux).
+- `--on-accent` sur `--accent` : **≥ 4,5:1** (texte des boutons principaux et de la carte « hero », reflet `--hero-sheen` compris).
 - Chaque couleur d'état sur son `-soft` : **≥ 4,5:1**.
 - `--line-strong` sur `--surface` : **≥ 3:1** (bordures de champs, interrupteurs).
 - Ne masque jamais le contour de focus (`:focus-visible`) et ne mets pas `outline: none`.

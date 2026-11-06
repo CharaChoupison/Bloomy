@@ -91,7 +91,7 @@ export function DayCard({
   const label = title ?? formatDay(day.date);
   return (
     <section
-      className={`overflow-hidden rounded-lg border bg-surface ${isToday ? "border-accent" : "border-line"}`}
+      className={`overflow-hidden card ${isToday ? "outline-2 -outline-offset-2 outline-accent" : ""}`}
       aria-label={label}
     >
       <h2

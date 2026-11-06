@@ -5,7 +5,7 @@ import { mondayKey } from "@/lib/pronote/timetable";
 import { lessonContentHref } from "@/lib/lesson-anchor";
 import { formatShortDate } from "@/lib/format";
 import { ChevronRightIcon, FolderOpenIcon, PaperclipIcon } from "@/components/icons";
-import { SubjectBar } from "@/components/grades";
+import { SubjectToken } from "@/components/grades";
 import { DashboardError, DashboardNote, DashboardSection } from "./section";
 
 const LATEST = 4;
@@ -31,7 +31,7 @@ export async function LessonsWidget({ className }: { className?: string }) {
       {sessions.length === 0 ? (
         <DashboardNote>Aucun contenu de cours renseigné ces deux dernières semaines.</DashboardNote>
       ) : (
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden card">
           {sessions.map((s) => (
             <LessonLine key={s.id} s={s} />
           ))}
@@ -39,7 +39,7 @@ export async function LessonsWidget({ className }: { className?: string }) {
       )}
       <Link
         href="/ressources"
-        className="flex min-h-touch items-center gap-3 rounded-lg border border-line bg-surface px-4 py-2 hover:border-line-strong"
+        className="flex min-h-touch items-center gap-3 card px-4 py-2 transition-colors hover:bg-bg"
       >
         <FolderOpenIcon className="text-accent" />
         <span className="min-w-0 flex-1">
@@ -66,8 +66,8 @@ function LessonLine({ s }: { s: LessonSession }) {
 
   return (
     <li>
-      <Link href={lessonContentHref(s.dateKey, s.start)} className="flex min-h-touch gap-3 px-4 py-3 hover:bg-bg">
-        <SubjectBar color={s.color} />
+      <Link href={lessonContentHref(s.dateKey, s.start)} className="flex min-h-touch items-start gap-3 px-4 py-3 hover:bg-bg">
+        <SubjectToken subject={s.subject} color={s.color} />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-3">
             <p className="min-w-0 truncate text-body font-semibold">{s.subject}</p>

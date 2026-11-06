@@ -41,7 +41,7 @@ export function DashboardSection({
 
 /** Message neutre dans une carte (bloc vide ou indisponible). */
 export function DashboardNote({ children }: { children: React.ReactNode }) {
-  return <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">{children}</p>;
+  return <p className="card px-4 py-3 text-callout text-ink-muted">{children}</p>;
 }
 
 /**
@@ -50,7 +50,7 @@ export function DashboardNote({ children }: { children: React.ReactNode }) {
  */
 export function DashboardError({ what }: { what: string }) {
   return (
-    <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+    <p className="card px-4 py-3 text-callout text-ink-muted">
       Impossible de récupérer {what} pour le moment.{" "}
       <Link href="/" className="font-medium text-accent underline-offset-2 hover:underline">
         Réessayer

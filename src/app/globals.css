@@ -50,6 +50,10 @@
     --neutral-soft: #ececef;
 
     --shadow-float-value: 0 1px 2px rgba(11, 11, 13, 0.06), 0 8px 24px rgba(11, 11, 13, 0.08);
+    /* Cartes : pas de bordure en clair, une ombre très douce suffit à les détacher du fond. */
+    --shadow-card-value: 0 1px 2px rgba(11, 11, 13, 0.04), 0 2px 12px rgba(11, 11, 13, 0.04);
+    /* Carte « hero » (chiffre clé de l'écran) : fond accent, léger relief. */
+    --hero-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 55%);
 
     /* Accent par défaut : Bleu. */
     --accent: var(--accent-bleu);
@@ -92,6 +96,8 @@
       --neutral: #b4b4bd;
       --neutral-soft: #27272b;
       --shadow-float-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-card-value: 0 0 0 1px var(--line);
+    --hero-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%);
     }
   }
 
@@ -130,6 +136,8 @@
     --neutral: #b4b4bd;
     --neutral-soft: #27272b;
     --shadow-float-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-card-value: 0 0 0 1px var(--line);
+    --hero-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%);
   }
 
   /* Accent choisi (voir lib/preferences.ts pour la liste). */
@@ -169,6 +177,7 @@
   --color-neutral-soft: var(--neutral-soft);
 
   --shadow-float: var(--shadow-float-value);
+  --shadow-card: var(--shadow-card-value);
 }
 
 @theme {
@@ -177,6 +186,11 @@
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
   /* Échelle typographique (en rem pour respecter le zoom du texte). */
+  /* Chiffre clé d'un écran (prochain cours, moyenne générale) : grand, serré, chiffres tabulaires. */
+  --text-hero: 2.75rem;
+  --text-hero--line-height: 1;
+  --text-hero--font-weight: 700;
+  --text-hero--letter-spacing: -0.04em;
   --text-display: 1.75rem;
   --text-display--line-height: 2.125rem;
   --text-display--font-weight: 700;
@@ -203,8 +217,8 @@
   /* Arrondis. */
   --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
 
   /* Tailles. */
   --spacing-touch: 44px;
@@ -236,6 +250,23 @@
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+}
+
+/*
+ * Carte du Design System : surface + arrondi + ombre douce (clair) ou filet (sombre).
+ * Remplace « rounded-lg border border-line bg-surface » : un seul endroit pour l'élévation.
+ */
+@utility card {
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+/* Carte « hero » : le chiffre clé de l'écran, sur l'accent. Le texte posé dessus est on-accent. */
+@utility card-hero {
+  border-radius: var(--radius-xl);
+  background: var(--hero-sheen), var(--accent);
+  color: var(--on-accent);
 }
 
 /* Changement d'accent ou de thème : fondu de 200 ms pour que l'élève voie son choix s'appliquer. */

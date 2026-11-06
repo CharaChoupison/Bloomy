@@ -38,14 +38,14 @@ async function ConversationList() {
 
   if (conversations.length === 0) {
     return (
-      <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+      <p className="card px-4 py-3 text-callout text-ink-muted">
         Aucune discussion pour le moment. Les messages de tes profs apparaîtront ici.
       </p>
     );
   }
 
   return (
-    <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+    <ul className="divide-y divide-line overflow-hidden card">
       {conversations.map((c) => (
         <li key={c.id}>
           <Link

@@ -38,7 +38,7 @@ async function AccountDetails() {
 
   return (
     <div className="flex flex-col gap-8">
-      <section aria-label="Identité" className="flex items-center gap-4 rounded-lg border border-line bg-surface px-4 py-4">
+      <section aria-label="Identité" className="flex items-center gap-4 card px-4 py-4">
         <Avatar name={me.name} src={me.photoUrl} />
         <div className="min-w-0">
           <p className="text-title break-words">{me.name}</p>
@@ -80,7 +80,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
       <h2 id={id} className="text-headline">
         {title}
       </h2>
-      <div className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">{children}</div>
+      <div className="divide-y divide-line overflow-hidden card">{children}</div>
     </section>
   );
 }

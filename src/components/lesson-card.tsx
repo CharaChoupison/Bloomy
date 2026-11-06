@@ -13,7 +13,7 @@ export function LessonCard({ s }: { s: LessonSession }) {
   return (
     <article
       id={s.anchor}
-      className="scroll-mt-6 overflow-hidden rounded-lg border border-line bg-surface transition-colors duration-200 data-target:border-accent data-target:ring-1 data-target:ring-accent"
+      className="scroll-mt-6 overflow-hidden card data-target:outline-2 data-target:-outline-offset-2 data-target:outline-accent"
     >
       <header className="flex gap-3 border-b border-line px-4 py-3">
         <div

@@ -39,7 +39,7 @@ export async function AssignmentsWidget({ className }: { className?: string }) {
 
   return (
     <Section className={className} count={items.length}>
-      <div className="overflow-hidden rounded-lg border border-line bg-surface">
+      <div className="overflow-hidden card">
         {groupByDeadline(shown).map(([key, group]) => (
           <div key={key} className="border-b border-line last:border-b-0">
             <h3 className="bg-bg px-4 py-1.5 text-label text-ink-muted">{deadlineLabel(key, todayKey)}</h3>

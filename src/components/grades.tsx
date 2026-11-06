@@ -17,6 +17,53 @@ export function SubjectBar({ color }: { color?: string }) {
   );
 }
 
+// Petits mots ignorés pour l'abréviation ("Sciences de la vie et de la Terre" → "ST").
+const MINOR_WORDS = new Set(["de", "du", "des", "la", "le", "les", "et", "en", "d", "l", "&"]);
+
+/** "HISTOIRE-GEOGRAPHIE" → "HG", "MATHEMATIQUES" → "Ma". */
+function subjectAbbr(name: string): string {
+  const words = name
+    .toLowerCase()
+    .split(/[\s\-'’.]+/)
+    .filter((w) => w && !MINOR_WORDS.has(w));
+  if (words.length === 0) return "?";
+  if (words.length === 1) return words[0].charAt(0).toUpperCase() + (words[0].charAt(1) ?? "");
+  return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+}
+
+/** Luminance relative WCAG d'une couleur "#rrggbb" (undefined si le format est inattendu). */
+function luminance(hex: string): number | undefined {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return undefined;
+  const [r, g, b] = [0, 2, 4].map((i) => {
+    const c = parseInt(m[1].slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * Pastille ronde de la matière (couleur Pronote + abréviation), comme l'icône d'une ligne de relevé.
+ * Le texte passe en noir ou en blanc selon ce qui contraste le plus (toujours ≥ 4,5:1).
+ * Décorative : le nom de la matière est écrit à côté.
+ */
+export function SubjectToken({ subject, color }: { subject: string; color?: string }) {
+  const lum = color ? luminance(color) : undefined;
+  const style =
+    lum === undefined
+      ? undefined
+      : { backgroundColor: color, color: (lum + 0.05) / 0.05 >= 1.05 / (lum + 0.05) ? "#000" : "#fff" };
+  return (
+    <span
+      aria-hidden
+      style={style}
+      className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-sunken text-label font-bold text-ink-muted ring-1 ring-line ring-inset"
+    >
+      {subjectAbbr(subject)}
+    </span>
+  );
+}
+
 /** "14,5 /20", ou le mot du cas particulier ("Absent·e"). */
 export function GradeFigure({ value, outOf, size = "md" }: { value?: GradeValue; outOf?: GradeValue; size?: "md" | "lg" }) {
   const points = formatPoints(value);
@@ -25,24 +72,65 @@ export function GradeFigure({ value, outOf, size = "md" }: { value?: GradeValue;
     return <span className="text-callout font-semibold text-ink-muted">{specialLabel(value) ?? "—"}</span>;
   }
   return (
-    <span className="font-mono font-medium tabular-nums whitespace-nowrap">
-      <span className={size === "lg" ? "text-[1.75rem] leading-none" : "text-headline"}>{points}</span>
-      {max && <span className="text-caption text-ink-muted"> /{max}</span>}
+    <span className="tabular-nums whitespace-nowrap">
+      <span className={size === "lg" ? "text-hero" : "text-headline"}>{points}</span>
+      {max && <span className={size === "lg" ? "text-headline font-medium opacity-80" : "text-caption text-ink-muted"}> /{max}</span>}
     </span>
   );
 }
 
-/** Moyenne générale de la période, avec celle de la classe. */
-export function OverallCard({ overall, classOverall }: { overall?: GradeValue; classOverall?: GradeValue }) {
+/** Écart à la classe, en mots neutres : on situe, on ne juge pas (pas de vert / rouge). */
+function classGap(me: GradeValue, cls?: GradeValue): string | undefined {
+  if (!isNumeric(cls)) return undefined;
+  const diff = Math.round((me.points - cls.points) * 100) / 100;
+  if (diff === 0) return "Pile la moyenne de la classe";
+  const pts = formatPoints({ kind: 0, points: Math.abs(diff) });
+  return `${pts} pt${Math.abs(diff) >= 2 ? "s" : ""} ${diff > 0 ? "au-dessus" : "en dessous"} de la classe`;
+}
+
+/**
+ * Moyenne générale de la période : le chiffre clé de l'écran Notes, en carte « hero ».
+ * Réglette 0–20 : point = toi, trait = classe (visuelle, les mêmes infos sont écrites).
+ */
+export function OverallCard({
+  overall,
+  classOverall,
+  period,
+}: {
+  overall?: GradeValue;
+  classOverall?: GradeValue;
+  period?: string;
+}) {
   if (!isNumeric(overall)) return null;
   const cls = formatPoints(classOverall);
+  const gap = classGap(overall, classOverall);
+  const pct = (v: GradeValue) => Math.min(100, Math.max(0, (v.points / 20) * 100));
+
   return (
-    <section aria-label="Moyenne générale" className="rounded-lg border border-line bg-surface px-4 py-4">
-      <p className="text-callout font-medium text-ink-muted">Moyenne générale</p>
-      <p className="mt-1" aria-label={spokenGrade(overall, { kind: 0, points: 20 })}>
+    <section aria-label="Moyenne générale" className="card-hero px-5 py-5">
+      <p className="text-callout font-medium opacity-90">Moyenne générale{period && ` · ${period}`}</p>
+      <p className="mt-2" aria-label={spokenGrade(overall, { kind: 0, points: 20 })}>
         <GradeFigure value={overall} outOf={{ kind: 0, points: 20 }} size="lg" />
       </p>
-      {cls && <p className="mt-1 text-caption text-ink-muted">Classe {cls}</p>}
+      <div className="relative mt-5 h-3" aria-hidden>
+        <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-current/25" />
+        <div
+          className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-current"
+          style={{ width: `${pct(overall)}%` }}
+        />
+        {isNumeric(classOverall) && (
+          <div
+            className="absolute top-0 h-3 w-0.5 -translate-x-1/2 rounded-full bg-current opacity-70"
+            style={{ left: `${pct(classOverall)}%` }}
+          />
+        )}
+      </div>
+      {(cls || gap) && (
+        <p className="mt-2 flex flex-wrap justify-between gap-x-3 text-caption font-medium opacity-90">
+          {cls && <span>Classe {cls}</span>}
+          {gap && <span>{gap}</span>}
+        </p>
+      )}
     </section>
   );
 }
@@ -54,8 +142,8 @@ export function GradeRow({ g }: { g: GradeItem }) {
   const hasBadges = showSpecialBadge || g.coefficient !== 1 || g.isBonus || g.isOptional;
 
   return (
-    <li className="flex gap-3 px-4 py-3">
-      <SubjectBar color={g.color} />
+    <li className="flex items-start gap-3 px-4 py-3">
+      <SubjectToken subject={g.subject} color={g.color} />
       <div className="min-w-0 flex-1">
         <p className="truncate text-body font-semibold">{g.subject}</p>
         <p className="mt-0.5 truncate text-caption text-ink-muted">
@@ -89,11 +177,11 @@ export function LatestGrades({ grades }: { grades: GradeItem[] }) {
         Dernières notes
       </h2>
       {grades.length === 0 ? (
-        <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+        <p className="card px-4 py-3 text-callout text-ink-muted">
           Aucune note pour cette période.
         </p>
       ) : (
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden card">
           {grades.map((g) => (
             <GradeRow key={g.id} g={g} />
           ))}
@@ -143,8 +231,8 @@ function SubjectRow({ s }: { s: SubjectAverage }) {
   const context = [cls && `Classe ${cls}`, min && max && `de ${min} à ${max}`].filter(Boolean).join(" · ");
 
   return (
-    <li className="flex gap-3 px-4 py-3">
-      <SubjectBar color={s.color} />
+    <li className="flex items-start gap-3 px-4 py-3">
+      <SubjectToken subject={s.subject} color={s.color} />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-3">
           <p className="min-w-0 truncate text-body font-semibold">{s.subject}</p>
@@ -177,7 +265,7 @@ export function SubjectAverages({ subjects }: { subjects: SubjectAverage[] }) {
           </span>
         </p>
       </div>
-      <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+      <ul className="divide-y divide-line overflow-hidden card">
         {subjects.map((s) => (
           <SubjectRow key={s.subjectId} s={s} />
         ))}

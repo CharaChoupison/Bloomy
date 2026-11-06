@@ -38,7 +38,7 @@ export async function InboxWidget({ className }: { className?: string }) {
           {failed.length === 2 ? "Messagerie et actualités indisponibles pour le moment." : "Rien de nouveau."}
         </DashboardNote>
       ) : (
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden card">
           {unread.map((c) => (
             <ConversationLine key={c.id} c={c} />
           ))}
@@ -75,7 +75,9 @@ function Line({
   return (
     <li>
       <Link href={href} className="flex min-h-touch items-center gap-3 px-4 py-3 hover:bg-bg">
-        <span className="text-ink-muted">{icon}</span>
+        <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
+          {icon}
+        </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-3">
             <p className={`min-w-0 truncate text-body ${strong ? "font-semibold" : "font-medium"}`}>{title}</p>

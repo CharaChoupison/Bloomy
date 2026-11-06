@@ -47,7 +47,7 @@ async function SchoolLife({ searchParams }: Pick<PageProps<"/vie-scolaire">, "se
     <div className="flex flex-col gap-6">
       <PeriodPicker periods={nb.periods} currentId={nb.period.id} basePath="/vie-scolaire" />
       {empty ? (
-        <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+        <p className="card px-4 py-3 text-callout text-ink-muted">
           Rien à signaler pour la période « {nb.period.name} ».
         </p>
       ) : (
@@ -86,7 +86,7 @@ function Summary({ nb }: { nb: NotebookView }) {
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Résumé de la période">
       {tiles.map((t) => (
-        <li key={t.label} className="rounded-lg border border-line bg-surface px-4 py-3">
+        <li key={t.label} className="card px-4 py-3">
           <p className="text-caption text-ink-muted">{t.label}</p>
           <p className="mt-0.5 font-mono text-[1.5rem] leading-none font-medium tabular-nums">{t.value}</p>
           {t.detail && <p className="mt-1 text-caption text-ink-muted">{t.detail}</p>}
@@ -104,7 +104,7 @@ function Section({ title, count, children }: { title: string; count: number; chi
       <h2 id={id} className="text-headline">
         {title}
       </h2>
-      <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">{children}</ul>
+      <ul className="divide-y divide-line overflow-hidden card">{children}</ul>
     </section>
   );
 }

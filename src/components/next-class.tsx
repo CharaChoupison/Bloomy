@@ -45,43 +45,53 @@ export function NextClass({ classes, serverNow }: { classes: UpcomingClass[]; se
   const href = next.weekOffset ? `/semaine?semaine=${next.weekOffset}` : "/semaine";
 
   if (dayKey(start) !== dayKey(now)) {
-    // Plus de cours aujourd'hui : encart neutre, l'accent est réservé à ce qui arrive maintenant.
+    // Plus de cours aujourd'hui : même gabarit, mais neutre — l'accent est réservé à ce qui arrive maintenant.
     return (
-      <Link
-        href={href}
-        className="flex items-center gap-3 rounded-lg border border-line bg-surface px-4 py-3 hover:border-line-strong"
-      >
+      <Link href={href} className="flex items-center gap-4 card px-5 py-5 transition-colors hover:bg-bg">
         <div className="min-w-0 flex-1">
-          <p className="text-caption font-medium text-ink-muted">Fini pour aujourd&apos;hui</p>
-          <p className="mt-0.5 truncate text-headline">
-            {dayLabel(start, now)} {formatTime(next.start)} · {next.title}
-          </p>
+          <p className="text-callout font-medium text-ink-muted">Fini pour aujourd&apos;hui · {dayLabel(start, now)}</p>
+          <p className="mt-2 text-hero tabular-nums">{formatTime(next.start)}</p>
+          <p className="mt-2 truncate text-headline">{room ? `${next.title} · ${room}` : next.title}</p>
         </div>
         <ChevronRightIcon className="text-ink-muted" />
       </Link>
     );
   }
 
-  const minutes = Math.ceil((start - now) / 60_000);
-  const when =
-    start <= now
-      ? `En cours · jusqu'à ${formatTime(next.end)}`
-      : minutes < 60
-        ? `Prochain cours · dans ${minutes} min`
-        : `Prochain cours · à ${formatTime(next.start)}`;
+  const ongoing = start <= now;
+  const end = Date.parse(next.end);
+  // L'horaire complet est écrit en grand : le libellé donne seulement le délai.
+  const minutes = Math.ceil(((ongoing ? end : start) - now) / 60_000);
+  const when = ongoing
+    ? `En cours · encore ${minutes} min`
+    : minutes < 60
+      ? `Prochain cours · dans ${minutes} min`
+      : "Prochain cours";
+  // Avancement du cours en cours (repère visuel ; le temps restant est écrit au-dessus).
+  const progress = ongoing ? Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100)) : 0;
 
   return (
-    <Link href={href} className="flex items-center gap-3 rounded-lg bg-accent px-4 py-3 text-on-accent hover:opacity-95">
-      <div className="min-w-0 flex-1">
-        <p className="text-caption font-medium opacity-90">{when}</p>
-        <p className="mt-0.5 truncate text-headline">{room ? `${next.title} · ${room}` : next.title}</p>
+    <Link
+      href={href}
+      className="flex flex-col gap-4 card-hero px-5 py-5 transition-[filter] duration-[120ms] hover:brightness-105"
+    >
+      <div className="flex items-start gap-4">
+        <div className="min-w-0 flex-1">
+          <p className="text-callout font-medium opacity-90">{when}</p>
+          <p className="mt-2 text-hero tabular-nums">
+            {formatTime(next.start)}
+            <span className="text-headline font-medium opacity-80"> – {formatTime(next.end)}</span>
+          </p>
+          <p className="mt-2 truncate text-headline">{next.title}</p>
+          {room && <p className="truncate text-callout opacity-90">{room}</p>}
+        </div>
+        <ChevronRightIcon className="mt-0.5 shrink-0" />
       </div>
-      <div className="text-right font-mono text-caption font-medium tabular-nums">
-        {formatTime(next.start)}
-        <br />
-        {formatTime(next.end)}
-      </div>
-      <ChevronRightIcon />
+      {ongoing && (
+        <div className="h-1.5 overflow-hidden rounded-full bg-current/25" aria-hidden>
+          <div className="h-full rounded-full bg-current" style={{ width: `${progress}%` }} />
+        </div>
+      )}
     </Link>
   );
 }

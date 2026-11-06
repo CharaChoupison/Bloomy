@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Plus · Pronoti" };
 export default function MorePage() {
   return (
     <Screen title="Plus">
-      <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+      <ul className="divide-y divide-line overflow-hidden card">
         {MORE_ITEMS.map(({ href, label, hint, Icon }) => (
           <li key={href}>
             <Link href={href} className="flex min-h-touch items-center gap-3 px-4 py-3 hover:bg-bg">

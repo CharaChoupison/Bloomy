@@ -42,7 +42,7 @@ async function ConversationView({ params }: Pick<PageProps<"/messagerie/[id]">, 
   if (!conversation) {
     return (
       <Screen title="Discussion introuvable" back={back}>
-        <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+        <p className="card px-4 py-3 text-callout text-ink-muted">
           Cette discussion n&apos;existe plus ou a été déplacée dans la corbeille de Pronote.
         </p>
       </Screen>
@@ -59,7 +59,7 @@ async function ConversationView({ params }: Pick<PageProps<"/messagerie/[id]">, 
               {/* Pas d'accent ici : le Design System le réserve à l'action et à l'état courant. */}
               <article
                 className={`max-w-[85%] min-w-0 rounded-lg px-4 py-3 ${
-                  mine ? "bg-surface-sunken" : "border border-line bg-surface"
+                  mine ? "bg-surface-sunken" : "bg-surface shadow-card"
                 }`}
               >
                 <p className="text-caption text-ink-muted">

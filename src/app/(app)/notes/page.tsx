@@ -46,12 +46,12 @@ async function Grades({ searchParams }: Pick<PageProps<"/notes">, "searchParams"
     <div className="flex flex-col gap-6">
       <PeriodPicker periods={view.periods} currentId={view.period.id} basePath="/notes" />
       {view.grades.length === 0 && view.subjects.length === 0 ? (
-        <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+        <p className="card px-4 py-3 text-callout text-ink-muted">
           Aucune note pour la période « {view.period.name} ».
         </p>
       ) : (
         <>
-          <OverallCard overall={view.overall} classOverall={view.classOverall} />
+          <OverallCard overall={view.overall} classOverall={view.classOverall} period={view.period.name} />
           <div className="flex flex-col gap-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
             <LatestGrades grades={view.grades} />
             <SubjectAverages subjects={view.subjects} />

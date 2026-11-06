@@ -23,7 +23,7 @@ export function TabBarView({ pathname }: { pathname: string }) {
   return (
     <nav
       aria-label="Navigation principale"
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] shadow-float lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-surface/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 lg:hidden"
     >
       <ul
         className="mx-auto grid h-tabbar max-w-content px-2"

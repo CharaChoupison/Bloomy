@@ -37,7 +37,7 @@ export async function GradesWidget({ className }: { className?: string }) {
 
   return (
     <Section className={className}>
-      <div className="overflow-hidden rounded-lg border border-line bg-surface">
+      <div className="overflow-hidden card">
         {hasOverall && (
           <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
             <div className="min-w-0">

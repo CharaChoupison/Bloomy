@@ -67,7 +67,7 @@ async function Lessons({ searchParams }: Pick<PageProps<"/cours">, "searchParams
     <>
       <WeekNav offset={offset} weekStart={weekStart} />
       {sessions.length === 0 ? (
-        <p className="rounded-lg border border-line bg-surface px-4 py-3 text-callout text-ink-muted">
+        <p className="card px-4 py-3 text-callout text-ink-muted">
           Aucun contenu de cours renseigné cette semaine.
         </p>
       ) : (

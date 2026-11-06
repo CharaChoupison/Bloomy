@@ -8,9 +8,9 @@ const base =
   "disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress";
 
 const variants: Record<ButtonVariant, string> = {
-  primary: "min-h-control rounded-md bg-accent px-6 text-on-accent hover:opacity-90",
-  secondary: "min-h-control rounded-md border border-line-strong bg-surface px-6 text-ink hover:border-ink-muted",
-  ghost: "min-h-touch rounded-md px-3 text-accent hover:bg-accent-soft",
+  primary: "min-h-control rounded-full bg-accent px-6 text-on-accent hover:opacity-90",
+  secondary: "min-h-control rounded-full border border-line-strong bg-surface px-6 text-ink hover:border-ink-muted",
+  ghost: "min-h-touch rounded-full px-3 text-accent hover:bg-accent-soft",
   icon: "size-touch rounded-full border border-line bg-surface text-ink hover:border-line-strong",
 };
 
