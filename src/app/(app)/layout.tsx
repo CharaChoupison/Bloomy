@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Sidebar, SidebarView, TabBar, TabBarView } from "@/components/app-nav";
+import { SubjectColorsSync } from "@/components/subject-colors";
 
 // Coquille des écrans connectés : barre latérale sur ordinateur, barre d'onglets en bas sur téléphone.
 // Les barres lisent l'URL (onglet actif) : elles sont sous <Suspense>, avec la même barre sans onglet
@@ -16,6 +17,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Suspense fallback={<TabBarView pathname="" />}>
         <TabBar />
       </Suspense>
+      <SubjectColorsSync />
     </div>
   );
 }

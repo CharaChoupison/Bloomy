@@ -6,6 +6,7 @@ import type { AssignmentItem } from "@/lib/pronote/assignments";
 import { AttachmentLink } from "@/components/attachment-link";
 import { AlertCircleIcon, CheckIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
+import { SubjectBar } from "@/components/grades";
 
 const RETURN_LABELS: Record<number, string> = {
   1: "À rendre sur papier",
@@ -74,11 +75,7 @@ export function AssignmentRow({ a }: { a: AssignmentItem }) {
         </span>
       </label>
 
-      <div
-        className="w-1 shrink-0 self-stretch rounded-full bg-line ring-1 ring-line ring-inset"
-        style={a.color ? { backgroundColor: a.color } : undefined}
-        aria-hidden
-      />
+      <SubjectBar subject={a.subject} />
 
       <div className={`min-w-0 flex-1 transition-opacity duration-200 ${done ? "opacity-60" : ""}`}>
         <p className="text-body font-semibold">{a.subject}</p>

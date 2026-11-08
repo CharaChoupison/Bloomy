@@ -4,6 +4,7 @@
 // Ce fichier est partagé serveur / client : pas d'API navigateur ici.
 
 import { CUSTOM_CSS_EVENT, customThemesBootSnippet } from "./custom-themes";
+import { subjectColorsBootSnippet } from "./subject-colors";
 
 export const ACCENTS = [
   { id: "bleu", label: "Bleu" },
@@ -42,7 +43,8 @@ export const THEME_COLOR = { light: "#f5f5f7", dark: "#0b0b0d" } as const;
  * Script exécuté dans <head> avant l'affichage :
  * - pose data-accent / data-theme sur <html> à partir des cookies (pas de flash de la mauvaise couleur) ;
  * - pose data-scheme="light|dark" : le thème réellement affiché (Automatique résolu), pour les thèmes personnalisés ;
- * - injecte le CSS des thèmes personnalisés (voir custom-themes.ts) ;
+ * - pose les couleurs des matières (voir subject-colors.ts) ;
+ * - injecte le CSS des thèmes personnalisés (voir custom-themes.ts), toujours après ;
  * - garde les <meta name="theme-color"> (barre du navigateur) alignées sur le thème affiché,
  *   y compris quand Next les réinsère, quand l'élève change de thème ou quand un thème personnalisé change le fond.
  */
@@ -54,7 +56,8 @@ if(${JSON.stringify(ACCENTS.map((x) => x.id))}.indexOf(a)>-1)d.setAttribute('dat
 if(t==='light'||t==='dark')d.setAttribute('data-theme',t);
 var mq=matchMedia('(prefers-color-scheme: dark)');
 function scheme(){var f=d.getAttribute('data-theme');d.setAttribute('data-scheme',f||(mq.matches?'dark':'light'))}
-scheme();${customThemesBootSnippet}
+scheme();${subjectColorsBootSnippet}
+${customThemesBootSnippet}
 var L=${JSON.stringify(THEME_COLOR.light)},D=${JSON.stringify(THEME_COLOR.dark)};
 function sync(){scheme();var f=d.getAttribute('data-scheme'),b=s.textContent&&!s.disabled?getComputedStyle(d).getPropertyValue('--bg').trim():'';
 document.head.querySelectorAll('meta[name="theme-color"]').forEach(function(m){var v=b||(f==='dark'?D:L);if(m.content!==v)m.content=v})}

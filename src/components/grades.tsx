@@ -2,16 +2,22 @@ import type { GradeItem, GradeValue, SubjectAverage } from "@/lib/pronote/grades
 import { formatPoints, isNumeric, specialLabel, spokenGrade } from "@/lib/grades-format";
 import { formatShortDate } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
+import { subjectKey } from "@/lib/subject-colors";
 
 // Pas de rouge / vert selon la note : on ne juge pas une note par une couleur.
 // La comparaison avec la classe se lit en texte (et sur la réglette, point = toi, trait = classe).
 
-/** Barre de couleur de la matière (couleur Pronote), avec un contour pour les couleurs très claires. */
-export function SubjectBar({ color }: { color?: string }) {
+/**
+ * Barre de couleur de la matière : couleur Bloomy de la matière (voir lib/subject-colors.ts),
+ * gris neutre le temps qu'elle en reçoive une. Décorative : le nom de la matière est écrit à côté.
+ */
+export function SubjectBar({ subject, className = "self-stretch" }: { subject?: string; className?: string }) {
+  const key = subject ? subjectKey(subject) : "";
   return (
     <div
-      className="w-1 shrink-0 self-stretch rounded-full bg-line ring-1 ring-line ring-inset"
-      style={color ? { backgroundColor: color } : undefined}
+      data-subject={key || undefined}
+      data-subject-name={key ? subject : undefined}
+      className={`w-1 shrink-0 rounded-full bg-(--subject,var(--line)) transition-colors duration-200 ${className}`}
       aria-hidden
     />
   );
@@ -31,33 +37,17 @@ function subjectAbbr(name: string): string {
   return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
 }
 
-/** Luminance relative WCAG d'une couleur "#rrggbb" (undefined si le format est inattendu). */
-function luminance(hex: string): number | undefined {
-  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
-  if (!m) return undefined;
-  const [r, g, b] = [0, 2, 4].map((i) => {
-    const c = parseInt(m[1].slice(i, i + 2), 16) / 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
 /**
- * Pastille ronde de la matière (couleur Pronote + abréviation), comme l'icône d'une ligne de relevé.
- * Le texte passe en noir ou en blanc selon ce qui contraste le plus (toujours ≥ 4,5:1).
- * Décorative : le nom de la matière est écrit à côté.
+ * Pastille ronde de la matière (abréviation), comme l'icône d'une ligne de relevé : fond doux et
+ * texte dans la couleur de la matière (≥ 4,5:1 dans les deux thèmes). Décorative : le nom est écrit à côté.
  */
-export function SubjectToken({ subject, color }: { subject: string; color?: string }) {
-  const lum = color ? luminance(color) : undefined;
-  const style =
-    lum === undefined
-      ? undefined
-      : { backgroundColor: color, color: (lum + 0.05) / 0.05 >= 1.05 / (lum + 0.05) ? "#000" : "#fff" };
+export function SubjectToken({ subject }: { subject: string }) {
   return (
     <span
       aria-hidden
-      style={style}
-      className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-sunken text-label font-bold text-ink-muted ring-1 ring-line ring-inset"
+      data-subject={subjectKey(subject)}
+      data-subject-name={subject}
+      className="grid size-10 shrink-0 place-items-center rounded-full bg-(--subject-soft,var(--surface-sunken)) text-label font-bold text-(--subject,var(--ink-muted)) transition-colors duration-200"
     >
       {subjectAbbr(subject)}
     </span>

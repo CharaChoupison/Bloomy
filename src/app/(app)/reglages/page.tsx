@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AccentPicker, ThemePicker } from "@/components/appearance-pickers";
 import { CustomThemesSettings } from "@/components/custom-themes";
+import { SubjectColorsSettings } from "@/components/subject-colors";
 import { ChevronRightIcon, LogOutIcon, SmartphoneIcon } from "@/components/icons";
 import { ReloadAppButton } from "@/components/reload-app-button";
 import { Screen } from "@/components/screen";
@@ -20,6 +21,18 @@ export default function SettingsPage() {
           </h2>
           <AccentPicker />
           <ThemePicker />
+        </section>
+
+        <section aria-labelledby="matieres" className="flex flex-col gap-3">
+          <div>
+            <h2 id="matieres" className="text-headline">
+              Couleurs des matières
+            </h2>
+            <p className="mt-1 text-caption text-ink-muted">
+              Chaque matière reçoit sa couleur automatiquement. Touche-en une pour la changer.
+            </p>
+          </div>
+          <SubjectColorsSettings />
         </section>
 
         <section aria-labelledby="themes-perso" className="flex flex-col gap-3">

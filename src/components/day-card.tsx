@@ -4,6 +4,7 @@ import Link from "next/link";
 import { lessonAnchor, lessonContentHref } from "@/lib/lesson-anchor";
 import { BookOpenIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
+import { SubjectBar } from "@/components/grades";
 import { withBreaks, type DayEntry } from "@/lib/timetable-layout";
 
 function ClassRow({
@@ -31,13 +32,8 @@ function ClassRow({
         <div>{formatTime(c.start)}</div>
         <div className="text-ink-muted">{formatTime(c.end)}</div>
       </div>
-      {/* Couleur de matière fournie par Pronote : simple repère, jamais derrière du texte.
-          Le contour garde visibles les couleurs très claires (blanc, gris) sur une carte blanche. */}
-      <div
-        className="w-1 shrink-0 rounded-full bg-line ring-1 ring-line ring-inset"
-        style={c.color ? { backgroundColor: c.color } : undefined}
-        aria-hidden
-      />
+      {/* Couleur de la matière : simple repère, jamais derrière du texte. Retenues et activités restent neutres. */}
+      <SubjectBar subject={c.kind === "lesson" ? c.title : undefined} className="" />
       <div className="min-w-0 flex-1">
         {/* Vue en colonnes (Calendrier sur ordinateur) : l'horaire passe au-dessus pour laisser la largeur au nom. */}
         {columns && (

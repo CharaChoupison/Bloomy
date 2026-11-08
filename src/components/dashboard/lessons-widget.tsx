@@ -67,7 +67,7 @@ function LessonLine({ s }: { s: LessonSession }) {
   return (
     <li>
       <Link href={lessonContentHref(s.dateKey, s.start)} className="flex min-h-touch items-start gap-3 px-4 py-3 hover:bg-bg">
-        <SubjectToken subject={s.subject} color={s.color} />
+        <SubjectToken subject={s.subject} />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-3">
             <p className="min-w-0 truncate text-body font-semibold">{s.subject}</p>

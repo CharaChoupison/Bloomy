@@ -4,6 +4,7 @@ import { formatTime } from "@/lib/format";
 import { AttachmentList } from "@/components/attachment-link";
 import { SquareCheckIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
+import { SubjectBar } from "@/components/grades";
 
 /**
  * Une séance et ses contenus (Cours, TD, Correction…). L'ancre `id` permet d'y arriver
@@ -16,11 +17,7 @@ export function LessonCard({ s }: { s: LessonSession }) {
       className="scroll-mt-6 overflow-hidden card data-target:outline-2 data-target:-outline-offset-2 data-target:outline-accent"
     >
       <header className="flex gap-3 border-b border-line px-4 py-3">
-        <div
-          className="w-1 shrink-0 self-stretch rounded-full bg-line ring-1 ring-line ring-inset"
-          style={s.color ? { backgroundColor: s.color } : undefined}
-          aria-hidden
-        />
+        <SubjectBar subject={s.subject} />
         <div className="min-w-0 flex-1">
           <h3 className="text-body font-semibold">{s.subject}</h3>
           <p className="mt-0.5 text-caption text-ink-muted">

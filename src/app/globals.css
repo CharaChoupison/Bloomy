@@ -49,6 +49,19 @@
     --neutral: #52525b;
     --neutral-soft: #ececef;
 
+    /* Couleurs des matières (voir lib/subject-colors.ts) : repères décoratifs, ≥ 4,5:1 sur surface et sur leur fond doux. */
+    --subject-bleu: #1f58d6; --subject-bleu-soft: #e7eefd;
+    --subject-violet: #7c3aed; --subject-violet-soft: #f1eafe;
+    --subject-rose: #c8246b; --subject-rose-soft: #fce8f1;
+    --subject-corail: #c2410c; --subject-corail-soft: #fdeee6;
+    --subject-ambre: #a15c07; --subject-ambre-soft: #fbf0d9;
+    --subject-olive: #46700d; --subject-olive-soft: #edf5dc;
+    --subject-vert: #137538; --subject-vert-soft: #e2f4e8;
+    --subject-turquoise: #0f766e; --subject-turquoise-soft: #ddf3f0;
+    --subject-ciel: #0369a1; --subject-ciel-soft: #e0eff9;
+    --subject-brun: #8a5636; --subject-brun-soft: #f4eae3;
+    --subject-ardoise: #526070; --subject-ardoise-soft: #eceff3;
+
     --shadow-float-value: 0 1px 2px rgba(11, 11, 13, 0.06), 0 8px 24px rgba(11, 11, 13, 0.08);
     /* Cartes : pas de bordure en clair, une ombre très douce suffit à les détacher du fond. */
     --shadow-card-value: 0 1px 2px rgba(11, 11, 13, 0.04), 0 2px 12px rgba(11, 11, 13, 0.04);
@@ -98,6 +111,18 @@
       --shadow-float-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
     --shadow-card-value: 0 0 0 1px var(--line);
     --hero-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%);
+
+    --subject-bleu: #7fa9ff; --subject-bleu-soft: #172443;
+    --subject-violet: #b99eff; --subject-violet-soft: #261b45;
+    --subject-rose: #f590bf; --subject-rose-soft: #3d1428;
+    --subject-corail: #ff9d7a; --subject-corail-soft: #3d1a10;
+    --subject-ambre: #f3b54f; --subject-ambre-soft: #352208;
+    --subject-olive: #a6d45a; --subject-olive-soft: #222f10;
+    --subject-vert: #62d28e; --subject-vert-soft: #0f2e1c;
+    --subject-turquoise: #4fd1be; --subject-turquoise-soft: #0f2b28;
+    --subject-ciel: #62bff0; --subject-ciel-soft: #0b2636;
+    --subject-brun: #d8a985; --subject-brun-soft: #2e2018;
+    --subject-ardoise: #afbac6; --subject-ardoise-soft: #232a31;
     }
   }
 
@@ -138,6 +163,18 @@
     --shadow-float-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
     --shadow-card-value: 0 0 0 1px var(--line);
     --hero-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%);
+
+    --subject-bleu: #7fa9ff; --subject-bleu-soft: #172443;
+    --subject-violet: #b99eff; --subject-violet-soft: #261b45;
+    --subject-rose: #f590bf; --subject-rose-soft: #3d1428;
+    --subject-corail: #ff9d7a; --subject-corail-soft: #3d1a10;
+    --subject-ambre: #f3b54f; --subject-ambre-soft: #352208;
+    --subject-olive: #a6d45a; --subject-olive-soft: #222f10;
+    --subject-vert: #62d28e; --subject-vert-soft: #0f2e1c;
+    --subject-turquoise: #4fd1be; --subject-turquoise-soft: #0f2b28;
+    --subject-ciel: #62bff0; --subject-ciel-soft: #0b2636;
+    --subject-brun: #d8a985; --subject-brun-soft: #2e2018;
+    --subject-ardoise: #afbac6; --subject-ardoise-soft: #232a31;
   }
 
   /* Accent choisi (voir lib/preferences.ts pour la liste). */
