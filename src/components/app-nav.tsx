@@ -21,12 +21,14 @@ export function TabBarView({ pathname }: { pathname: string }) {
   ];
 
   return (
+    // Pilule flottante en verre dépoli, détachée des bords : l'onglet actif est une pastille
+    // qui épouse la forme de la barre. L'écart au bas suit la zone sûre (barre d'accueil iOS).
     <nav
       aria-label="Navigation principale"
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-surface/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 lg:hidden"
+      className="fixed inset-x-0 bottom-[max(var(--spacing-tabbar-gap),env(safe-area-inset-bottom))] z-10 mx-auto w-[min(460px,calc(100%-32px))] animate-[tabbar-in_360ms_var(--ease-spring)_180ms_backwards] rounded-full border border-line/80 bg-surface/85 p-1.5 shadow-float backdrop-blur-xl backdrop-saturate-150 lg:hidden"
     >
       <ul
-        className="mx-auto grid h-tabbar max-w-content px-2"
+        className="grid min-h-[calc(var(--spacing-tabbar)-14px)]"
         style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}
       >
         {tabs.map(([{ href, label, Icon }, active]) => (
@@ -34,12 +36,12 @@ export function TabBarView({ pathname }: { pathname: string }) {
             <Link
               href={href}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-touch flex-1 flex-col items-center justify-center gap-0.5 rounded-md text-label ${
-                active ? "text-accent" : "text-ink-muted hover:text-ink"
+              className={`flex min-h-touch flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-label transition-[color,background-color,transform] duration-200 ease-(--ease-spring) motion-safe:active:scale-[0.92] ${
+                active ? "bg-accent-soft text-accent" : "text-ink-muted hover:text-ink"
               }`}
             >
               <Icon />
-              {label}
+              <span className="max-w-full truncate px-1">{label}</span>
             </Link>
           </li>
         ))}

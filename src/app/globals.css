@@ -223,7 +223,9 @@
   /* Tailles. */
   --spacing-touch: 44px;
   --spacing-control: 48px;
-  --spacing-tabbar: 64px;
+  /* Barre d'onglets flottante (pilule) : hauteur + écart au bord bas de l'écran. */
+  --spacing-tabbar: 72px;
+  --spacing-tabbar-gap: 12px;
   --spacing-sidebar: 240px;
   --container-content: 720px;
   /* Écrans en grille sur ordinateur (Accueil, Notes). */
@@ -232,6 +234,8 @@
   /* Mouvement. */
   --ease-enter: cubic-bezier(0.2, 0, 0, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  /* Ressort court, sans rebond visible : pression et arrivée des éléments flottants. */
+  --ease-spring: cubic-bezier(0.2, 1, 0.32, 1);
 }
 
 /* Dans la couche « base » de Tailwind : un thème personnalisé (couche déclarée après) peut les remplacer. */
@@ -284,6 +288,14 @@ html.theme-transition *::after {
   from {
     opacity: 0;
     transform: translateX(24px);
+  }
+}
+
+/* Barre d'onglets : monte depuis le bas au premier affichage. */
+@keyframes tabbar-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
   }
 }
 
