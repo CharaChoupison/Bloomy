@@ -116,7 +116,7 @@ function NewsLine({ n }: { n: NewsEntry }) {
   ) : undefined;
   return (
     <Line
-      href="/actualites"
+      href={`/actualites/${encodeURIComponent(n.id)}`}
       icon={<NewspaperIcon size={18} />}
       title={n.title}
       meta={[n.kind === "survey" ? "Sondage" : n.category, n.author].filter(Boolean).join(" · ")}

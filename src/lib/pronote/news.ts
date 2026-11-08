@@ -6,6 +6,7 @@ import { withPronote } from "./client";
 import { viewerTag } from "./cache-tags";
 import { plainAttachments, type PlainAttachment } from "./attachments";
 import { htmlToText } from "@/lib/html-to-text";
+import { calmShouting } from "@/lib/text-case";
 
 export type NewsEntry = {
   id: string;
@@ -34,6 +35,12 @@ export async function getNews(): Promise<NewsEntry[]> {
   return getNewsFor(viewer.id);
 }
 
+/** Une actualité de l'élève connecté, ou `null` si elle n'existe plus. */
+export async function getNewsEntry(id: string): Promise<NewsEntry | null> {
+  const items = await getNews();
+  return items.find((n) => n.id === id) ?? null;
+}
+
 async function getNewsFor(viewerId: string): Promise<NewsEntry[]> {
   "use cache";
   cacheLife("minutes");
@@ -45,7 +52,7 @@ async function getNewsFor(viewerId: string): Promise<NewsEntry[]> {
     .map((item): NewsEntry => {
       const base = {
         id: item.id,
-        title: item.title?.trim() || "Sans titre",
+        title: calmShouting(item.title?.trim() || "Sans titre"),
         category: item.category.name,
         author: item.author,
         date: item.startDate.toISOString(),
