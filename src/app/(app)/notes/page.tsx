@@ -7,8 +7,8 @@ import { LatestGrades, OverallCard, SubjectAverages } from "@/components/grades"
 import { PeriodPicker } from "@/components/period-picker";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
-import { ChartColumnIcon } from "@/components/icons";
 import { EmptyState } from "@/components/ui/empty-state";
+import { GradesIllustration } from "@/components/illustrations";
 
 export const metadata: Metadata = { title: "Notes · Bloomy" };
 
@@ -48,7 +48,7 @@ async function Grades({ searchParams }: Pick<PageProps<"/notes">, "searchParams"
     <div className="flex flex-col gap-6">
       <PeriodPicker periods={view.periods} currentId={view.period.id} basePath="/notes" />
       {view.grades.length === 0 && view.subjects.length === 0 ? (
-        <EmptyState icon={<ChartColumnIcon size={28} />} title="Aucune note">
+        <EmptyState illustration={GradesIllustration} title="Aucune note">
           Pas encore de note pour la période « {view.period.name} ».
         </EmptyState>
       ) : (

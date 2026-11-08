@@ -3,12 +3,13 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
 import { getConversations } from "@/lib/pronote/discussions";
-import { ChevronRightIcon, MailIcon } from "@/components/icons";
+import { ChevronRightIcon } from "@/components/icons";
 import { Screen } from "@/components/screen";
 import { Badge } from "@/components/ui/badge";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { formatShortDate } from "@/lib/format";
 import { EmptyState } from "@/components/ui/empty-state";
+import { MessagesIllustration } from "@/components/illustrations";
 
 export const metadata: Metadata = { title: "Messagerie · Bloomy" };
 
@@ -39,7 +40,7 @@ async function ConversationList() {
 
   if (conversations.length === 0) {
     return (
-      <EmptyState icon={<MailIcon size={28} />} title="Aucune discussion">
+      <EmptyState illustration={MessagesIllustration} title="Aucune discussion">
         Les messages de tes profs apparaîtront ici.
       </EmptyState>
     );

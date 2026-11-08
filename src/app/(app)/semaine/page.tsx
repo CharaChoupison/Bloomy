@@ -5,12 +5,13 @@ import { verifySession } from "@/lib/auth/session";
 import { getWeekTimetable, mondayKey, toDateKey, type DayTimetable } from "@/lib/pronote/timetable";
 import { getContentAnchors } from "@/lib/pronote/resources";
 import { DayCard, DayCardSkeleton, FreeDaysCard } from "@/components/day-card";
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
 import { WeekPicker } from "@/components/week-picker";
 import { EmptyState } from "@/components/ui/empty-state";
+import { CalendarIllustration } from "@/components/illustrations";
 
 export const metadata: Metadata = { title: "Calendrier · Bloomy" };
 
@@ -59,7 +60,7 @@ async function Week({ searchParams }: Pick<PageProps<"/semaine">, "searchParams"
     <>
       <WeekNav offset={offset} weekStart={weekStart} />
       {groups.every((g) => g.type === "free") ? (
-        <EmptyState icon={<CalendarIcon size={28} />} title="Aucun cours cette semaine">
+        <EmptyState illustration={CalendarIllustration} title="Aucun cours cette semaine">
           Vacances ou semaine libre : rien n&apos;est prévu à l&apos;emploi du temps.
         </EmptyState>
       ) : (

@@ -8,8 +8,8 @@ import { deadlineLabel } from "@/lib/format";
 import { AssignmentRow } from "@/components/assignment-row";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
-import { FilePenLineIcon } from "@/components/icons";
 import { EmptyState } from "@/components/ui/empty-state";
+import { HomeworkIllustration } from "@/components/illustrations";
 
 export const metadata: Metadata = { title: "Devoirs · Bloomy" };
 
@@ -41,7 +41,7 @@ async function Assignments() {
 
   if (assignments.length === 0) {
     return (
-      <EmptyState icon={<FilePenLineIcon size={28} />} title="Aucun devoir">
+      <EmptyState illustration={HomeworkIllustration} title="Aucun devoir">
         Rien à rendre dans les 4 prochaines semaines.
       </EmptyState>
     );
