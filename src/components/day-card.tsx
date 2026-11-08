@@ -1,5 +1,5 @@
 import type { ClassItem, DayTimetable } from "@/lib/pronote/timetable";
-import { formatDay, formatTime } from "@/lib/format";
+import { formatDay, formatShortDay, formatTime } from "@/lib/format";
 import Link from "next/link";
 import { lessonAnchor, lessonContentHref } from "@/lib/lesson-anchor";
 import { BookOpenIcon } from "@/components/icons";
@@ -149,6 +149,41 @@ export function DayCard({
           )}
         </ul>
       )}
+    </section>
+  );
+}
+
+/**
+ * Jours consécutifs sans cours, regroupés en une seule carte compacte : ils ne prennent plus la
+ * largeur d'une journée pleine (vue en colonnes) ni la hauteur d'une carte chacun (téléphone).
+ * Chaque jour reste nommé pour que l'on sache lesquels sont libres.
+ */
+export function FreeDaysCard({ days, today }: { days: readonly DayTimetable[]; today: string | null }) {
+  const label =
+    days.length === 1 ? formatDay(days[0].date) : `${formatDay(days[0].date)} – ${formatDay(days.at(-1)!.date)}`;
+  return (
+    <section className="overflow-hidden card" aria-label={`${label} : pas de cours`}>
+      <ul className="divide-y divide-line">
+        {days.map((day) => {
+          const isToday = day.date === today;
+          return (
+            <li
+              key={day.date}
+              className={`flex items-baseline justify-between gap-2 px-4 py-2.5 lg:flex-col lg:gap-0 ${
+                isToday ? "bg-accent-soft" : ""
+              }`}
+            >
+              <span className="text-callout font-semibold">
+                {formatShortDay(day.date)}
+                {isToday && <span className="sr-only"> (aujourd&apos;hui)</span>}
+              </span>
+              <span className={`text-caption ${isToday ? "font-medium text-accent" : "text-ink-muted"}`}>
+                {isToday ? "Aujourd'hui · libre" : "Pas de cours"}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }

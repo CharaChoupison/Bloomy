@@ -8,6 +8,8 @@ import { PeriodPicker } from "@/components/period-picker";
 import { Screen } from "@/components/screen";
 import { Badge } from "@/components/ui/badge";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
+import { ClipboardListIcon } from "@/components/icons";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Vie scolaire · Bloomy" };
 
@@ -47,9 +49,9 @@ async function SchoolLife({ searchParams }: Pick<PageProps<"/vie-scolaire">, "se
     <div className="flex flex-col gap-6">
       <PeriodPicker periods={nb.periods} currentId={nb.period.id} basePath="/vie-scolaire" />
       {empty ? (
-        <p className="card px-4 py-3 text-callout text-ink-muted">
-          Rien à signaler pour la période « {nb.period.name} ».
-        </p>
+        <EmptyState icon={<ClipboardListIcon size={28} />} title="Rien à signaler">
+          Ni absence, ni retard, ni punition, ni observation pour la période « {nb.period.name} ».
+        </EmptyState>
       ) : (
         <>
           <Summary nb={nb} />

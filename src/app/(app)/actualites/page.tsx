@@ -7,6 +7,8 @@ import { AttachmentList } from "@/components/attachment-link";
 import { Screen } from "@/components/screen";
 import { Badge } from "@/components/ui/badge";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
+import { NewspaperIcon } from "@/components/icons";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Actualités · Bloomy" };
 
@@ -37,9 +39,9 @@ async function NewsList() {
 
   if (items.length === 0) {
     return (
-      <p className="card px-4 py-3 text-callout text-ink-muted">
-        Aucune actualité pour le moment.
-      </p>
+      <EmptyState icon={<NewspaperIcon size={28} />} title="Aucune actualité">
+        Les informations de ton établissement apparaîtront ici.
+      </EmptyState>
     );
   }
 

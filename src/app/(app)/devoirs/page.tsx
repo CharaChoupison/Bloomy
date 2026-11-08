@@ -8,6 +8,8 @@ import { deadlineLabel } from "@/lib/format";
 import { AssignmentRow } from "@/components/assignment-row";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
+import { FilePenLineIcon } from "@/components/icons";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Devoirs · Bloomy" };
 
@@ -39,9 +41,9 @@ async function Assignments() {
 
   if (assignments.length === 0) {
     return (
-      <p className="card px-4 py-3 text-callout text-ink-muted">
-        Aucun devoir pour les 4 prochaines semaines.
-      </p>
+      <EmptyState icon={<FilePenLineIcon size={28} />} title="Aucun devoir">
+        Rien à rendre dans les 4 prochaines semaines.
+      </EmptyState>
     );
   }
 

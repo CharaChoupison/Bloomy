@@ -3,11 +3,12 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
 import { getConversations } from "@/lib/pronote/discussions";
-import { ChevronRightIcon } from "@/components/icons";
+import { ChevronRightIcon, MailIcon } from "@/components/icons";
 import { Screen } from "@/components/screen";
 import { Badge } from "@/components/ui/badge";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { formatShortDate } from "@/lib/format";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Messagerie · Bloomy" };
 
@@ -38,9 +39,9 @@ async function ConversationList() {
 
   if (conversations.length === 0) {
     return (
-      <p className="card px-4 py-3 text-callout text-ink-muted">
-        Aucune discussion pour le moment. Les messages de tes profs apparaîtront ici.
-      </p>
+      <EmptyState icon={<MailIcon size={28} />} title="Aucune discussion">
+        Les messages de tes profs apparaîtront ici.
+      </EmptyState>
     );
   }
 

@@ -5,12 +5,13 @@ import { verifySession } from "@/lib/auth/session";
 import { getLessonContents, type LessonSession } from "@/lib/pronote/resources";
 import { mondayKey } from "@/lib/pronote/timetable";
 import { formatDay, formatWeekRange, fromDateKey } from "@/lib/format";
-import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
+import { BookOpenIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import { HashHighlight } from "@/components/hash-highlight";
 import { LessonCard } from "@/components/lesson-card";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Contenu des cours · Bloomy" };
 
@@ -67,9 +68,9 @@ async function Lessons({ searchParams }: Pick<PageProps<"/cours">, "searchParams
     <>
       <WeekNav offset={offset} weekStart={weekStart} />
       {sessions.length === 0 ? (
-        <p className="card px-4 py-3 text-callout text-ink-muted">
-          Aucun contenu de cours renseigné cette semaine.
-        </p>
+        <EmptyState icon={<BookOpenIcon size={28} />} title="Aucun contenu de cours">
+          Tes profs n&apos;ont rien renseigné pour cette semaine.
+        </EmptyState>
       ) : (
         <div className="flex flex-col gap-6">
           {groupByDay(sessions).map(([dateKey, items]) => (

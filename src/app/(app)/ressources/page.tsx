@@ -6,12 +6,13 @@ import { getResourceLibrary, type ResourceItem } from "@/lib/pronote/library";
 import { toDateKey } from "@/lib/pronote/timetable";
 import { downloadHref } from "@/lib/download";
 import { formatShortDate } from "@/lib/format";
-import { DownloadIcon, ExternalLinkIcon, FileTextIcon, LinkIcon } from "@/components/icons";
+import { DownloadIcon, ExternalLinkIcon, FileTextIcon, FolderOpenIcon, LinkIcon } from "@/components/icons";
 import { SubjectBar } from "@/components/grades";
 import { SegmentedLinks } from "@/components/period-picker";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Ressources · Bloomy" };
 
@@ -79,9 +80,9 @@ async function Resources({ searchParams }: Pick<PageProps<"/ressources">, "searc
       )}
 
       {items.length === 0 ? (
-        <p className="card px-4 py-3 text-callout text-ink-muted">
+        <EmptyState icon={<FolderOpenIcon size={28} />} title="Aucune ressource">
           Aucun fichier ni lien déposé sur {period}, ni dans tes devoirs à venir.
-        </p>
+        </EmptyState>
       ) : (
         <>
           {forAssignments.length > 0 && (

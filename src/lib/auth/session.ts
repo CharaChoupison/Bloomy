@@ -42,10 +42,11 @@ export async function createSession(credentials: PronoteCredentials): Promise<Vi
  * (déconnexion, jeton Pronote refusé). Mémorisé le temps d'un rendu.
  */
 export const getViewer = cache(async (): Promise<Viewer | null> => {
-  const decoded = decodeSessionCookie((await cookies()).get(SESSION_COOKIE)?.value);
   // La vérification compare l'expiration à Date.now() : avec cacheComponents, il faut signaler
   // explicitement que ce calcul se fait au moment de la requête (et jamais pendant un prérendu).
+  // connection() doit donc précéder le décodage, sans quoi Next.js lève une erreur de prérendu.
   await connection();
+  const decoded = decodeSessionCookie((await cookies()).get(SESSION_COOKIE)?.value);
   if (!decoded) return null;
   const id = viewerIdOf(decoded.sid);
   if (!(await sessionExists(id))) return null;

@@ -25,6 +25,13 @@ export const formatDay = (key: string) => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
+const shortDayFmt = new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric" });
+/** "Lun. 2" */
+export const formatShortDay = (key: string) => {
+  const s = shortDayFmt.format(fromDateKey(key));
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 /** "2 – 8 novembre" ou "30 novembre – 6 décembre" */
 export function formatWeekRange(weekStart: string): string {
   const start = fromDateKey(weekStart);

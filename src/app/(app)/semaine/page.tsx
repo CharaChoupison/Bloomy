@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
-import { getWeekTimetable, mondayKey, toDateKey } from "@/lib/pronote/timetable";
+import { getWeekTimetable, mondayKey, toDateKey, type DayTimetable } from "@/lib/pronote/timetable";
 import { getContentAnchors } from "@/lib/pronote/resources";
-import { DayCard, DayCardSkeleton } from "@/components/day-card";
-import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
+import { DayCard, DayCardSkeleton, FreeDaysCard } from "@/components/day-card";
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
 import { WeekPicker } from "@/components/week-picker";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "Calendrier · Bloomy" };
 
@@ -52,27 +53,55 @@ async function Week({ searchParams }: Pick<PageProps<"/semaine">, "searchParams"
   // Samedi et dimanche ne s'affichent que s'il y a cours.
   const days = week.days.filter((d, i) => i < 5 || d.classes.length > 0);
   const contentAnchors = await anchorsPromise;
+  const groups = groupFreeDays(days);
 
   return (
     <>
       <WeekNav offset={offset} weekStart={weekStart} />
-      {/* Téléphone : une colonne. Ordinateur : un jour par colonne. */}
-      <div
-        className="mx-auto flex max-w-content flex-col gap-3 lg:grid lg:max-w-none lg:items-start"
-        style={{ gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))` }}
-      >
-        {days.map((day) => (
-          <DayCard
-            key={day.date}
-            day={day}
-            isToday={day.date === today}
-            columns
-            contentAnchors={contentAnchors}
-          />
-        ))}
-      </div>
+      {groups.every((g) => g.type === "free") ? (
+        <EmptyState icon={<CalendarIcon size={28} />} title="Aucun cours cette semaine">
+          Vacances ou semaine libre : rien n&apos;est prévu à l&apos;emploi du temps.
+        </EmptyState>
+      ) : (
+        /* Téléphone : une colonne. Ordinateur : un jour par colonne, les jours libres
+           consécutifs regroupés dans une colonne étroite pour laisser la place aux autres. */
+        <div
+          className="mx-auto flex max-w-content flex-col gap-3 lg:grid lg:max-w-none lg:items-start"
+          style={{
+            gridTemplateColumns: groups.map((g) => (g.type === "free" ? "8.5rem" : "minmax(0, 1fr)")).join(" "),
+          }}
+        >
+          {groups.map((g) =>
+            g.type === "free" ? (
+              <FreeDaysCard key={g.days[0].date} days={g.days} today={today} />
+            ) : (
+              <DayCard
+                key={g.day.date}
+                day={g.day}
+                isToday={g.day.date === today}
+                columns
+                contentAnchors={contentAnchors}
+              />
+            ),
+          )}
+        </div>
+      )}
     </>
   );
+}
+
+type DayGroup = { type: "day"; day: DayTimetable } | { type: "free"; days: DayTimetable[] };
+
+/** Regroupe les jours consécutifs sans cours. */
+function groupFreeDays(days: readonly DayTimetable[]): DayGroup[] {
+  const groups: DayGroup[] = [];
+  for (const day of days) {
+    const last = groups.at(-1);
+    if (day.classes.length > 0) groups.push({ type: "day", day });
+    else if (last?.type === "free") last.days.push(day);
+    else groups.push({ type: "free", days: [day] });
+  }
+  return groups;
 }
 
 const href = (n: number) => (n === 0 ? "/semaine" : `/semaine?semaine=${n}`);
