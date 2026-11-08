@@ -236,6 +236,10 @@
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
   /* Ressort court, sans rebond visible : pression et arrivée des éléments flottants. */
   --ease-spring: cubic-bezier(0.2, 1, 0.32, 1);
+  /* Ressort avec rebond : dépasse légèrement la cible puis revient (pastille de la barre d'onglets). */
+  --ease-bounce: cubic-bezier(0.34, 1.4, 0.5, 1);
+  /* Arrivée d'un écran : départ vif, fin très douce. */
+  --ease-page: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* Dans la couche « base » de Tailwind : un thème personnalisé (couche déclarée après) peut les remplacer. */
@@ -296,6 +300,65 @@ html.theme-transition *::after {
   from {
     opacity: 0;
     transform: translateY(18px) scale(0.97);
+  }
+}
+
+/*
+ * Changement d'écran (voir app/(app)/template.tsx) : sortie en fondu court, puis entrée
+ * en fondu avec une légère montée. Les clics traversent la transition pendant qu'elle joue.
+ */
+::view-transition {
+  pointer-events: none;
+}
+
+/*
+ * Barres de navigation : hors du fondu de l'écran. Sans ça, le navigateur les capture en image
+ * et les fond avec la page (elles clignotent, la pastille de l'onglet actif ne glisse pas).
+ * On masque l'ancienne capture et on affiche la nouvelle telle quelle, en direct : leurs
+ * propres transitions CSS (couleur, fond de l'onglet actif) jouent normalement.
+ */
+::view-transition-group(tabbar),
+::view-transition-group(sidebar) {
+  animation: none;
+  z-index: 10;
+}
+
+::view-transition-old(tabbar),
+::view-transition-old(sidebar) {
+  display: none;
+}
+
+::view-transition-new(tabbar),
+::view-transition-new(sidebar) {
+  animation: none;
+}
+
+::view-transition-old(.page-out) {
+  animation: page-out 140ms ease both;
+}
+
+::view-transition-new(.page-in) {
+  animation: page-in 220ms var(--ease-page) both;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01ms !important;
   }
 }
 
