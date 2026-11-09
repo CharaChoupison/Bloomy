@@ -22,7 +22,7 @@ export const metadata: Metadata = { title: "Ressources · Bloomy" };
 // ?matiere=<nom> filtre par matière ; ?semaines=<n> remonte plus loin dans le temps.
 export default function ResourcesPage({ searchParams }: PageProps<"/ressources">) {
   return (
-    <Screen title="Ressources" back={{ href: "/plus", label: "Plus" }}>
+    <Screen refresh title="Ressources" back={{ href: "/plus", label: "Plus" }}>
       <Suspense fallback={<ResourcesSkeleton />}>
         <Resources searchParams={searchParams} />
       </Suspense>

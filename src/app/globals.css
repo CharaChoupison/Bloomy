@@ -288,6 +288,14 @@
     background: var(--bg);
   }
 
+  /* Écran tactile : le geste « tirer pour actualiser » est celui de Bloomy (components/pull-to-refresh.tsx),
+     pas celui du navigateur, qui rechargerait la page sans redemander les données à Pronote. */
+  @media (pointer: coarse) {
+    html {
+      overscroll-behavior-y: contain;
+    }
+  }
+
   body {
     background: var(--bg);
     color: var(--ink);

@@ -21,7 +21,7 @@ export const metadata: Metadata = { title: "Contenu des cours · Bloomy" };
 // (lien « Contenu du cours » depuis l'emploi du temps, avec l'ancre de la séance).
 export default function LessonContentsPage({ searchParams }: PageProps<"/cours">) {
   return (
-    <Screen title="Contenu des cours" back={{ href: "/plus", label: "Plus" }}>
+    <Screen refresh title="Contenu des cours" back={{ href: "/plus", label: "Plus" }}>
       <Suspense fallback={<LessonsSkeleton />}>
         <Lessons searchParams={searchParams} />
       </Suspense>

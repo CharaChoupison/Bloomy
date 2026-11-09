@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Compte · Bloomy" };
 
 export default function AccountPage() {
   return (
-    <Screen title="Compte" back={{ href: "/plus", label: "Plus" }}>
+    <Screen refresh title="Compte" back={{ href: "/plus", label: "Plus" }}>
       <Suspense fallback={<AccountSkeleton />}>
         <AccountDetails />
       </Suspense>

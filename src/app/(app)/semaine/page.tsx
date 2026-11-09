@@ -18,7 +18,7 @@ export const metadata: Metadata = { title: "Calendrier · Bloomy" };
 // Lit ?semaine=… (donnée de requête) : rendu derrière <Suspense>, comme l'exige cacheComponents.
 export default function WeekPage({ searchParams }: PageProps<"/semaine">) {
   return (
-    <Screen title="Calendrier" width="full">
+    <Screen refresh title="Calendrier" width="full">
       <Suspense fallback={<WeekSkeleton />}>
         <Week searchParams={searchParams} />
       </Suspense>

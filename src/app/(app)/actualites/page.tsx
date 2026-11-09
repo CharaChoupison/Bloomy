@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Actualités · Bloomy" };
 
 export default function NewsPage() {
   return (
-    <Screen title="Actualités" back={{ href: "/plus", label: "Plus" }}>
+    <Screen refresh title="Actualités" back={{ href: "/plus", label: "Plus" }}>
       <Suspense fallback={<NewsSkeleton />}>
         <NewsList />
       </Suspense>

@@ -15,7 +15,7 @@ export const metadata: Metadata = { title: "Messagerie · Bloomy" };
 
 export default function MessagesPage() {
   return (
-    <Screen title="Messagerie" back={{ href: "/plus", label: "Plus" }}>
+    <Screen refresh title="Messagerie" back={{ href: "/plus", label: "Plus" }}>
       <Suspense fallback={<MessagesSkeleton />}>
         <ConversationList />
       </Suspense>

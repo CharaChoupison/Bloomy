@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "Vie scolaire · Bloomy" };
 // Lit ?periode=… (donnée de requête) : rendu derrière <Suspense>, comme l'exige cacheComponents.
 export default function SchoolLifePage({ searchParams }: PageProps<"/vie-scolaire">) {
   return (
-    <Screen title="Vie scolaire" back={{ href: "/plus", label: "Plus" }}>
+    <Screen refresh title="Vie scolaire" back={{ href: "/plus", label: "Plus" }}>
       <Suspense fallback={<SchoolLifeSkeleton />}>
         <SchoolLife searchParams={searchParams} />
       </Suspense>

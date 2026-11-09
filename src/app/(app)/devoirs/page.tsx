@@ -15,7 +15,7 @@ export const metadata: Metadata = { title: "Devoirs · Bloomy" };
 
 export default function AssignmentsPage() {
   return (
-    <Screen title="Devoirs">
+    <Screen refresh title="Devoirs">
       <Suspense fallback={<AssignmentsSkeleton />}>
         <Assignments />
       </Suspense>

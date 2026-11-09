@@ -26,6 +26,7 @@ export default function Home() {
   return (
     <Screen
       title="Aujourd'hui"
+      refresh
       width="wide"
       subtitle={
         <Suspense fallback={<span aria-hidden>&nbsp;</span>}>

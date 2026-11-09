@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronLeftIcon } from "@/components/icons";
+import { RefreshButton } from "@/components/refresh-button";
 
 const WIDTHS = {
   content: "max-w-content",
@@ -12,6 +13,7 @@ export function Screen({
   title,
   subtitle,
   aside,
+  refresh = false,
   back,
   width = "content",
   children,
@@ -20,6 +22,8 @@ export function Screen({
   subtitle?: React.ReactNode;
   /** Action discrète à droite du titre. */
   aside?: React.ReactNode;
+  /** Bouton « Actualiser » à droite du titre, pour les écrans qui affichent des données Pronote. */
+  refresh?: boolean;
   /** Retour vers l'écran parent (pages rangées dans Plus) ; masqué sur ordinateur, où la barre latérale suffit. */
   back?: { href: string; label: string };
   /**
@@ -45,7 +49,12 @@ export function Screen({
           {subtitle && <p className="text-callout text-ink-muted">{subtitle}</p>}
           <h1 className="text-display">{title}</h1>
         </div>
-        {aside}
+        {(aside || refresh) && (
+          <div className="flex shrink-0 items-center gap-2">
+            {aside}
+            {refresh && <RefreshButton />}
+          </div>
+        )}
       </header>
       {children}
     </main>
