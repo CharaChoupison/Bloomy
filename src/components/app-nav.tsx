@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { AppLogo } from "@/components/app-logo";
 import { isActive, isPlusActive, MAIN_ITEMS, MORE_ITEMS, PLUS_ITEM, type NavItem } from "@/lib/navigation";
 
 // Chaque barre existe en deux temps : la vue (sans hook, sert aussi de rendu d'attente)
@@ -101,7 +102,10 @@ export function SidebarView({ pathname }: { pathname: string }) {
       aria-label="Navigation principale"
       className="[view-transition-name:sidebar] sticky top-0 hidden h-dvh w-sidebar shrink-0 flex-col gap-0.5 border-r border-line bg-surface px-3 py-4 lg:flex"
     >
-      <p className="px-3 pt-2 pb-4 text-title font-bold">Bloomy</p>
+      <p className="flex items-center gap-2.5 px-3 pt-2 pb-4 text-title font-bold">
+        <AppLogo />
+        Bloomy
+      </p>
       <ul className="flex flex-col gap-0.5">{MAIN_ITEMS.map(link)}</ul>
       <ul className="mt-4 flex flex-col gap-0.5 border-t border-line pt-4">{MORE_ITEMS.map(link)}</ul>
     </nav>
