@@ -60,49 +60,68 @@ export function NextClass({
   if (!next) return null;
 
   const start = Date.parse(next.start);
-  const room = next.rooms.join(", ");
   const href = next.weekOffset ? `/semaine?semaine=${next.weekOffset}` : "/semaine";
   const isToday = dayKey(start) === dayKey(now);
-  // La suite : les cours du même jour que le prochain, après lui.
-  const later = classes.slice(index + 1).filter((c) => dayKey(Date.parse(c.start)) === dayKey(start));
+  // Les cours du même jour que le prochain, à partir de lui.
+  const sameDay = classes.slice(index).filter((c) => dayKey(Date.parse(c.start)) === dayKey(start));
 
+  if (!isToday) {
+    // Plus de cours aujourd'hui : une seule carte pour le prochain jour, qui commence par son premier cours
+    // (séparer le premier cours du reste faisait croire que la journée commençait au deuxième).
+    return <NextDayCard classes={sameDay} now={now} href={href} hadClassesToday={hadClassesToday} />;
+  }
+
+  // Cours aujourd'hui : la carte accent (heure en grand), puis la suite.
+  const later = sameDay.slice(1);
   return (
     <div className="flex flex-col gap-3">
-      {isToday ? <TodayHero next={next} now={now} href={href} /> : <LaterHero next={next} now={now} href={href} room={room} hadClassesToday={hadClassesToday} />}
-      {later.length > 0 && <UpNext classes={later} label={isToday ? "Ensuite" : `Ensuite ${dayLabel(start, now).toLowerCase()}`} href={href} />}
+      <TodayHero next={next} now={now} href={href} />
+      {later.length > 0 && (
+        <section aria-label="Ensuite" className="overflow-hidden card">
+          <h3 className="px-4 pt-3 pb-1 text-label text-ink-muted">Ensuite</h3>
+          <ClassLines classes={later} href={href} />
+        </section>
+      )}
     </div>
   );
 }
 
-/** Plus de cours aujourd'hui : la phrase d'abord, puis le prochain cours. Neutre : l'accent est pour « maintenant ». */
-function LaterHero({
-  next,
+const dateFmt = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: SCHOOL_TIME_ZONE });
+
+/**
+ * Plus de cours aujourd'hui : la phrase d'abord, puis le prochain jour de cours en entier (résumé + premiers cours).
+ * Neutre : l'accent est réservé à ce qui se passe aujourd'hui.
+ */
+function NextDayCard({
+  classes,
   now,
   href,
-  room,
   hadClassesToday,
 }: {
-  next: UpcomingClass;
+  classes: UpcomingClass[];
   now: number;
   href: string;
-  room: string;
   hadClassesToday: boolean;
 }) {
-  const start = Date.parse(next.start);
+  const first = classes[0];
+  const last = classes[classes.length - 1];
+  const start = Date.parse(first.start);
+  const label = dayLabel(start, now);
+  const date = dateFmt.format(start);
+  // « Jeudi 12 novembre », ou « Demain · jeudi 12 novembre ».
+  const when = label === "Demain" ? `Demain · ${date}` : date.charAt(0).toUpperCase() + date.slice(1);
+
   return (
-    <Link href={href} className="flex items-center gap-4 card px-5 py-4 pressable hover:bg-bg">
-      <div className="min-w-0 flex-1">
+    <section aria-labelledby="prochain-jour" className="overflow-hidden card">
+      <div className="px-4 pt-4 pb-2">
         <p className="text-title">{hadClassesToday ? "Journée terminée" : "Pas de cours aujourd\u2019hui"}</p>
-        <p className="mt-1 text-callout text-ink-muted">
-          Prochain cours <span className="font-semibold text-ink">{dayLabel(start, now).toLowerCase()} à {formatTime(next.start)}</span>
-        </p>
-        <div className="mt-0.5 flex min-w-0 items-center gap-2 text-callout">
-          <SubjectBar subject={next.kind === "lesson" ? next.title : undefined} className="h-4" />
-          <span className="truncate">{room ? `${titleOf(next)} · ${room}` : titleOf(next)}</span>
-        </div>
+        <h3 id="prochain-jour" className="mt-1 text-callout text-ink-muted">
+          <span className="font-semibold text-ink">{when}</span>
+          {` · ${classes.length} cours, de ${formatTime(first.start)} à ${formatTime(last.end)}`}
+        </h3>
       </div>
-      <ChevronRightIcon className="shrink-0 text-ink-muted" />
-    </Link>
+      <ClassLines classes={classes} href={href} />
+    </section>
   );
 }
 
@@ -145,16 +164,15 @@ function TodayHero({ next, now, href }: { next: UpcomingClass; now: number; href
   );
 }
 
-const MAX_LATER = 3;
+const MAX_LINES = 3;
 
-/** Les cours suivants de la journée, en lignes compactes ; le reste est dans le Calendrier. */
-function UpNext({ classes, label, href }: { classes: UpcomingClass[]; label: string; href: string }) {
-  const shown = classes.slice(0, MAX_LATER);
+/** Lignes compactes (heure, couleur, matière, salle) puis lien vers la journée complète du Calendrier. */
+function ClassLines({ classes, href }: { classes: UpcomingClass[]; href: string }) {
+  const shown = classes.slice(0, MAX_LINES);
   const hidden = classes.length - shown.length;
   return (
-    <section aria-label={label} className="overflow-hidden card">
-      <h3 className="px-4 pt-3 pb-1 text-label text-ink-muted">{label}</h3>
-      <ul>
+    <>
+      <ul className="pb-1">
         {shown.map((c) => (
           <li key={c.id} className="flex items-center gap-3 px-4 py-2">
             <span className="w-11 shrink-0 font-mono text-caption font-medium tabular-nums">{formatTime(c.start)}</span>
@@ -173,6 +191,6 @@ function UpNext({ classes, label, href }: { classes: UpcomingClass[]; label: str
         {hidden > 0 ? `Voir toute la journée · ${hidden} autre${hidden > 1 ? "s" : ""}` : "Voir toute la journée"}
         <ChevronRightIcon size={16} />
       </Link>
-    </section>
+    </>
   );
 }
