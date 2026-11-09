@@ -56,6 +56,15 @@ export async function getAssignmentsFor(
   cacheTag(viewerTag(viewerId));
   cacheTag(assignmentsTag(viewerId));
 
+  return loadAssignments(viewerId, fromKey, daysAhead);
+}
+
+/** Même chargement, sans cache : données à jour (vérification des notifications, voir lib/push). */
+export async function loadAssignments(
+  viewerId: string,
+  fromKey: string,
+  daysAhead = DAYS_AHEAD,
+): Promise<AssignmentItem[]> {
   const [y, m, d] = fromKey.split("-").map(Number);
   const from = new Date(y, m - 1, d, 0, 0, 0, 0);
   const to = new Date(y, m - 1, d + daysAhead, 23, 59, 59, 999);

@@ -59,6 +59,11 @@ export async function getWeekTimetableFor(viewerId: string, weekStart: string): 
   cacheLife("minutes");
   cacheTag(viewerTag(viewerId));
 
+  return loadWeekTimetable(viewerId, weekStart);
+}
+
+/** Même chargement, sans cache : données à jour (vérification des notifications, voir lib/push). */
+export async function loadWeekTimetable(viewerId: string, weekStart: string): Promise<WeekTimetable> {
   const [y, m, d] = weekStart.split("-").map(Number);
   const monday = new Date(y, m - 1, d, 0, 0, 0, 0);
   const sunday = new Date(y, m - 1, d + 6, 23, 59, 59, 999);

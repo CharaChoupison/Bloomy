@@ -16,6 +16,7 @@ Chaque élève se connecte avec **son propre identifiant et mot de passe Pronote
 - **Vie scolaire** : absences, retards et punitions
 - **Actualités** et **Messagerie** (lecture seule)
 - **Compte** : les informations de l'élève, valeurs sensibles masquées
+- **Notifications** (facultatives, par appareil) : nouvelles notes, nouveaux devoirs, cours annulés ou modifiés
 - **Réglages** : thème, couleur d'accent et thèmes personnalisés (fichiers `.css`, à la Vencord) : voir le [guide pour créer un thème](public/themes/guide.md), aussi servi par l'app sur `/themes/guide.md`
 
 ## Stack
@@ -57,5 +58,6 @@ Bloomy s'héberge gratuitement sur un serveur Oracle Cloud, avec mise à jour au
 | Caches Next.js séparés par élève (identifiant non secret, jamais la clé) | `src/lib/pronote/*.ts`, `src/lib/pronote/cache-tags.ts` |
 | Établissements autorisés (`PRONOTI_ALLOWED_HOSTS`) et refus des adresses IP privées, redirections comprises (anti-SSRF) | `src/lib/pronote/network.ts`, `src/lib/pronote/fetcher.ts` |
 | Limite de tentatives par IP et par compte Pronote | `src/lib/auth/rate-limit.ts`, `src/app/login/actions.ts` |
+| Notifications sur demande seulement : clé de session chiffrée avec une clé du serveur, messages chiffrés pour l'appareil (Web Push, RFC 8291), effacée avec la session | `src/lib/push/` |
 
 Les secrets (`.env.local`) et les sessions (`.data/`) restent sur la machine et ne sont jamais versionnés. Ce que voient les élèves : page `/confidentialite`.

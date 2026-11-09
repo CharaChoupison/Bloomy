@@ -21,6 +21,15 @@ const SECTIONS: { title: string; body: string[] }[] = [
     ],
   },
   {
+    title: "Notifications",
+    body: [
+      "Les notifications sont désactivées tant que tu ne les actives pas dans Réglages › Notifications, appareil par appareil.",
+      "Pour vérifier Pronote quand l'app est fermée, le serveur garde alors la clé de ta session, chiffrée avec une clé propre au serveur : il peut rouvrir ta session seul, ce qui n'est pas possible sans notifications. Il ne garde rien d'autre que les identifiants des notes, devoirs et cours déjà signalés.",
+      "Le contenu des notifications est chiffré pour ton appareil : le service de notifications (Apple, Google ou Mozilla) ne peut pas le lire. La valeur des notes n'y figure que si tu le demandes.",
+      "Désactiver les notifications, te déconnecter ou laisser ta session expirer efface tout cela du serveur.",
+    ],
+  },
+  {
     title: "Widget iPhone",
     body: [
       "Si tu crées un widget (Réglages › Widget iPhone), Bloomy te donne un code d'accès en lecture seule : emploi du temps, devoirs et dernières notes. Il est rangé dans le trousseau de ton iPhone par l'app Scriptable.",

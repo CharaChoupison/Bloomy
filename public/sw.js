@@ -4,6 +4,8 @@
 //   Chaque écran chargé avec succès est gardé, pour cet appareil seulement.
 // - Fichiers de l'app (/_next/static, icônes) : versionnés par Next, servis depuis le cache.
 // - Jamais en cache : API, actions serveur (POST), connexion, réponses en erreur ou redirigées.
+// - Notifications (push) : affichées telles qu'envoyées par le serveur (voir lib/push), le toucher
+//   ouvre l'écran concerné.
 // - Déconnexion ou session expirée (passage par /login) : les écrans gardés sont effacés, pour que
 //   personne ne puisse relire les données de l'élève sur l'appareil.
 //
@@ -29,6 +31,43 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("message", (event) => {
   if (event.data === "clear-pages") event.waitUntil(caches.delete(PAGES));
+});
+
+self.addEventListener("push", (event) => {
+  let message = {};
+  try {
+    message = event.data ? event.data.json() : {};
+  } catch {
+    // Message illisible : on affiche quand même quelque chose (obligatoire pour les notifications web).
+  }
+  const title = typeof message.title === "string" ? message.title : "Bloomy";
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: typeof message.body === "string" ? message.body : "",
+      tag: typeof message.tag === "string" ? message.tag : undefined,
+      data: { url: typeof message.url === "string" && message.url.startsWith("/") ? message.url : "/" },
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png",
+      lang: "fr",
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url ?? "/", self.location.origin).href;
+  event.waitUntil(
+    (async () => {
+      const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      const open = windows.find((w) => new URL(w.url).origin === self.location.origin);
+      if (open) {
+        await open.focus();
+        if ("navigate" in open) await open.navigate(target).catch(() => {});
+        return;
+      }
+      await self.clients.openWindow(target);
+    })(),
+  );
 });
 
 const isLogin = (url) => url.pathname === "/login";

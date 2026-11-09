@@ -68,6 +68,11 @@ export async function getGradesFor(viewerId: string, periodId?: string): Promise
   cacheLife("minutes");
   cacheTag(viewerTag(viewerId));
 
+  return loadGrades(viewerId, periodId);
+}
+
+/** Même chargement, sans cache : données à jour (vérification des notifications, voir lib/push). */
+export async function loadGrades(viewerId: string, periodId?: string): Promise<GradesView> {
   return withPronote(viewerId, async (session) => {
     const tab = session.userResource.tabs.get(TabLocation.Grades);
     const periods = tab?.periods.length ? tab.periods : session.instance.periods;

@@ -31,6 +31,8 @@ type StoredSession = {
 const SESSIONS_DIR = path.join(/* turbopackIgnore: true */ process.cwd(), ".data", "sessions");
 /** Accès des widgets (voir widget-store.ts) : un fichier par session, supprimé avec elle. */
 export const WIDGETS_DIR = path.join(/* turbopackIgnore: true */ process.cwd(), ".data", "widgets");
+/** Abonnements aux notifications (voir lib/push/store.ts) : un fichier par session, supprimé avec elle. */
+export const PUSH_DIR = path.join(/* turbopackIgnore: true */ process.cwd(), ".data", "push");
 const HEX_ID = /^[0-9a-f]{64}$/;
 
 /** Vrai si la valeur a la forme d'un viewerId (empreinte SHA-256 en hexadécimal). */
@@ -43,6 +45,7 @@ function fileOf(viewerId: string, dir = SESSIONS_DIR): string {
 }
 
 export const widgetFileOf = (viewerId: string) => fileOf(viewerId, WIDGETS_DIR);
+export const pushFileOf = (viewerId: string) => fileOf(viewerId, PUSH_DIR);
 
 function encrypt(viewerId: string, key: Buffer, credentials: PronoteCredentials) {
   const iv = randomBytes(12);
@@ -119,9 +122,13 @@ export async function sessionExists(viewerId: string): Promise<boolean> {
   }
 }
 
-/** Supprime la session et l'accès widget qui en dépend (déconnexion, jeton refusé, expiration). */
+/** Supprime la session, et l'accès widget et les notifications qui en dépendent (déconnexion, jeton refusé, expiration). */
 export async function deleteStoredSession(viewerId: string): Promise<void> {
-  await Promise.all([rm(fileOf(viewerId), { force: true }), rm(widgetFileOf(viewerId), { force: true })]);
+  await Promise.all([
+    rm(fileOf(viewerId), { force: true }),
+    rm(widgetFileOf(viewerId), { force: true }),
+    rm(pushFileOf(viewerId), { force: true }),
+  ]);
 }
 
 /** Supprime les sessions expirées (appelé à chaque connexion, c'est assez fréquent). */

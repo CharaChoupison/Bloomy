@@ -11,6 +11,8 @@ const PUBLIC_PATHS = new Set([
   "/sw.js",
   // Widget d'écran d'accueil : pas de cookie, la route vérifie elle-même son code d'accès.
   "/api/widget",
+  // Vérification des notifications : appelée par le serveur lui-même, la route vérifie son jeton.
+  "/api/push/tick",
 ]);
 
 async function isLoggedIn(request: NextRequest): Promise<boolean> {
