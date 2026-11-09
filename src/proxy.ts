@@ -7,6 +7,8 @@ import { NEXT_PARAM, safeNextPath } from "@/lib/auth/next-path";
 const PUBLIC_PATHS = new Set([
   "/login",
   "/confidentialite",
+  // Service worker : doit rester joignable même session expirée (sinon il ne se met plus à jour).
+  "/sw.js",
   // Widget d'écran d'accueil : pas de cookie, la route vérifie elle-même son code d'accès.
   "/api/widget",
 ]);

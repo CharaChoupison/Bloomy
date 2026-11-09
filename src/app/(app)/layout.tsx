@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Sidebar, SidebarView, TabBar, TabBarView } from "@/components/app-nav";
+import { OfflineBanner } from "@/components/offline";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { SubjectColorsSync } from "@/components/subject-colors";
 
@@ -14,6 +15,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <Sidebar />
       </Suspense>
       <div className="flex min-w-0 flex-1 flex-col pb-[calc(var(--spacing-tabbar)+var(--spacing-tabbar-offset)+var(--spacing-tabbar-gap))] lg:pb-0">
+        <OfflineBanner />
         <PullToRefresh className="flex flex-1 flex-col">{children}</PullToRefresh>
       </div>
       <Suspense fallback={<TabBarView pathname="" />}>

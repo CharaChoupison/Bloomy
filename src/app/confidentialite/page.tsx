@@ -16,6 +16,8 @@ const SECTIONS: { title: string; body: string[] }[] = [
     title: "Ce qui reste sur ton appareil",
     body: [
       "Ton thème, ta couleur d'accent et tes thèmes personnalisés restent dans ton navigateur. Seule exception : quand tu crées un widget, sa couleur d'accent est enregistrée avec lui.",
+      "Pour savoir quelles notes sont nouvelles, Bloomy retient sur ton appareil les notes que tu as déjà vues.",
+      "Pour fonctionner sans réseau, l'app garde aussi sur ton appareil une copie des derniers écrans ouverts. Elle est effacée quand tu te déconnectes ou que ta session expire.",
     ],
   },
   {

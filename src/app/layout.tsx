@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import { CustomCssPathGuard } from "@/components/custom-themes";
+import { ServiceWorkerRegistration } from "@/components/offline";
 import { preferencesBootScript, THEME_COLOR } from "@/lib/preferences";
 import "./globals.css";
 
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Suspense fallback={null}>
           <CustomCssPathGuard />
         </Suspense>
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );
