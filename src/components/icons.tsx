@@ -248,3 +248,25 @@ export const SmartphoneIcon = (p: IconProps) => (
     <path d="M12 18h.01" />
   </Icon>
 );
+
+export const CalculatorIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect width="16" height="20" x="4" y="2" rx="2" />
+    <path d="M8 6h8" />
+    <path d="M16 14v4" />
+    <path d="M16 10h.01" />
+    <path d="M12 10h.01" />
+    <path d="M8 10h.01" />
+    <path d="M12 14h.01" />
+    <path d="M8 14h.01" />
+    <path d="M12 18h.01" />
+    <path d="M8 18h.01" />
+  </Icon>
+);
+
+export const XIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M18 6 6 18" />
+    <path d="m6 6 12 12" />
+  </Icon>
+);

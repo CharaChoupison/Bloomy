@@ -58,7 +58,7 @@ async function Grades({ searchParams }: Pick<PageProps<"/notes">, "searchParams"
           <GradesSeenTracker grades={view.grades.map(({ id, date }) => ({ id, date }))} current={periodId === undefined} markSeen />
           <OverallCard overall={view.overall} classOverall={view.classOverall} period={view.period.name} />
           <RecentGrades grades={view.grades} />
-          <SubjectCards groups={groupBySubject(view.subjects, view.grades)} />
+          <SubjectCards groups={groupBySubject(view.subjects, view.grades)} overall={view.overall} />
         </>
       )}
     </div>

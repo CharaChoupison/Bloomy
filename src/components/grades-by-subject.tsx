@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRightIcon } from "@/components/icons";
 import { GradeFigure } from "@/components/grades";
 import { NewGradeLabel } from "@/components/new-grades";
+import { GradeSimulator } from "@/components/grade-simulator";
 
 // Écran Notes organisé par matière : une carte par matière (sa moyenne + ses notes en étiquettes),
 // qui s'ouvre sur le détail. Les couleurs viennent de lib/subject-colors.ts (data-subject).
@@ -331,7 +332,15 @@ function GradeTrend({ grades, subject }: { grades: GradeItem[]; subject: string 
  * Ouverte (touche) : chaque note avec son intitulé et ses repères. <details> natif : clavier et
  * lecteurs d'écran gèrent l'ouverture sans script.
  */
-function SubjectCard({ group }: { group: SubjectGroup }) {
+function SubjectCard({
+  group,
+  overall,
+  subjectCount,
+}: {
+  group: SubjectGroup;
+  overall?: GradeValue;
+  subjectCount: number;
+}) {
   const { average: avg, grades } = group;
   const name = displayName(group.name);
   const cls = formatPoints(avg?.classAverage);
@@ -385,14 +394,30 @@ function SubjectCard({ group }: { group: SubjectGroup }) {
             ))}
           </ul>
         )}
+        <GradeSimulator
+          subject={name}
+          grades={grades.map(({ value, outOf, coefficient, isBonus, isOptional }) => ({
+            value,
+            outOf,
+            coefficient,
+            isBonus,
+            isOptional,
+          }))}
+          official={avg?.student}
+          officialOutOf={avg?.outOf}
+          overall={overall}
+          subjectCount={subjectCount}
+        />
       </details>
     </li>
   );
 }
 
 /** Toutes les matières de la période, dans l'ordre de Pronote. */
-export function SubjectCards({ groups }: { groups: SubjectGroup[] }) {
+export function SubjectCards({ groups, overall }: { groups: SubjectGroup[]; overall?: GradeValue }) {
   if (groups.length === 0) return null;
+  // Matières qui comptent dans la moyenne générale (pour l'estimation du simulateur).
+  const subjectCount = groups.filter((g) => isNumeric(g.average?.student)).length;
   return (
     <section aria-labelledby="matieres" className="flex flex-col gap-3">
       <h2 id="matieres" className="text-headline">
@@ -400,7 +425,7 @@ export function SubjectCards({ groups }: { groups: SubjectGroup[] }) {
       </h2>
       <ul className="flex flex-col gap-3 stagger lg:grid lg:grid-cols-2 lg:items-start">
         {groups.map((g) => (
-          <SubjectCard key={g.subjectId} group={g} />
+          <SubjectCard key={g.subjectId} group={g} overall={overall} subjectCount={subjectCount} />
         ))}
       </ul>
     </section>
