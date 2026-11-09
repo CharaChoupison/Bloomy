@@ -3,7 +3,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
 import { getGrades } from "@/lib/pronote/grades";
-import { LatestGrades, OverallCard, SubjectAverages } from "@/components/grades";
+import { OverallCard } from "@/components/grades";
+import { groupBySubject, RecentGrades, SubjectCards } from "@/components/grades-by-subject";
 import { PeriodPicker } from "@/components/period-picker";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
@@ -54,10 +55,8 @@ async function Grades({ searchParams }: Pick<PageProps<"/notes">, "searchParams"
       ) : (
         <>
           <OverallCard overall={view.overall} classOverall={view.classOverall} period={view.period.name} />
-          <div className="flex flex-col gap-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
-            <LatestGrades grades={view.grades} />
-            <SubjectAverages subjects={view.subjects} />
-          </div>
+          <RecentGrades grades={view.grades} />
+          <SubjectCards groups={groupBySubject(view.subjects, view.grades)} />
         </>
       )}
     </div>
