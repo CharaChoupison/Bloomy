@@ -10,6 +10,7 @@ import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
 import { buttonClasses } from "@/components/ui/button";
 import { WeekPicker } from "@/components/week-picker";
+import { WeekSwipe } from "@/components/week-swipe";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CalendarIllustration } from "@/components/illustrations";
 
@@ -59,34 +60,37 @@ async function Week({ searchParams }: Pick<PageProps<"/semaine">, "searchParams"
   return (
     <>
       <WeekNav offset={offset} weekStart={weekStart} />
-      {groups.every((g) => g.type === "free") ? (
-        <EmptyState illustration={CalendarIllustration} title="Aucun cours cette semaine">
-          Vacances ou semaine libre : rien n&apos;est prévu à l&apos;emploi du temps.
-        </EmptyState>
-      ) : (
-        /* Téléphone : une colonne. Ordinateur : un jour par colonne, les jours libres
-           consécutifs regroupés dans une colonne étroite pour laisser la place aux autres. */
-        <div
-          className="mx-auto flex max-w-content flex-col gap-3 lg:grid lg:max-w-none lg:items-start"
-          style={{
-            gridTemplateColumns: groups.map((g) => (g.type === "free" ? "8.5rem" : "minmax(0, 1fr)")).join(" "),
-          }}
-        >
-          {groups.map((g) =>
-            g.type === "free" ? (
-              <FreeDaysCard key={g.days[0].date} days={g.days} today={today} />
-            ) : (
-              <DayCard
-                key={g.day.date}
-                day={g.day}
-                isToday={g.day.date === today}
-                columns
-                contentAnchors={contentAnchors}
-              />
-            ),
-          )}
-        </div>
-      )}
+      {/* Écran tactile : balayer pour changer de semaine (les flèches restent). */}
+      <WeekSwipe key={weekStart} prevHref={href(offset - 1)} nextHref={href(offset + 1)}>
+        {groups.every((g) => g.type === "free") ? (
+          <EmptyState illustration={CalendarIllustration} title="Aucun cours cette semaine">
+            Vacances ou semaine libre : rien n&apos;est prévu à l&apos;emploi du temps.
+          </EmptyState>
+        ) : (
+          /* Téléphone : une colonne. Ordinateur : un jour par colonne, les jours libres
+             consécutifs regroupés dans une colonne étroite pour laisser la place aux autres. */
+          <div
+            className="mx-auto flex max-w-content flex-col gap-3 lg:grid lg:max-w-none lg:items-start"
+            style={{
+              gridTemplateColumns: groups.map((g) => (g.type === "free" ? "8.5rem" : "minmax(0, 1fr)")).join(" "),
+            }}
+          >
+            {groups.map((g) =>
+              g.type === "free" ? (
+                <FreeDaysCard key={g.days[0].date} days={g.days} today={today} />
+              ) : (
+                <DayCard
+                  key={g.day.date}
+                  day={g.day}
+                  isToday={g.day.date === today}
+                  columns
+                  contentAnchors={contentAnchors}
+                />
+              ),
+            )}
+          </div>
+        )}
+      </WeekSwipe>
     </>
   );
 }
