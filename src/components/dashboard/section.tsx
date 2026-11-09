@@ -8,22 +8,28 @@ export function DashboardSection({
   id,
   title,
   more,
+  status,
   className = "",
   children,
 }: {
   id: string;
   title: string;
+  /** Petit état sous le titre (« Rien à rendre cette semaine ») : remplace une carte vide. */
+  status?: React.ReactNode;
   /** Lien vers l'écran complet (le libellé dit où il mène, pas seulement « Voir plus »). */
   more?: { href: string; label: string };
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <section aria-labelledby={id} className={`flex min-w-0 flex-col gap-2 [&>*:not(:first-child)]:animate-[rise_360ms_var(--ease-spring)_backwards] ${className}`}>
       <div className="flex min-h-touch items-center justify-between gap-3">
-        <h2 id={id} className="text-headline">
-          {title}
-        </h2>
+        <div className="min-w-0">
+          <h2 id={id} className="text-headline">
+            {title}
+          </h2>
+          {status && <p className="text-caption text-ink-muted">{status}</p>}
+        </div>
         {more && (
           <Link
             href={more.href}

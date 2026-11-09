@@ -1,7 +1,5 @@
-import type { GradeItem, GradeValue } from "@/lib/pronote/grades";
+import type { GradeValue } from "@/lib/pronote/grades";
 import { formatPoints, isNumeric, specialLabel, spokenGrade } from "@/lib/grades-format";
-import { formatShortDate } from "@/lib/format";
-import { Badge } from "@/components/ui/badge";
 import { subjectKey } from "@/lib/subject-colors";
 
 // Pas de rouge / vert selon la note : on ne juge pas une note par une couleur.
@@ -122,38 +120,5 @@ export function OverallCard({
         </p>
       )}
     </section>
-  );
-}
-
-export function GradeRow({ g }: { g: GradeItem }) {
-  const cls = formatPoints(g.classAverage);
-  const special = specialLabel(g.value);
-  const showSpecialBadge = special && isNumeric(g.value); // "Absent·e" compté 0 : on montre le 0 et le mot
-  const hasBadges = showSpecialBadge || g.coefficient !== 1 || g.isBonus || g.isOptional;
-
-  return (
-    <li className="flex items-start gap-3 px-4 py-3">
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-body font-semibold">{g.subject}</p>
-        <p className="mt-0.5 truncate text-caption text-ink-muted">
-          {formatShortDate(g.date)}
-          {g.comment && ` · ${g.comment}`}
-        </p>
-        {hasBadges && (
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            {showSpecialBadge && <Badge tone="neutral">{special}</Badge>}
-            {g.coefficient !== 1 && <Badge tone="neutral">Coef. {formatPoints({ kind: 0, points: g.coefficient })}</Badge>}
-            {g.isBonus && <Badge tone="neutral">Bonus</Badge>}
-            {g.isOptional && <Badge tone="neutral">Facultative</Badge>}
-          </div>
-        )}
-      </div>
-      <div className="shrink-0 text-right">
-        <p aria-label={spokenGrade(g.value, g.outOf)}>
-          <GradeFigure value={g.value} outOf={g.outOf} />
-        </p>
-        {cls && <p className="mt-0.5 text-caption text-ink-muted">Classe {cls}</p>}
-      </div>
-    </li>
   );
 }

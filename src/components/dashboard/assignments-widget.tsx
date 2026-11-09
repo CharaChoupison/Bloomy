@@ -3,7 +3,7 @@ import { getAssignments, type AssignmentItem } from "@/lib/pronote/assignments";
 import { toDateKey } from "@/lib/pronote/timetable";
 import { addDays, deadlineLabel } from "@/lib/format";
 import { AssignmentRow } from "@/components/assignment-row";
-import { DashboardError, DashboardNote, DashboardSection } from "./section";
+import { DashboardError, DashboardSection } from "./section";
 
 const HORIZON_DAYS = 7;
 const MAX_ITEMS = 6;
@@ -28,9 +28,7 @@ export async function AssignmentsWidget({ className }: { className?: string }) {
 
   if (items.length === 0) {
     return (
-      <Section className={className}>
-        <DashboardNote>Rien à rendre dans les {HORIZON_DAYS} prochains jours.</DashboardNote>
-      </Section>
+      <Section className={className} status={`Rien à rendre dans les ${HORIZON_DAYS} prochains jours.`} />
     );
   }
 
@@ -60,12 +58,23 @@ export async function AssignmentsWidget({ className }: { className?: string }) {
   );
 }
 
-function Section({ className, count, children }: { className?: string; count?: number; children: React.ReactNode }) {
+function Section({
+  className,
+  count,
+  status,
+  children,
+}: {
+  className?: string;
+  count?: number;
+  status?: string;
+  children?: React.ReactNode;
+}) {
   return (
     <DashboardSection
       id="accueil-devoirs"
       title={count ? `À faire · ${count}` : "À faire"}
       more={{ href: "/devoirs", label: "Devoirs" }}
+      status={status}
       className={className}
     >
       {children}

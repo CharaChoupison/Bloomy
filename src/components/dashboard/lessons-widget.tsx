@@ -6,9 +6,10 @@ import { lessonContentHref } from "@/lib/lesson-anchor";
 import { formatShortDate } from "@/lib/format";
 import { ChevronRightIcon, FolderOpenIcon, PaperclipIcon } from "@/components/icons";
 import { SubjectToken } from "@/components/grades";
+import { calmShouting } from "@/lib/text-case";
 import { DashboardError, DashboardNote, DashboardSection } from "./section";
 
-const LATEST = 4;
+const LATEST = 3;
 
 /** Dernières séances qui ont un contenu (cette semaine et la précédente), avec leurs fichiers. */
 export async function LessonsWidget({ className }: { className?: string }) {
@@ -70,7 +71,7 @@ function LessonLine({ s }: { s: LessonSession }) {
         <SubjectToken subject={s.subject} />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-3">
-            <p className="min-w-0 truncate text-body font-semibold">{s.subject}</p>
+            <p className="min-w-0 truncate text-body font-semibold">{calmShouting(s.subject)}</p>
             <p className="shrink-0 text-caption text-ink-muted">{formatShortDate(s.start)}</p>
           </div>
           {summary && <p className="mt-0.5 truncate text-callout">{summary}</p>}

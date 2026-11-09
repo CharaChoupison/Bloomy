@@ -31,6 +31,7 @@ export async function InboxWidget({ className }: { className?: string }) {
       id="accueil-infos"
       title="Messages et actualités"
       more={{ href: "/actualites", label: "Actualités" }}
+      status={conversations !== null && unread.length === 0 && (latestNews.length > 0 || failed.length > 0) ? "Aucun message non lu" : undefined}
       className={className}
     >
       {unread.length === 0 && latestNews.length === 0 ? (
@@ -46,9 +47,6 @@ export async function InboxWidget({ className }: { className?: string }) {
             <NewsLine key={n.id} n={n} />
           ))}
         </ul>
-      )}
-      {conversations !== null && unread.length === 0 && (latestNews.length > 0 || failed.length > 0) && (
-        <p className="text-caption text-ink-muted">Aucun message non lu.</p>
       )}
       {failed.length === 1 && <p className="text-caption text-ink-muted">Impossible de récupérer {failed[0]}.</p>}
     </DashboardSection>

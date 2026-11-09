@@ -25,10 +25,10 @@ export function QuickActions() {
           <li key={href}>
             <Link
               href={href}
-              className="group flex flex-col items-center gap-1.5 rounded-md py-1 text-caption font-medium"
+              className="group flex flex-col items-center gap-1 rounded-md py-1 text-label text-ink-muted"
             >
-              <span className="grid size-14 place-items-center rounded-full bg-surface text-accent shadow-card transition-transform duration-[120ms] ease-enter group-active:scale-95 motion-reduce:transition-none">
-                <Icon size={22} />
+              <span className="grid size-12 place-items-center rounded-full bg-surface text-accent shadow-card transition-transform duration-[120ms] ease-enter group-active:scale-95 motion-reduce:transition-none">
+                <Icon size={20} />
               </span>
               <span>{short}</span>
             </Link>

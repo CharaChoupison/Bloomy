@@ -18,7 +18,7 @@ const NEW_FOR_MS = 7 * 24 * 60 * 60 * 1000;
  * Note de moins d'une semaine. Composants serveur rendus à chaque requête (la page lit ?periode=,
  * derrière <Suspense>) : l'heure est celle de l'affichage, pas celle du cache des notes.
  */
-const isRecent = (iso: string) => Date.now() - Date.parse(iso) < NEW_FOR_MS;
+export const isRecent = (iso: string) => Date.now() - Date.parse(iso) < NEW_FOR_MS;
 
 export type SubjectGroup = {
   key: string;
@@ -46,13 +46,13 @@ export function groupBySubject(subjects: SubjectAverage[], grades: GradeItem[]):
 }
 
 /** Équivalent sur 20 d'une note sur un autre barème ("3/5" → "12"), sinon undefined. */
-function on20(value: GradeValue, outOf: GradeValue): string | undefined {
+export function on20(value: GradeValue, outOf: GradeValue): string | undefined {
   if (!isNumeric(value) || !isNumeric(outOf) || outOf.points <= 0 || outOf.points === 20) return undefined;
   return formatPoints({ kind: 0, points: Math.round((value.points / outOf.points) * 20 * 100) / 100 });
 }
 
 /** Nom lisible : « BUSINESS DEVELOPPEMENT » → « Business developpement » (sigles gardés). */
-const displayName = (name: string) => calmShouting(name);
+export const displayName = (name: string) => calmShouting(name);
 
 /* ------------------------------------------------------------------ */
 /* Bande des dernières notes                                            */

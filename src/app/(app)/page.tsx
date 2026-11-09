@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
+import { connection } from "next/server";
 import { getWeekTimetable, mondayKey, toDateKey, type DayTimetable } from "@/lib/pronote/timetable";
-import { getContentAnchors } from "@/lib/pronote/resources";
-import { formatDay } from "@/lib/format";
-import { DayCard, DayCardSkeleton } from "@/components/day-card";
+import { mergeConsecutive } from "@/lib/timetable-layout";
+import { SCHOOL_TIME_ZONE } from "@/lib/time-zone";
 import { NextClass, type UpcomingClass } from "@/components/next-class";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
@@ -24,7 +24,15 @@ import { QuickActions } from "@/components/dashboard/quick-actions";
 // pour que `order` puisse entrelacer leurs blocs dans une seule pile.
 export default function Home() {
   return (
-    <Screen title="Aujourd'hui" width="wide">
+    <Screen
+      title="Aujourd'hui"
+      width="wide"
+      subtitle={
+        <Suspense fallback={<span aria-hidden>&nbsp;</span>}>
+          <TodayDate />
+        </Suspense>
+      }
+    >
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start lg:gap-8">
         <div className="contents lg:flex lg:flex-col lg:gap-6">
           <DashboardSection
@@ -72,31 +80,30 @@ async function Today() {
     );
   }
 
-  const isToday = data.day?.date === data.todayKey;
   return (
     <div className="flex flex-col gap-4">
-      <NextClass classes={data.upcoming} serverNow={data.now} />
+      <NextClass classes={data.upcoming} serverNow={data.now} hadClassesToday={data.hadClassesToday} />
       <QuickActions />
-      {data.day && (
-        <DayCard
-          day={data.day}
-          isToday={isToday}
-          title={isToday ? undefined : `Prochain jour de cours · ${formatDay(data.day.date)}`}
-          contentAnchors={data.contentAnchors}
-        />
-      )}
     </div>
   );
 }
 
+const todayFmt = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: SCHOOL_TIME_ZONE });
+
+/** « Lundi 9 novembre », au-dessus du titre. Lue à la requête (pas figée au prérendu). */
+async function TodayDate() {
+  await connection();
+  const s = todayFmt.format(new Date());
+  return <>{s.charAt(0).toUpperCase() + s.slice(1)}</>;
+}
+
 /**
- * Prochains cours non annulés et journée à afficher : aujourd'hui s'il reste un cours,
- * sinon le prochain jour de cours (demain, lundi…). `null` si Pronote ne répond pas.
+ * Prochains cours non annulés (aujourd'hui, puis les jours suivants), séances identiques à la suite
+ * fusionnées. `null` si Pronote ne répond pas.
  */
 async function loadToday() {
   const now = Date.now();
   const todayKey = toDateKey(new Date(now));
-  const anchorsPromise = getContentAnchors(mondayKey(0)); // en parallèle, non bloquant
   let days: DayTimetable[];
   try {
     days = (await getWeekTimetable(mondayKey(0))).days;
@@ -106,38 +113,32 @@ async function loadToday() {
   }
 
   const upcomingIn = (list: DayTimetable[], weekOffset: number): UpcomingClass[] =>
-    list
-      .flatMap((d) => d.classes)
-      .filter((c) => !c.canceled && Date.parse(c.end) > now)
+    mergeConsecutive(list.flatMap((d) => d.classes).filter((c) => !c.canceled))
+      .filter((c) => Date.parse(c.end) > now)
       .map((c) => ({ ...c, weekOffset }));
 
+  const hadClassesToday = days.some((d) => d.date === todayKey && d.classes.some((c) => !c.canceled));
   let upcoming = upcomingIn(days, 0);
-  let contentAnchors = await anchorsPromise;
 
   // Plus rien cette semaine (vendredi soir, week-end) : on regarde la semaine suivante.
   if (upcoming.length === 0) {
     try {
       const nextWeek = (await getWeekTimetable(mondayKey(1))).days;
       upcoming = upcomingIn(nextWeek, 1);
-      days = nextWeek;
-      contentAnchors = new Set(); // pas encore de contenu pour des cours à venir
     } catch (error) {
       console.error("[pronote]", error); // non bloquant : l'encart ne s'affiche simplement pas
     }
   }
 
-  const nextDayKey = upcoming[0] ? toDateKey(new Date(upcoming[0].start)) : todayKey;
-  const day = days.find((d) => d.date === nextDayKey) ?? days.find((d) => d.date === todayKey);
-
-  return { now, todayKey, day, upcoming: upcoming.slice(0, 12), contentAnchors };
+  return { now, hadClassesToday, upcoming: upcoming.slice(0, 12) };
 }
 
 function TodaySkeleton() {
   return (
     <div className="flex flex-col gap-4">
-      <div className="h-[164px] animate-pulse rounded-xl bg-surface-sunken" aria-busy="true" aria-label="Chargement" />
+      <div className="h-[132px] animate-pulse rounded-xl bg-surface-sunken" aria-busy="true" aria-label="Chargement" />
+      <div className="h-[176px] animate-pulse rounded-lg bg-surface-sunken" aria-hidden />
       <QuickActions />
-      <DayCardSkeleton />
     </div>
   );
 }
