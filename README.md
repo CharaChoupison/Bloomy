@@ -40,6 +40,7 @@ L'application est disponible sur [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Build de production |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Vérification TypeScript |
+| `npm test` | Tests unitaires (runner intégré de Node, sans dépendance) |
 
 > `npm install` applique automatiquement un petit correctif à Pawnote (`scripts/patch-pawnote.mjs`).
 

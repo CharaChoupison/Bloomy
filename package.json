@@ -10,7 +10,8 @@
     "generate-secret": "node scripts/generate-secret.mjs",
     "typecheck": "tsc --noEmit",
     "postinstall": "node scripts/patch-pawnote.mjs",
-    "generate-icons": "node scripts/generate-icons.mjs"
+    "generate-icons": "node scripts/generate-icons.mjs",
+    "test": "TZ=Europe/Paris node --import ./scripts/test-resolve.mjs --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"src/**/*.test.ts\""
   },
   "dependencies": {
     "@literate.ink/utilities": "1.0.0-10641118381.1",
