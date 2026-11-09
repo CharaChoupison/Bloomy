@@ -2,8 +2,8 @@
 
 /*
  * Design tokens Bloomy — source : le Design System « Bloomy » (tokens.json).
- * - Thème : clair par défaut, sombre via prefers-color-scheme ou data-theme="dark" sur <html>
- *   (data-theme="light" force le clair). Posé avant l'affichage par le script de app/layout.tsx.
+ * - Thème : clair par défaut, sombre via data-scheme="dark" sur <html> (thème choisi, ou celui de
+ *   l'appareil en Automatique). Posé avant l'affichage par le script de app/layout.tsx.
  * - Accent : choisi par l'élève via data-accent sur <html>. Le code n'utilise que
  *   accent / accent-soft / on-accent, jamais accent-violet & co directement.
  */
@@ -73,61 +73,12 @@
     --accent-soft: var(--accent-bleu-soft);
   }
 
-  /* Sombre : suit l'appareil sauf si l'élève a forcé le clair… */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --bg: #0b0b0d;
-      --surface: #17171a;
-      --surface-sunken: #222226;
-      --ink: #f2f2f4;
-      --ink-muted: #9a9aa3;
-      --line: #2a2a30;
-      --line-strong: #70707a;
-      --overlay: rgba(0, 0, 0, 0.6);
-      --on-accent: #0b0b0d;
-      --accent-bleu: #86aefc;
-      --accent-bleu-soft: #172440;
-      --accent-violet: #b9a2fb;
-      --accent-violet-soft: #231b3c;
-      --accent-framboise: #f58fbc;
-      --accent-framboise-soft: #3a1526;
-      --accent-ocean: #5cc8e6;
-      --accent-ocean-soft: #0d2832;
-      --accent-sapin: #4fd1be;
-      --accent-sapin-soft: #0f2b28;
-      --accent-graphite: #d4d4d8;
-      --accent-graphite-soft: #27272b;
-      --danger: #ffa071;
-      --danger-soft: #3d1a0c;
-      --warn: #f5c46b;
-      --warn-soft: #3a2a0a;
-      --test: #c9b6ff;
-      --test-soft: #2b1f4d;
-      --success: #6fdc95;
-      --success-soft: #10301c;
-      --neutral: #b4b4bd;
-      --neutral-soft: #27272b;
-      --shadow-float-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
-    --shadow-card-value: 0 0 0 1px var(--line);
-    --hero-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%);
-
-    --subject-bleu: #7fa9ff; --subject-bleu-soft: #172443;
-    --subject-violet: #b99eff; --subject-violet-soft: #261b45;
-    --subject-rose: #f590bf; --subject-rose-soft: #3d1428;
-    --subject-corail: #ff9d7a; --subject-corail-soft: #3d1a10;
-    --subject-ambre: #f3b54f; --subject-ambre-soft: #352208;
-    --subject-olive: #a6d45a; --subject-olive-soft: #222f10;
-    --subject-vert: #62d28e; --subject-vert-soft: #0f2e1c;
-    --subject-turquoise: #4fd1be; --subject-turquoise-soft: #0f2b28;
-    --subject-ciel: #62bff0; --subject-ciel-soft: #0b2636;
-    --subject-brun: #d8a985; --subject-brun-soft: #2e2018;
-    --subject-ardoise: #afbac6; --subject-ardoise-soft: #232a31;
-    }
-  }
-
-  /* …ou si l'élève a choisi « Sombre ». (Mêmes valeurs que ci-dessus.) */
-  :root[data-theme="dark"] {
+  /*
+   * Sombre : data-scheme="dark" est posé avant l'affichage par le script de app/layout.tsx
+   * (lib/preferences.ts), que le thème soit forcé ou qu'il suive l'appareil. Un seul bloc de
+   * valeurs, donc rien à garder synchronisé.
+   */
+  :root[data-scheme="dark"] {
     color-scheme: dark;
     --bg: #0b0b0d;
     --surface: #17171a;
