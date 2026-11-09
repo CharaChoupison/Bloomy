@@ -19,8 +19,15 @@ export function parsePrefs(value: unknown): PushPrefs {
   return { grades: pick("grades"), assignments: pick("assignments"), timetable: pick("timetable"), showValues: pick("showValues") };
 }
 
-/** Dernier état connu : identifiants des notes et devoirs, et état de chaque cours à venir. */
-export type Snapshot = { grades: string[]; assignments: string[]; classes: Record<string, string> };
+/**
+ * Dernier état connu : identifiants des notes et devoirs, et état de chaque cours à venir.
+ * `gradeIds: 2` : identifiants de notes stables (lib/grade-key.ts). Un instantané plus ancien porte
+ * les identifiants Pronote, qui ne se comparent pas aux nouveaux.
+ */
+export type Snapshot = { grades: string[]; assignments: string[]; classes: Record<string, string>; gradeIds?: 2 };
+
+/** Identifiants gardés en mémoire : plus qu'une année de notes ou de devoirs, mais borné. */
+const KEEP = 1000;
 
 export type CheckInput = {
   grades: { id: string; subject: string; value?: string }[];
@@ -62,17 +69,20 @@ export function computeChanges(
   input: CheckInput,
   prefs: PushPrefs,
 ): { messages: PushMessage[]; snapshot: Snapshot } {
+  const comparableGrades = prev?.gradeIds === 2;
   const snapshot: Snapshot = {
-    grades: input.grades.map((g) => g.id),
-    // On garde aussi les devoirs déjà connus : un devoir qui sort de la fenêtre puis y revient n'est pas « nouveau ».
-    assignments: [...new Set([...(prev?.assignments ?? []), ...input.assignments.map((a) => a.id)])].slice(-500),
+    // On garde aussi ce qui est déjà connu : une note ou un devoir qui disparaît un moment (changement
+    // de période, fenêtre de dates, réponse partielle de Pronote) puis revient n'est pas « nouveau ».
+    grades: [...new Set([...(comparableGrades ? prev.grades : []), ...input.grades.map((g) => g.id)])].slice(-KEEP),
+    assignments: [...new Set([...(prev?.assignments ?? []), ...input.assignments.map((a) => a.id)])].slice(-KEEP),
     classes: Object.fromEntries(input.classes.map((c) => [c.id, classState(c)])),
+    gradeIds: 2,
   };
   if (!prev) return { messages: [], snapshot };
 
   const messages: PushMessage[] = [];
 
-  if (prefs.grades) {
+  if (prefs.grades && comparableGrades) {
     const known = new Set(prev.grades);
     const fresh = input.grades.filter((g) => !known.has(g.id));
     if (fresh.length >= GROUP_FROM) {

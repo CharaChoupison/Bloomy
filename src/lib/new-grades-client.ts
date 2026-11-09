@@ -6,8 +6,10 @@ import { mergeSeen, parseIds, parseStamps, type GradeStamp } from "./new-grades"
 // Mémoire des notes vues, propre à l'appareil (localStorage) : rien n'est envoyé au serveur.
 // - SEEN : identifiants des notes déjà vues dans l'écran Notes ;
 // - KNOWN : les dernières notes connues (période en cours), pour la pastille de l'onglet Notes.
-const SEEN_KEY = "bloomy:grades-seen";
-const KNOWN_KEY = "bloomy:grades-known";
+// « -v2 » : identifiants stables (lib/grade-key.ts) ; les anciennes listes, aux identifiants
+// Pronote, ne correspondent plus à rien et sont abandonnées (retour à la règle de la date).
+const SEEN_KEY = "bloomy:grades-seen-v2";
+const KNOWN_KEY = "bloomy:grades-known-v2";
 
 const listeners = new Set<() => void>();
 

@@ -15,7 +15,7 @@ describe("computeChanges", () => {
   it("première vérification : un instantané, aucune notification", () => {
     const { messages, snapshot } = computeChanges(null, base, DEFAULT_PREFS);
     assert.deepEqual(messages, []);
-    assert.deepEqual(snapshot, { grades: ["g1"], assignments: ["a1"], classes: { c1: "" } });
+    assert.deepEqual(snapshot, { grades: ["g1"], assignments: ["a1"], classes: { c1: "" }, gradeIds: 2 });
   });
 
   it("nouvelle note : matière seule par défaut, valeur si l'élève l'a demandé", () => {
@@ -48,6 +48,21 @@ describe("computeChanges", () => {
     assert.deepEqual(computeChanges(prev, next, DEFAULT_PREFS).messages, [
       { title: "Nouveau devoir en Economie", body: "Pour demain", url: "/devoirs", tag: "devoir-a2" },
     ]);
+  });
+
+  it("une note qui disparaît puis revient n'est pas renotifiée", () => {
+    const prev = computeChanges(null, base, DEFAULT_PREFS).snapshot;
+    const gone = computeChanges(prev, { ...base, grades: [] }, DEFAULT_PREFS);
+    assert.deepEqual(gone.messages, []);
+    assert.deepEqual(computeChanges(gone.snapshot, base, DEFAULT_PREFS).messages, []);
+  });
+
+  it("ancien instantané (identifiants Pronote) : pas de rafale, juste une remise à niveau", () => {
+    const old = { grades: ["123#xyz"], assignments: ["a1"], classes: { c1: "" } };
+    const { messages, snapshot } = computeChanges(old, base, DEFAULT_PREFS);
+    assert.deepEqual(messages, []);
+    assert.deepEqual(snapshot.grades, ["g1"]);
+    assert.equal(snapshot.gradeIds, 2);
   });
 
   it("cours annulé ou modifié, seulement s'il était déjà connu", () => {

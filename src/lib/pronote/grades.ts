@@ -4,6 +4,7 @@ import { gradesOverview, TabLocation, type GradeValue as PawnoteGradeValue } fro
 import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
 import { viewerTag } from "./cache-tags";
+import { stableGradeIds } from "@/lib/grade-key";
 
 // Objets "plats" et sérialisables (pas de Date ni d'objet Pawnote), comme pour l'emploi du temps.
 
@@ -85,9 +86,22 @@ export async function loadGrades(viewerId: string, periodId?: string): Promise<G
     // Les notes ne portent pas la couleur de la matière : on la reprend des moyennes.
     const colors = new Map(overview.subjectsAverages.map((s) => [s.subject.id, s.backgroundColor]));
 
+    // L'identifiant Pronote peut changer d'une session à l'autre : voir lib/grade-key.ts.
+    const ids = stableGradeIds(
+      overview.grades.map((g) => ({
+        date: g.date.toISOString(),
+        subject: g.subject.name,
+        comment: g.comment,
+        outOf: g.outOf,
+        coefficient: g.coefficient,
+        isBonus: g.isBonus,
+        isOptional: g.isOptional,
+      })),
+    );
+
     const grades: GradeItem[] = overview.grades
-      .map((g) => ({
-        id: g.id,
+      .map((g, i) => ({
+        id: ids[i],
         date: g.date.toISOString(),
         subjectId: g.subject.id,
         subject: g.subject.name,
