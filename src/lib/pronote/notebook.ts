@@ -16,6 +16,10 @@ export type AbsenceItem = {
   end: string;
   /** Durée lisible : "2 h 30", "1 jour"… */
   duration: string;
+  /** Temps de cours manqué en minutes (0 si Pronote ne donne que des jours). */
+  minutes: number;
+  /** Jours concernés selon Pronote : seule mesure quand les heures manquent. */
+  days: number;
   justified: boolean;
   toJustify: boolean;
   reason?: string;
@@ -54,13 +58,39 @@ export type NotebookView = {
   punishments: PunishmentItem[];
   observations: ObservationItem[];
   measures: MeasureItem[];
-  totals: { absenceHours: number; absenceMinutes: number; absenceDays: number; delayMinutes: number };
 };
 
 /**
  * Durée d'une absence. Pronote renvoie à la fois les « jours concernés » et les heures manquées
  * (une absence de 2 h compte pour 1 jour) : on privilégie les heures, plus parlantes.
  */
+/** Minutes → "15 min", "2 h", "2 h 15". */
+export function formatMinutes(total: number): string {
+  return total < 60 ? `${total} min` : formatDuration(0, Math.floor(total / 60), total % 60);
+}
+
+/**
+ * Temps de cours manqué sur la période : absences + retards. Un retard qui tombe pendant une absence
+ * (même cours compté deux fois par Pronote) n'est pas ajouté. Les absences sans horaire (jours seuls)
+ * ne sont pas converties en heures : elles sont rendues à part, en jours.
+ */
+export function missedTime(absences: AbsenceItem[], delays: DelayItem[]) {
+  const absenceMinutes = absences.reduce((s, a) => s + a.minutes, 0);
+  const daysOnly = absences.filter((a) => a.minutes === 0).reduce((s, a) => s + a.days, 0);
+  const counted = delays.filter(
+    (d) => !absences.some((a) => a.start <= d.date && d.date < a.end),
+  );
+  const delayMinutes = counted.reduce((s, d) => s + d.minutes, 0);
+  return {
+    absenceMinutes,
+    delayMinutes,
+    /** Minutes de retard écartées car déjà comprises dans une absence. */
+    overlapMinutes: delays.reduce((s, d) => s + d.minutes, 0) - delayMinutes,
+    totalMinutes: absenceMinutes + delayMinutes,
+    daysOnly,
+  };
+}
+
 export function formatDuration(days: number, hours: number, minutes: number): string {
   if (hours > 0) return `${hours} h${minutes ? ` ${String(minutes).padStart(2, "0")}` : ""}`;
   if (minutes > 0) return `${minutes} min`;
@@ -100,6 +130,8 @@ async function getNotebookFor(viewerId: string, periodId?: string): Promise<Note
       start: a.startDate.toISOString(),
       end: a.endDate.toISOString(),
       duration: formatDuration(a.daysMissed || 0, a.hoursMissed || 0, a.minutesMissed || 0),
+      minutes: (a.hoursMissed || 0) * 60 + (a.minutesMissed || 0),
+      days: a.daysMissed || 0,
       justified: a.justified,
       toJustify: !a.justified && a.shouldParentsJustify,
       reason: reasonOf(a.isReasonUnknown, a.reason),
@@ -150,12 +182,6 @@ async function getNotebookFor(viewerId: string, periodId?: string): Promise<Note
           reasons: m.reasons.filter(Boolean),
         }))
         .sort(newestFirst),
-      totals: {
-        absenceDays: nb.absences.reduce((s, a) => s + (a.daysMissed || 0), 0),
-        absenceHours: nb.absences.reduce((s, a) => s + (a.hoursMissed || 0), 0),
-        absenceMinutes: nb.absences.reduce((s, a) => s + (a.minutesMissed || 0), 0),
-        delayMinutes: nb.delays.reduce((s, d) => s + (d.minutes || 0), 0),
-      },
     };
   });
 }
