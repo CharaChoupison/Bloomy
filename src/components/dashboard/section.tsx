@@ -19,7 +19,7 @@ export function DashboardSection({
   children: React.ReactNode;
 }) {
   return (
-    <section aria-labelledby={id} className={`flex min-w-0 flex-col gap-2 ${className}`}>
+    <section aria-labelledby={id} className={`flex min-w-0 flex-col gap-2 [&>*:not(:first-child)]:animate-[rise_360ms_var(--ease-spring)_backwards] ${className}`}>
       <div className="flex min-h-touch items-center justify-between gap-3">
         <h2 id={id} className="text-headline">
           {title}

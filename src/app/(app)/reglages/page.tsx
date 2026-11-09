@@ -46,7 +46,7 @@ export default function SettingsPage() {
           <h2 id="application" className="text-headline">
             Application
           </h2>
-          <Link href="/reglages/widget" className="flex min-h-touch items-center gap-3 card px-4 py-3 hover:bg-bg">
+          <Link href="/reglages/widget" className="flex min-h-touch items-center gap-3 card px-4 py-3 pressable hover:bg-bg">
             <SmartphoneIcon className="text-ink-muted" />
             <span className="min-w-0 flex-1">
               <span className="block text-body font-medium">Widget iPhone</span>

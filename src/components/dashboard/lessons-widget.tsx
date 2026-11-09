@@ -39,7 +39,7 @@ export async function LessonsWidget({ className }: { className?: string }) {
       )}
       <Link
         href="/ressources"
-        className="flex min-h-touch items-center gap-3 card px-4 py-2 transition-colors hover:bg-bg"
+        className="flex min-h-touch items-center gap-3 card px-4 py-2 pressable hover:bg-bg"
       >
         <FolderOpenIcon className="text-accent" />
         <span className="min-w-0 flex-1">

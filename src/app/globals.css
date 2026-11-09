@@ -335,6 +335,108 @@ html.theme-transition *::after {
   }
 }
 
+/*
+ * ── Mouvement ──────────────────────────────────────────────────────────────
+ * Règles communes : une animation explique un changement (ce qui arrive, ce qui s'ouvre, ce
+ * qu'on vient de toucher), jamais pour décorer. Courte (≤ 360 ms à l'entrée, 160 ms au toucher),
+ * ressort --ease-spring, rebond --ease-bounce réservé aux confirmations. Coupée si l'appareil
+ * demande moins d'animations (voir en bas du fichier).
+ */
+
+/* Les blocs <details> (cartes de matière, couleurs des matières) s'ouvrent en dépliant leur hauteur.
+   Amélioration progressive : sans ::details-content, ils s'ouvrent d'un coup comme avant. */
+:root {
+  interpolate-size: allow-keywords;
+}
+
+details::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 280ms var(--ease-spring),
+    content-visibility 280ms allow-discrete;
+}
+
+details[open]::details-content {
+  block-size: auto;
+}
+
+/* Arrivée d'un élément : fondu + légère montée. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+/* Une liste dont les éléments arrivent l'un après l'autre (40 ms d'écart, plafonné à 8). */
+@utility stagger {
+  & > * {
+    animation: rise 360ms var(--ease-spring) backwards;
+  }
+  & > :nth-child(2) { animation-delay: 40ms; }
+  & > :nth-child(3) { animation-delay: 80ms; }
+  & > :nth-child(4) { animation-delay: 120ms; }
+  & > :nth-child(5) { animation-delay: 160ms; }
+  & > :nth-child(6) { animation-delay: 200ms; }
+  & > :nth-child(7) { animation-delay: 240ms; }
+  & > :nth-child(n + 8) { animation-delay: 280ms; }
+}
+
+/* Élément touchable (carte, raccourci) : s'enfonce légèrement sous le doigt. */
+@utility pressable {
+  transition-property: scale, color, background-color, border-color, filter;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-spring);
+  -webkit-tap-highlight-color: transparent;
+  &:active {
+    scale: 0.97;
+  }
+}
+
+/* Réglette / barre de progression : se remplit depuis la gauche. Dans un <details> fermé,
+   l'animation attend l'ouverture (elle part quand la propriété passe de « none » à sa valeur). */
+@keyframes grow-x {
+  from {
+    scale: 0 1;
+  }
+}
+
+@utility grow-x {
+  transform-origin: left center;
+  animation: grow-x 700ms var(--ease-spring) 120ms backwards;
+}
+
+/* Graphique : se dévoile de gauche à droite, comme si la courbe se traçait. */
+@keyframes reveal-x {
+  from {
+    clip-path: inset(-8px 100% -8px -8px);
+  }
+  to {
+    clip-path: inset(-8px -8px -8px -8px);
+  }
+}
+
+@utility reveal-x {
+  animation: reveal-x 700ms var(--ease-enter) 150ms backwards;
+}
+
+details:not([open]) :is(.grow-x, .reveal-x) {
+  animation: none;
+}
+
+/* Confirmation (case cochée) : la coche apparaît avec un petit rebond. */
+@keyframes pop {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+
+@utility pop {
+  animation: pop 320ms var(--ease-bounce) both;
+}
+
 /* Barre d'onglets : monte depuis le bas au premier affichage. */
 @keyframes tabbar-in {
   from {
@@ -408,6 +510,7 @@ html.theme-transition *::after {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }

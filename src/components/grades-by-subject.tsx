@@ -67,7 +67,7 @@ export function RecentGrades({ grades }: { grades: GradeItem[] }) {
       <h2 id="dernieres-notes" className="text-headline">
         Dernières notes
       </h2>
-      <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0">
+      <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 stagger [scrollbar-width:none] sm:mx-0 sm:px-0">
         {recent.map((g) => {
           const isNew = isRecent(g.date);
           const eq = on20(g.value, g.outOf);
@@ -175,7 +175,7 @@ function GradeBar({ value, outOf, classAverage }: { value: GradeValue; outOf: Gr
     <div className="relative mt-2.5 h-3" aria-hidden>
       <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--subject-soft,var(--surface-sunken))" />
       <div
-        className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-(--subject,var(--ink))"
+        className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-(--subject,var(--ink)) grow-x"
         style={{ width: `${pct(value)}%` }}
       />
       {isNumeric(classAverage) && (
@@ -271,7 +271,7 @@ function GradeTrend({ grades, subject }: { grades: GradeItem[]; subject: string 
           <span className="translate-y-1/2">0</span>
         </div>
 
-        <div className="relative h-28 flex-1" aria-hidden>
+        <div className="relative h-28 flex-1 reveal-x" aria-hidden>
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full overflow-visible">
             {[0, 50, 100].map((y) => (
               <line key={y} x1="0" x2="100" y1={y} y2={y} stroke="var(--line)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
@@ -350,7 +350,7 @@ function SubjectCard({ group }: { group: SubjectGroup }) {
   return (
     <li data-subject={group.key} data-subject-name={group.name} className="overflow-hidden card">
       <details className="group">
-        <summary className="flex cursor-pointer list-none gap-3 px-4 py-3.5 hover:bg-bg [&::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer list-none gap-3 px-4 py-3.5 transition-colors duration-150 hover:bg-bg active:bg-bg [&::-webkit-details-marker]:hidden">
           <div aria-hidden className="w-1 shrink-0 self-stretch rounded-full bg-(--subject,var(--line))" />
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-3">
@@ -409,7 +409,7 @@ export function SubjectCards({ groups }: { groups: SubjectGroup[] }) {
       <h2 id="matieres" className="text-headline">
         Matières
       </h2>
-      <ul className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
+      <ul className="flex flex-col gap-3 stagger lg:grid lg:grid-cols-2 lg:items-start">
         {groups.map((g) => (
           <SubjectCard key={g.subjectId} group={g} />
         ))}

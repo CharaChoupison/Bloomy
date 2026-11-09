@@ -32,11 +32,14 @@ export function AssignmentRow({ a }: { a: AssignmentItem }) {
   const [done, setDone] = useOptimistic(a.done);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string>();
+  // La coche rebondit seulement quand l'élève coche (pas pour les devoirs déjà faits à l'affichage).
+  const [touched, setTouched] = useState(false);
   const inputId = `devoir-${a.id}`;
 
   const toggle = () => {
     const next = !done;
     setError(undefined);
+    setTouched(true);
     startTransition(async () => {
       setDone(next);
       const result = await setAssignmentDone(a.id, next);
@@ -53,7 +56,7 @@ export function AssignmentRow({ a }: { a: AssignmentItem }) {
       {/* Case de 24px dans une cible de 44px. */}
       <label
         htmlFor={inputId}
-        className="-my-2.5 -ml-2.5 flex size-touch shrink-0 cursor-pointer items-center justify-center rounded-md has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-[-4px] has-[:focus-visible]:outline-accent"
+        className="group/check -my-2.5 -ml-2.5 flex size-touch shrink-0 cursor-pointer items-center justify-center rounded-md has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-[-4px] has-[:focus-visible]:outline-accent"
       >
         <input
           id={inputId}
@@ -67,11 +70,11 @@ export function AssignmentRow({ a }: { a: AssignmentItem }) {
         />
         <span
           aria-hidden
-          className={`grid size-6 place-items-center rounded-[6px] border-2 transition-colors duration-200 ${
+          className={`grid size-6 place-items-center rounded-[6px] border-2 transition-[color,background-color,border-color,scale] duration-200 ease-(--ease-spring) group-active/check:scale-90 ${
             done ? "border-success bg-success-soft text-success" : "border-line-strong bg-surface"
           } ${pending ? "opacity-60" : ""}`}
         >
-          {done && <CheckIcon size={16} strokeWidth={3} />}
+          {done && <CheckIcon size={16} strokeWidth={3} className={touched ? "pop" : undefined} />}
         </span>
       </label>
 

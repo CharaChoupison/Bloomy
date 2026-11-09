@@ -51,7 +51,7 @@ export function NextClass({ classes, serverNow }: { classes: UpcomingClass[]; se
   if (dayKey(start) !== dayKey(now)) {
     // Plus de cours aujourd'hui : même gabarit, mais neutre — l'accent est réservé à ce qui arrive maintenant.
     return (
-      <Link href={href} className="flex items-center gap-4 card px-5 py-5 transition-colors hover:bg-bg">
+      <Link href={href} className="flex items-center gap-4 card px-5 py-5 pressable hover:bg-bg">
         <div className="min-w-0 flex-1">
           <p className="text-callout font-medium text-ink-muted">Fini pour aujourd&apos;hui · {dayLabel(start, now)}</p>
           <p className="mt-2 text-hero tabular-nums">{formatTime(next.start)}</p>
@@ -77,7 +77,7 @@ export function NextClass({ classes, serverNow }: { classes: UpcomingClass[]; se
   return (
     <Link
       href={href}
-      className="flex flex-col gap-4 card-hero px-5 py-5 transition-[filter] duration-[120ms] hover:brightness-105"
+      className="flex flex-col gap-4 card-hero px-5 py-5 pressable hover:brightness-105"
     >
       <div className="flex items-start gap-4">
         <div className="min-w-0 flex-1">

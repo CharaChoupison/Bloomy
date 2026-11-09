@@ -105,7 +105,7 @@ export function OverallCard({
       <div className="relative mt-4 h-3" aria-hidden>
         <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-current/25" />
         <div
-          className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-current"
+          className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-current grow-x"
           style={{ width: `${pct(overall)}%` }}
         />
         {isNumeric(classOverall) && (
