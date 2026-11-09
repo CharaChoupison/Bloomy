@@ -188,6 +188,153 @@ function GradeBar({ value, outOf, classAverage }: { value: GradeValue; outOf: Gr
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Évolution des notes d'une matière                                    */
+/* ------------------------------------------------------------------ */
+
+type TrendPoint = { x: number; y: number; label: string };
+
+/** Valeur ramenée sur 20 (pour comparer des barèmes différents sur un même axe). */
+function to20(v: GradeValue | undefined, outOf: GradeValue): number | undefined {
+  if (!isNumeric(v) || !isNumeric(outOf) || outOf.points <= 0) return undefined;
+  return Math.min(20, Math.max(0, (v.points / outOf.points) * 20));
+}
+
+const fmt20 = (v: number) => formatPoints({ kind: 0, points: Math.round(v * 100) / 100 }) ?? "";
+
+/**
+ * Courbe des notes de la matière dans le temps, ramenées sur 20, avec la moyenne de la classe
+ * à chaque devoir (pointillés). Ce sont les notes elles-mêmes, pas une moyenne recalculée.
+ * - Axe unique 0–20, grille discrète ; position horizontale proportionnelle à la date.
+ * - Toi = trait plein + points dans la couleur de la matière ; Classe = pointillés gris :
+ *   l'identité ne repose jamais sur la couleur seule, et la légende est écrite.
+ * - La liste des notes juste en dessous sert de tableau ; le graphique a un résumé pour les lecteurs d'écran.
+ * Affiché à partir de deux notes chiffrées.
+ */
+function GradeTrend({ grades, subject }: { grades: GradeItem[]; subject: string }) {
+  const chrono = grades
+    .filter((g) => to20(g.value, g.outOf) !== undefined)
+    .sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+  if (chrono.length < 2) return null;
+
+  const t0 = Date.parse(chrono[0].date);
+  const span = Date.parse(chrono[chrono.length - 1].date) - t0;
+  // Marge de 4 % de chaque côté pour que les points du bord ne soient pas coupés.
+  const xOf = (g: GradeItem, i: number) =>
+    4 + 92 * (span > 0 ? (Date.parse(g.date) - t0) / span : i / (chrono.length - 1));
+  const yOf = (v: number) => 100 - (v / 20) * 100;
+
+  const me: TrendPoint[] = chrono.map((g, i) => {
+    const v = to20(g.value, g.outOf)!;
+    return { x: xOf(g, i), y: yOf(v), label: `${fmt20(v)}/20 · ${formatShortDate(g.date)}${g.comment ? ` · ${g.comment}` : ""}` };
+  });
+  const cls: TrendPoint[] = chrono.flatMap((g, i) => {
+    const v = to20(g.classAverage, g.outOf);
+    return v === undefined ? [] : [{ x: xOf(g, i), y: yOf(v), label: `Classe ${fmt20(v)}/20 · ${formatShortDate(g.date)}` }];
+  });
+  const line = (pts: TrendPoint[]) => pts.map((p) => `${p.x},${p.y}`).join(" ");
+  const last = me[me.length - 1];
+  const lastValue = to20(chrono[chrono.length - 1].value, chrono[chrono.length - 1].outOf)!;
+
+  const summary =
+    `Évolution de tes notes en ${subject}, ramenées sur 20 : ` +
+    chrono.map((g) => `${fmt20(to20(g.value, g.outOf)!)} le ${formatShortDate(g.date)}`).join(", ");
+
+  return (
+    <figure className="mx-4 mb-3 border-t border-line pt-3 pl-4">
+      <figcaption className="mb-3 flex items-center justify-between gap-3">
+        <span className="text-caption font-medium text-ink-muted">Évolution (sur 20)</span>
+        <span className="flex items-center gap-3 text-caption text-ink-muted" aria-hidden>
+          <span className="flex items-center gap-1.5">
+            <svg width="16" height="8" viewBox="0 0 16 8" className="overflow-visible">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="var(--subject, var(--ink))" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="8" cy="4" r="3" fill="var(--subject, var(--ink))" />
+            </svg>
+            Toi
+          </span>
+          {cls.length > 0 && (
+            <span className="flex items-center gap-1.5">
+              <svg width="16" height="8" viewBox="0 0 16 8">
+                <line x1="0" y1="4" x2="16" y2="4" stroke="var(--ink-muted)" strokeWidth="1.5" strokeDasharray="3 3" />
+              </svg>
+              Classe
+            </span>
+          )}
+        </span>
+      </figcaption>
+
+      <div role="img" aria-label={summary} className="flex gap-2">
+        {/* Graduations : 20, 10, 0 (texte en encre secondaire, jamais dans la couleur de la série). */}
+        <div className="flex h-28 flex-col justify-between py-0 text-label font-medium text-ink-muted tabular-nums" aria-hidden>
+          <span className="-translate-y-1/2">20</span>
+          <span>10</span>
+          <span className="translate-y-1/2">0</span>
+        </div>
+
+        <div className="relative h-28 flex-1" aria-hidden>
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 size-full overflow-visible">
+            {[0, 50, 100].map((y) => (
+              <line key={y} x1="0" x2="100" y1={y} y2={y} stroke="var(--line)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+            ))}
+            {cls.length > 1 && (
+              <polyline
+                points={line(cls)}
+                fill="none"
+                stroke="var(--ink-muted)"
+                strokeWidth="1.5"
+                strokeDasharray="4 4"
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            )}
+            <polyline
+              points={line(me)}
+              fill="none"
+              stroke="var(--subject, var(--ink))"
+              strokeWidth="2"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+
+          {/* Points en HTML (ils restent ronds quelle que soit la largeur) ; zone de survol de 24px. */}
+          {cls.map((p) => (
+            <span
+              key={`c${p.x}`}
+              title={p.label}
+              className="absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink-muted"
+              style={{ left: `${p.x}%`, top: `${p.y}%` }}
+            />
+          ))}
+          {me.map((p) => (
+            <span
+              key={`m${p.x}`}
+              title={p.label}
+              className="absolute grid size-6 -translate-x-1/2 -translate-y-1/2 place-items-center"
+              style={{ left: `${p.x}%`, top: `${p.y}%` }}
+            >
+              <span className="size-2.5 rounded-full bg-(--subject,var(--ink)) ring-2 ring-surface" />
+            </span>
+          ))}
+          {/* Étiquette directe sur le dernier point seulement. */}
+          <span
+            className="absolute text-label font-semibold text-ink tabular-nums"
+            style={{ left: `${Math.min(Math.max(last.x, 8), 92)}%`, top: `${last.y}%`, transform: `translate(-50%, ${last.y < 25 ? "8px" : "calc(-100% - 8px)"})` }}
+          >
+            {fmt20(lastValue)}
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-1.5 flex justify-between pl-7 text-label text-ink-muted" aria-hidden>
+        <span>{formatShortDate(chrono[0].date)}</span>
+        <span>{formatShortDate(chrono[chrono.length - 1].date)}</span>
+      </div>
+    </figure>
+  );
+}
+
 /**
  * Carte d'une matière. Fermée : moyenne, moyenne de la classe et notes en étiquettes.
  * Ouverte (touche) : chaque note avec son intitulé et ses repères. <details> natif : clavier et
@@ -241,6 +388,7 @@ function SubjectCard({ group }: { group: SubjectGroup }) {
             className="mt-1 shrink-0 text-ink-muted transition-transform duration-200 group-open:rotate-90"
           />
         </summary>
+        <GradeTrend grades={grades} subject={name} />
         {grades.length > 0 && (
           <ul className="mx-4 mb-1 divide-y divide-line border-t border-line pl-4">
             {grades.map((g) => (
