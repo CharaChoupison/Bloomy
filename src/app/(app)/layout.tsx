@@ -11,7 +11,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Suspense fallback={<SidebarView pathname="" />}>
         <Sidebar />
       </Suspense>
-      <div className="flex min-w-0 flex-1 flex-col pb-[calc(var(--spacing-tabbar)+var(--spacing-tabbar-gap)*2+env(safe-area-inset-bottom))] lg:pb-0">
+      <div className="flex min-w-0 flex-1 flex-col pb-[calc(var(--spacing-tabbar)+var(--spacing-tabbar-offset)+var(--spacing-tabbar-gap))] lg:pb-0">
         {children}
       </div>
       <Suspense fallback={<TabBarView pathname="" />}>

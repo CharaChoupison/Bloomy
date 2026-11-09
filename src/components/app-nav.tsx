@@ -33,7 +33,7 @@ export function TabBarView({ pathname, onNavigate }: { pathname: string; onNavig
     // qui épouse la forme de la barre. L'écart au bas suit la zone sûre (barre d'accueil iOS).
     <nav
       aria-label="Navigation principale"
-      className="[view-transition-name:tabbar] fixed inset-x-0 bottom-[max(var(--spacing-tabbar-gap),env(safe-area-inset-bottom))] z-10 mx-auto w-[min(460px,calc(100%-32px))] animate-[tabbar-in_360ms_var(--ease-spring)_180ms_backwards] rounded-full border border-line/80 bg-surface/85 p-1.5 shadow-float backdrop-blur-xl backdrop-saturate-150 lg:hidden"
+      className="[view-transition-name:tabbar] fixed inset-x-0 bottom-tabbar-offset z-10 mx-auto w-[min(460px,calc(100%-32px))] animate-[tabbar-in_360ms_var(--ease-spring)_180ms_backwards] rounded-full border border-line/80 bg-surface/85 p-1.5 shadow-float backdrop-blur-xl backdrop-saturate-150 lg:hidden"
     >
       <ul
         className="relative grid min-h-[calc(var(--spacing-tabbar)-14px)]"

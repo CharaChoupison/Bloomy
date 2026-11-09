@@ -263,6 +263,9 @@
   /* Barre d'onglets flottante (pilule) : hauteur + écart au bord bas de l'écran. */
   --spacing-tabbar: 72px;
   --spacing-tabbar-gap: 12px;
+  /* Écart réel au bas de l'écran : 12px, ou sur iPhone la barre descend dans la zone de la barre
+     d'accueil en gardant 14px au-dessus du trait (34px de zone sûre → 20px du bord). */
+  --spacing-tabbar-offset: max(var(--spacing-tabbar-gap), calc(env(safe-area-inset-bottom) - 14px));
   --spacing-sidebar: 240px;
   --container-content: 720px;
   /* Écrans en grille sur ordinateur (Accueil, Notes). */
