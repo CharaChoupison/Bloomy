@@ -6,19 +6,11 @@ import { subjectKey } from "@/lib/subject-colors";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRightIcon } from "@/components/icons";
 import { GradeFigure } from "@/components/grades";
+import { NewGradeLabel } from "@/components/new-grades";
 
 // Écran Notes organisé par matière : une carte par matière (sa moyenne + ses notes en étiquettes),
 // qui s'ouvre sur le détail. Les couleurs viennent de lib/subject-colors.ts (data-subject).
 // Pas de rouge / vert selon la note : on situe une note, on ne la juge pas.
-
-/** Une note est « nouvelle » pendant une semaine. */
-const NEW_FOR_MS = 7 * 24 * 60 * 60 * 1000;
-
-/**
- * Note de moins d'une semaine. Composants serveur rendus à chaque requête (la page lit ?periode=,
- * derrière <Suspense>) : l'heure est celle de l'affichage, pas celle du cache des notes.
- */
-export const isRecent = (iso: string) => Date.now() - Date.parse(iso) < NEW_FOR_MS;
 
 export type SubjectGroup = {
   key: string;
@@ -69,7 +61,6 @@ export function RecentGrades({ grades }: { grades: GradeItem[] }) {
       </h2>
       <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 stagger [scrollbar-width:none] sm:mx-0 sm:px-0">
         {recent.map((g) => {
-          const isNew = isRecent(g.date);
           const eq = on20(g.value, g.outOf);
           return (
             <li
@@ -82,7 +73,7 @@ export function RecentGrades({ grades }: { grades: GradeItem[] }) {
               <div className="flex flex-1 flex-col gap-1 px-3.5 pt-3 pb-3.5">
                 <p className="flex items-center justify-between gap-2 text-caption text-ink-muted">
                   <span>{formatShortDate(g.date)}</span>
-                  {isNew && <span className="font-semibold text-(--subject,var(--accent))">Nouveau</span>}
+                  <NewGradeLabel grades={[g]} />
                 </p>
                 <p aria-label={spokenGrade(g.value, g.outOf)}>
                   <GradeFigure value={g.value} outOf={g.outOf} />
@@ -344,8 +335,6 @@ function SubjectCard({ group }: { group: SubjectGroup }) {
   const { average: avg, grades } = group;
   const name = displayName(group.name);
   const cls = formatPoints(avg?.classAverage);
-  const latest = grades[0];
-  const isNew = latest && isRecent(latest.date);
 
   return (
     <li data-subject={group.key} data-subject-name={group.name} className="overflow-hidden card">
@@ -360,7 +349,7 @@ function SubjectCard({ group }: { group: SubjectGroup }) {
                   <span>
                     {grades.length} note{grades.length > 1 ? "s" : ""}
                   </span>
-                  {isNew && <span className="font-semibold text-(--subject,var(--accent))">· Nouveau</span>}
+                  <NewGradeLabel grades={grades} label="· Nouveau" />
                 </p>
               </div>
               <div className="shrink-0 text-right">

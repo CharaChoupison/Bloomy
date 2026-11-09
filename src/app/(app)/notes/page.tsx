@@ -5,6 +5,7 @@ import { verifySession } from "@/lib/auth/session";
 import { getGrades } from "@/lib/pronote/grades";
 import { OverallCard } from "@/components/grades";
 import { groupBySubject, RecentGrades, SubjectCards } from "@/components/grades-by-subject";
+import { GradesSeenTracker } from "@/components/new-grades";
 import { PeriodPicker } from "@/components/period-picker";
 import { Screen } from "@/components/screen";
 import { Banner, bannerActionClasses } from "@/components/ui/banner";
@@ -54,6 +55,7 @@ async function Grades({ searchParams }: Pick<PageProps<"/notes">, "searchParams"
         </EmptyState>
       ) : (
         <>
+          <GradesSeenTracker grades={view.grades.map(({ id, date }) => ({ id, date }))} current={periodId === undefined} markSeen />
           <OverallCard overall={view.overall} classOverall={view.classOverall} period={view.period.name} />
           <RecentGrades grades={view.grades} />
           <SubjectCards groups={groupBySubject(view.subjects, view.grades)} />

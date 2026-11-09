@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AppLogo } from "@/components/app-logo";
+import { NewGradesDot } from "@/components/new-grades";
 import { isActive, isPlusActive, MAIN_ITEMS, MORE_ITEMS, PLUS_ITEM, type NavItem } from "@/lib/navigation";
 
 // Chaque barre existe en deux temps : la vue (sans hook, sert aussi de rendu d'attente)
@@ -62,7 +63,10 @@ export function TabBarView({ pathname, onNavigate }: { pathname: string; onNavig
                 active ? "text-accent" : "text-ink-muted hover:text-ink"
               }`}
             >
-              <Icon />
+              <span className="relative">
+                <Icon />
+                {href === "/notes" && !active && <NewGradesDot className="absolute -top-0.5 -right-1" />}
+              </span>
               <span className="max-w-full truncate px-1">{label}</span>
             </Link>
           </li>
@@ -91,7 +95,8 @@ export function SidebarView({ pathname }: { pathname: string }) {
           }`}
         >
           <Icon />
-          {label}
+          <span className="flex-1">{label}</span>
+          {href === "/notes" && !active && <NewGradesDot />}
         </Link>
       </li>
     );

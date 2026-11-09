@@ -2,7 +2,8 @@ import { verifySession } from "@/lib/auth/session";
 import { getGrades, type GradesView } from "@/lib/pronote/grades";
 import { formatPoints, isNumeric, spokenGrade } from "@/lib/grades-format";
 import { GradeFigure, SubjectBar } from "@/components/grades";
-import { displayName, isRecent, on20 } from "@/components/grades-by-subject";
+import { displayName, on20 } from "@/components/grades-by-subject";
+import { GradesSeenTracker, NewGradeLabel } from "@/components/new-grades";
 import { formatShortDate } from "@/lib/format";
 import type { GradeItem } from "@/lib/pronote/grades";
 import { subjectKey } from "@/lib/subject-colors";
@@ -41,6 +42,7 @@ export async function GradesWidget({ className }: { className?: string }) {
 
   return (
     <Section className={className}>
+      <GradesSeenTracker grades={view.grades.map(({ id, date }) => ({ id, date }))} current />
       <div className="overflow-hidden card">
         {hasOverall && (
           <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
@@ -71,14 +73,13 @@ export async function GradesWidget({ className }: { className?: string }) {
 /** Une dernière note, compacte : couleur et nom de la matière, date, valeur (et son équivalent sur 20). */
 function LatestLine({ g }: { g: GradeItem }) {
   const eq = on20(g.value, g.outOf);
-  const isNew = isRecent(g.date);
   return (
     <li data-subject={subjectKey(g.subject)} className="flex items-center gap-3 px-4 py-2.5">
       <SubjectBar subject={g.subject} />
       <div className="min-w-0 flex-1">
         <p className="truncate text-callout font-semibold">{displayName(g.subject)}</p>
         <p className="truncate text-caption text-ink-muted">
-          {isNew && <span className="font-semibold text-(--subject,var(--accent))">Nouveau · </span>}
+          <NewGradeLabel grades={[g]} label="Nouveau · " />
           {formatShortDate(g.date)}
           {g.comment && ` · ${g.comment}`}
         </p>
