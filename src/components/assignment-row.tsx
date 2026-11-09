@@ -28,7 +28,16 @@ function formatLength(minutes: number): string {
  * si Pronote refuse), matière, consigne et infos utiles. Un devoir fait reste en place, grisé,
  * pour pouvoir le décocher : rien ne disparaît sous le doigt.
  */
-export function AssignmentRow({ a }: { a: AssignmentItem }) {
+export function AssignmentRow({
+  a,
+  onToggle,
+  note,
+}: {
+  a: AssignmentItem;
+  onToggle?: (id: string) => void;
+  /** Précision sous la matière (ex. l'échéance d'un devoir en retard). */
+  note?: string;
+}) {
   const [done, setDone] = useOptimistic(a.done);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string>();
@@ -40,6 +49,7 @@ export function AssignmentRow({ a }: { a: AssignmentItem }) {
     const next = !done;
     setError(undefined);
     setTouched(true);
+    onToggle?.(a.id);
     startTransition(async () => {
       setDone(next);
       const result = await setAssignmentDone(a.id, next);
@@ -82,6 +92,7 @@ export function AssignmentRow({ a }: { a: AssignmentItem }) {
 
       <div className={`min-w-0 flex-1 transition-opacity duration-200 ${done ? "opacity-60" : ""}`}>
         <p className="text-body font-semibold">{a.subject}</p>
+        {note && <p className="text-caption text-ink-muted">{note}</p>}
         {a.description && (
           <p className={`mt-0.5 text-callout break-words whitespace-pre-line ${done ? "line-through" : ""}`}>
             {a.description}
