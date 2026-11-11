@@ -110,7 +110,8 @@ export async function getNotebook(periodId?: string): Promise<NotebookView> {
   return getNotebookFor(viewer.id, periodId);
 }
 
-async function getNotebookFor(viewerId: string, periodId?: string): Promise<NotebookView> {
+/** Comme getNotebook(), pour un élève déjà authentifié (préchauffage, voir warmup.ts). */
+export async function getNotebookFor(viewerId: string, periodId?: string): Promise<NotebookView> {
   "use cache";
   cacheLife("minutes");
   cacheTag(viewerTag(viewerId));

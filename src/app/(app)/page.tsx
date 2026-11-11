@@ -3,6 +3,7 @@ import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
 import { connection } from "next/server";
 import { getWeekTimetable, mondayKey, toDateKey, type DayTimetable } from "@/lib/pronote/timetable";
+import { warmUpScreens } from "@/lib/pronote/warmup";
 import { mergeConsecutive } from "@/lib/timetable-layout";
 import { SCHOOL_TIME_ZONE } from "@/lib/time-zone";
 import { NextClass, type UpcomingClass } from "@/components/next-class";
@@ -62,8 +63,18 @@ export default function Home() {
           </Suspense>
         </div>
       </div>
+      <Suspense fallback={null}>
+        <WarmUp />
+      </Suspense>
     </Screen>
   );
+}
+
+/** Après l'envoi de l'accueil, remplit le cache des écrans voisins (Devoirs, Calendrier, Vie scolaire). */
+async function WarmUp() {
+  const viewer = await verifySession();
+  warmUpScreens(viewer.id);
+  return null;
 }
 
 async function Today() {

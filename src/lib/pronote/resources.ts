@@ -81,7 +81,7 @@ export async function getLessonContentsBetween(firstDay: string, lastDay: string
   return getLessonContentsBetweenFor(viewer.id, firstDay, lastDay);
 }
 
-async function getLessonContentsBetweenFor(viewerId: string, firstDay: string, lastDay: string): Promise<LessonSession[]> {
+export async function getLessonContentsBetweenFor(viewerId: string, firstDay: string, lastDay: string): Promise<LessonSession[]> {
   "use cache";
   cacheLife("minutes");
   cacheTag(viewerTag(viewerId));
