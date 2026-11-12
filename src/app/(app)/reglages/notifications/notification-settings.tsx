@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { DEFAULT_PREFS, type PushPrefs } from "@/lib/push/changes";
+import { detectPushSupport, subscribeDevice, type PushSupport } from "@/lib/push/client";
 import { AlertCircleIcon, CheckIcon } from "@/components/icons";
 import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import {
   type PushActionResult,
 } from "./actions";
 
-type Support = "checking" | "ok" | "unsupported" | "install" | "dev";
+type Support = "checking" | PushSupport;
 
 const PREF_ROWS: { key: keyof PushPrefs; label: string; hint: string }[] = [
   { key: "grades", label: "Nouvelles notes", hint: "Dès qu'une note est publiée" },
@@ -26,23 +27,6 @@ const PREF_ROWS: { key: keyof PushPrefs; label: string; hint: string }[] = [
     hint: "Visible sur l'écran verrouillé : désactivé par défaut",
   },
 ];
-
-function keyBytes(b64url: string): Uint8Array<ArrayBuffer> {
-  const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/");
-  const raw = atob(b64 + "=".repeat((4 - (b64.length % 4)) % 4));
-  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
-}
-
-function detectSupport(): Support {
-  if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
-    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    const standalone =
-      window.matchMedia("(display-mode: standalone)").matches || (navigator as { standalone?: boolean }).standalone === true;
-    // Sur iPhone, les notifications web n'existent que pour l'app ajoutée à l'écran d'accueil.
-    return ios && !standalone ? "install" : "unsupported";
-  }
-  return process.env.NODE_ENV === "production" ? "ok" : "dev";
-}
 
 /**
  * Réglages des notifications de CET appareil : activation (permission du navigateur + abonnement),
@@ -66,7 +50,7 @@ export function NotificationSettings({
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const s = detectSupport();
+      const s = detectPushSupport();
       let on = false;
       if (s === "ok") {
         const registration = await navigator.serviceWorker.getRegistration();
@@ -93,24 +77,13 @@ export function NotificationSettings({
   const enable = () => {
     setMessage(undefined);
     startTransition(async () => {
-      try {
-        // Demandée au moment du toucher : obligatoire sur iPhone, et c'est là que l'élève comprend pourquoi.
-        const permission = await Notification.requestPermission();
-        if (permission !== "granted") {
-          setDenied(permission === "denied");
-          setMessage({ tone: "error", text: "Notifications refusées. Tu peux les autoriser dans les réglages de l'appareil." });
-          return;
-        }
-        if (!publicKey) throw new Error("clé du serveur absente");
-        const registration = await navigator.serviceWorker.ready;
-        const current = await registration.pushManager.getSubscription();
-        const sub =
-          current ?? (await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) }));
-        if (report(await enableNotifications(sub.toJSON(), prefs), "Notifications activées sur cet appareil.")) setEnabled(true);
-      } catch (error) {
-        console.warn("[push]", error);
-        setMessage({ tone: "error", text: "Impossible d'activer les notifications sur cet appareil." });
+      const device = await subscribeDevice(publicKey);
+      if (!device.ok) {
+        setDenied(device.denied);
+        setMessage({ tone: "error", text: device.error });
+        return;
       }
+      if (report(await enableNotifications(device.subscription, prefs), "Notifications activées sur cet appareil.")) setEnabled(true);
     });
   };
 

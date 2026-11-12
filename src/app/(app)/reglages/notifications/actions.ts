@@ -69,3 +69,9 @@ export async function sendTestNotification(): Promise<PushActionResult> {
   }
   return result === "sent" ? { ok: true } : { ok: false, error: "Le service de notifications n'a pas répondu. Réessaie plus tard." };
 }
+
+/** Clé publique du serveur pour s'abonner (onboarding : la page ne la reçoit pas au rendu). */
+export async function getPushPublicKey(): Promise<string | null> {
+  if (!(await getViewer())) return null;
+  return (await getVapidKeys(await siteOrigin()))?.publicKey ?? null;
+}
