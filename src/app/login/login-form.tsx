@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { ShieldIcon } from "@/components/icons";
 import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
+import { PasswordField } from "@/components/ui/password-field";
 import { TextField } from "@/components/ui/text-field";
 import { NEXT_PARAM, nextPathFromSearch } from "@/lib/auth/next-path";
 import { login, type LoginField, type LoginState } from "./actions";
@@ -59,25 +61,27 @@ export function LoginForm({ askUrl, defaultUrl }: LoginFormProps) {
         error={errorFor("username")}
         autoFocus={focus === "username"}
       />
-      <TextField
+      <PasswordField
         label="Mot de passe Pronote"
         name="password"
-        type="password"
         autoComplete="current-password"
         required
         error={errorFor("password")}
         autoFocus={focus === "password"}
       />
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         <Button type="submit" variant="primary" block busy={pending}>
           {pending ? "Connexion…" : "Se connecter"}
         </Button>
-        <p className="text-caption text-ink-muted">
-          Ton mot de passe sert seulement à te connecter à Pronote : il n&apos;est jamais enregistré.{" "}
-          <Link href="/confidentialite" className="rounded-sm font-medium text-accent underline underline-offset-2">
-            Données et confidentialité
-          </Link>
+        <p className="flex items-start gap-2 text-caption text-ink-muted">
+          <ShieldIcon size={16} className="mt-px shrink-0" />
+          <span>
+            Ton mot de passe sert seulement à te connecter à Pronote&nbsp;: il n&apos;est jamais enregistré.{" "}
+            <Link href="/confidentialite" className="rounded-sm font-medium text-accent underline underline-offset-2">
+              Données et confidentialité
+            </Link>
+          </span>
         </p>
       </div>
     </form>
