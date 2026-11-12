@@ -9,6 +9,7 @@ import { AnimatedDetails } from "@/components/ui/animated-details";
 import { GradeFigure } from "@/components/grades";
 import { NewGradeLabel } from "@/components/new-grades";
 import { GradeSimulator } from "@/components/grade-simulator";
+import { SubjectMasterDetail } from "@/components/subject-master-detail";
 
 // Écran Notes organisé par matière : une carte par matière (sa moyenne + ses notes en étiquettes),
 // qui s'ouvre sur le détail. Les couleurs viennent de lib/subject-colors.ts (data-subject).
@@ -328,58 +329,95 @@ function GradeTrend({ grades, subject }: { grades: GradeItem[]; subject: string 
   );
 }
 
-/**
- * Carte d'une matière. Fermée : moyenne, moyenne de la classe et notes en étiquettes.
- * Ouverte (touche) : chaque note avec son intitulé et ses repères. <details> natif : clavier et
- * lecteurs d'écran gèrent l'ouverture sans script.
- */
-function SubjectCard({
-  group,
-  overall,
-  subjectCount,
-}: {
-  group: SubjectGroup;
-  overall?: GradeValue;
-  subjectCount: number;
-}) {
+/** En-tête d'une matière : nom, nombre de notes, moyenne et moyenne de la classe. */
+function SubjectHeading({ group, as: Title = "h3" }: { group: SubjectGroup; as?: "h3" | "span" }) {
+  const { average: avg, grades } = group;
+  const cls = formatPoints(avg?.classAverage);
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <Title className="block text-body font-semibold break-words">{displayName(group.name)}</Title>
+        <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-caption text-ink-muted">
+          <span>
+            {grades.length} note{grades.length > 1 ? "s" : ""}
+          </span>
+          <NewGradeLabel grades={grades} label="· Nouveau" />
+        </span>
+      </div>
+      <div className="shrink-0 text-right">
+        {avg?.student ? (
+          <span className="block" aria-label={`Moyenne ${spokenGrade(avg.student, avg.outOf)}`}>
+            <GradeFigure value={avg.student} outOf={avg.outOf} />
+          </span>
+        ) : (
+          <span className="block text-caption text-ink-muted">Pas de moyenne</span>
+        )}
+        {cls && <span className="mt-0.5 block text-caption text-ink-muted tabular-nums">Classe {cls}</span>}
+      </div>
+    </div>
+  );
+}
+
+/** Les notes d'une matière en étiquettes. */
+function GradeChips({ grades }: { grades: GradeItem[] }) {
+  if (grades.length === 0) return null;
+  return (
+    <ul aria-label="Notes" className="mt-3 flex flex-wrap gap-1.5">
+      {grades.map((g) => (
+        <GradeChip key={g.id} g={g} />
+      ))}
+    </ul>
+  );
+}
+
+/** Détail d'une matière : courbe, chaque note avec ses repères, simulateur. */
+function SubjectBody({ group, overall, subjectCount }: { group: SubjectGroup; overall?: GradeValue; subjectCount: number }) {
   const { average: avg, grades } = group;
   const name = displayName(group.name);
-  const cls = formatPoints(avg?.classAverage);
+  return (
+    <>
+      <GradeTrend grades={grades} subject={name} />
+      {grades.length > 0 && (
+        <ul className="mx-4 mb-1 divide-y divide-line border-t border-line pl-4">
+          {grades.map((g) => (
+            <GradeDetail key={g.id} g={g} />
+          ))}
+        </ul>
+      )}
+      <GradeSimulator
+        subject={name}
+        grades={grades.map(({ value, outOf, coefficient, isBonus, isOptional }) => ({
+          value,
+          outOf,
+          coefficient,
+          isBonus,
+          isOptional,
+        }))}
+        official={avg?.student}
+        officialOutOf={avg?.outOf}
+        overall={overall}
+        subjectCount={subjectCount}
+      />
+    </>
+  );
+}
 
+const SubjectStripe = () => <div aria-hidden className="w-1 shrink-0 self-stretch rounded-full bg-(--subject,var(--line))" />;
+
+/**
+ * Carte d'une matière (téléphone et tablette). Fermée : moyenne, moyenne de la classe et notes en
+ * étiquettes. Ouverte (touche) : le détail. <details> natif : clavier et lecteurs d'écran gèrent
+ * l'ouverture sans script.
+ */
+function SubjectCard({ group, overall, subjectCount }: { group: SubjectGroup; overall?: GradeValue; subjectCount: number }) {
   return (
     <li data-subject={group.key} data-subject-name={group.name} className="overflow-hidden card">
       <AnimatedDetails className="group">
         <summary className="flex cursor-pointer list-none gap-3 px-4 py-3.5 transition-colors duration-150 hover:bg-bg active:bg-bg [&::-webkit-details-marker]:hidden">
-          <div aria-hidden className="w-1 shrink-0 self-stretch rounded-full bg-(--subject,var(--line))" />
+          <SubjectStripe />
           <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h3 className="text-body font-semibold break-words">{name}</h3>
-                <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-caption text-ink-muted">
-                  <span>
-                    {grades.length} note{grades.length > 1 ? "s" : ""}
-                  </span>
-                  <NewGradeLabel grades={grades} label="· Nouveau" />
-                </p>
-              </div>
-              <div className="shrink-0 text-right">
-                {avg?.student ? (
-                  <p aria-label={`Moyenne ${spokenGrade(avg.student, avg.outOf)}`}>
-                    <GradeFigure value={avg.student} outOf={avg.outOf} />
-                  </p>
-                ) : (
-                  <p className="text-caption text-ink-muted">Pas de moyenne</p>
-                )}
-                {cls && <p className="mt-0.5 text-caption text-ink-muted tabular-nums">Classe {cls}</p>}
-              </div>
-            </div>
-            {grades.length > 0 && (
-              <ul aria-label="Notes" className="mt-3 flex flex-wrap gap-1.5">
-                {grades.map((g) => (
-                  <GradeChip key={g.id} g={g} />
-                ))}
-              </ul>
-            )}
+            <SubjectHeading group={group} />
+            <GradeChips grades={group.grades} />
           </div>
           <ChevronRightIcon
             size={16}
@@ -387,28 +425,7 @@ function SubjectCard({
             className="mt-1 shrink-0 text-ink-muted transition-transform duration-200 group-open:rotate-90"
           />
         </summary>
-        <GradeTrend grades={grades} subject={name} />
-        {grades.length > 0 && (
-          <ul className="mx-4 mb-1 divide-y divide-line border-t border-line pl-4">
-            {grades.map((g) => (
-              <GradeDetail key={g.id} g={g} />
-            ))}
-          </ul>
-        )}
-        <GradeSimulator
-          subject={name}
-          grades={grades.map(({ value, outOf, coefficient, isBonus, isOptional }) => ({
-            value,
-            outOf,
-            coefficient,
-            isBonus,
-            isOptional,
-          }))}
-          official={avg?.student}
-          officialOutOf={avg?.outOf}
-          overall={overall}
-          subjectCount={subjectCount}
-        />
+        <SubjectBody group={group} overall={overall} subjectCount={subjectCount} />
       </AnimatedDetails>
     </li>
   );
@@ -424,11 +441,43 @@ export function SubjectCards({ groups, overall }: { groups: SubjectGroup[]; over
       <h2 id="matieres" className="text-headline">
         Matières
       </h2>
-      <ul className="flex flex-col gap-3 stagger lg:grid lg:grid-cols-2 lg:items-start">
+
+      {/* Téléphone et tablette : cartes dépliables. */}
+      <ul className="flex flex-col gap-3 stagger lg:hidden">
         {groups.map((g) => (
           <SubjectCard key={g.subjectId} group={g} overall={overall} subjectCount={subjectCount} />
         ))}
       </ul>
+
+      {/* Ordinateur : liste à gauche, détail de la matière choisie à droite. */}
+      <SubjectMasterDetail
+        label="Matières"
+        panes={groups.map((g) => ({
+          id: g.subjectId,
+          subject: g.key,
+          subjectName: g.name,
+          row: (
+            <span className="flex gap-3 px-4 py-3">
+              <SubjectStripe />
+              <span className="min-w-0 flex-1">
+                <SubjectHeading group={g} as="span" />
+              </span>
+            </span>
+          ),
+          panel: (
+            <article aria-label={displayName(g.name)} className="overflow-hidden card">
+              <header className="flex gap-3 px-4 py-3.5">
+                <SubjectStripe />
+                <div className="min-w-0 flex-1">
+                  <SubjectHeading group={g} />
+                  <GradeChips grades={g.grades} />
+                </div>
+              </header>
+              <SubjectBody group={g} overall={overall} subjectCount={subjectCount} />
+            </article>
+          ),
+        }))}
+      />
     </section>
   );
 }
