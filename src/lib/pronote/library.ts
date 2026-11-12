@@ -30,13 +30,20 @@ export type ResourceLibrary = {
 };
 
 /**
- * Fichiers des `weeks` dernières semaines de cours (jusqu'à aujourd'hui) et des devoirs à venir,
- * du plus récent au plus ancien (les devoirs, à venir, arrivent donc en tête).
+ * Les profs déposent souvent leurs fichiers sur des séances à venir (Pronote les montre déjà
+ * dans « Dernières ressources pédagogiques ») : on lit donc aussi les prochaines semaines.
+ * Une seule requête Pronote couvre tout l'intervalle, l'élargir ne coûte rien de plus.
+ */
+export const UPCOMING_WEEKS = 4;
+
+/**
+ * Fichiers des `weeks` dernières semaines de cours, des `UPCOMING_WEEKS` prochaines et des devoirs
+ * à venir, du plus récent au plus ancien (ce qui est à venir arrive donc en tête).
  * Les deux sources sont lues en parallèle ; une erreur sur l'une fait échouer l'ensemble.
  */
 export async function getResourceLibrary(todayKey: string, weeks: number): Promise<ResourceLibrary> {
   const [sessions, assignments] = await Promise.all([
-    getLessonContentsBetween(addDays(todayKey, -7 * weeks + 1), todayKey),
+    getLessonContentsBetween(addDays(todayKey, -7 * weeks + 1), addDays(todayKey, 7 * UPCOMING_WEEKS)),
     getAssignments(todayKey),
   ]);
 

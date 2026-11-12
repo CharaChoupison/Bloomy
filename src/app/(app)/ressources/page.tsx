@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { verifySession } from "@/lib/auth/session";
-import { getResourceLibrary, type ResourceItem } from "@/lib/pronote/library";
+import { getResourceLibrary, UPCOMING_WEEKS, type ResourceItem } from "@/lib/pronote/library";
 import { toDateKey } from "@/lib/pronote/timetable";
 import { downloadHref } from "@/lib/download";
 import { formatShortDate } from "@/lib/format";
@@ -18,7 +18,7 @@ import { ResourcesIllustration } from "@/components/illustrations";
 export const metadata: Metadata = { title: "Ressources · Bloomy" };
 
 // Tous les fichiers et liens des profs, au même endroit : ceux des devoirs à venir,
-// puis ceux du contenu des cours, du plus récent au plus ancien.
+// puis ceux du contenu des cours (séances passées et à venir), du plus récent au plus ancien.
 // ?matiere=<nom> filtre par matière ; ?semaines=<n> remonte plus loin dans le temps.
 export default function ResourcesPage({ searchParams }: PageProps<"/ressources">) {
   return (
@@ -65,7 +65,7 @@ async function Resources({ searchParams }: Pick<PageProps<"/ressources">, "searc
   const items = subject ? library.items.filter((i) => i.subject === subject) : library.items;
   const forAssignments = items.filter((i) => i.origin === "devoir");
   const fromLessons = items.filter((i) => i.origin === "cours");
-  const period = `les ${weeks} dernières semaines`;
+  const period = `les ${weeks} dernières semaines et les ${UPCOMING_WEEKS} prochaines`;
 
   return (
     <div className="flex flex-col gap-6">
@@ -96,7 +96,9 @@ async function Resources({ searchParams }: Pick<PageProps<"/ressources">, "searc
       )}
 
       <div className="flex flex-col items-center gap-2 text-center">
-        <p className="text-caption text-ink-muted">Cours des {weeks} dernières semaines.</p>
+        <p className="text-caption text-ink-muted">
+          Cours des {weeks} dernières semaines et des {UPCOMING_WEEKS} prochaines.
+        </p>
         {weeks < MAX_WEEKS && (
           <Link href={hrefFor(subject, Math.min(MAX_WEEKS, weeks + STEP_WEEKS))} scroll={false} className={buttonClasses("ghost")}>
             Remonter {STEP_WEEKS} semaines plus loin
