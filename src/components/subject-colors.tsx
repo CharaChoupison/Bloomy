@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AnimatedDetails } from "@/components/ui/animated-details";
 import { SUBJECT_COLORS, type SubjectColor } from "@/lib/subject-colors";
 import { registerSubjects, setSubjectColor, useSubjectColors } from "@/lib/subject-colors-client";
 import { CheckIcon, ChevronRightIcon } from "@/components/icons";
@@ -57,7 +58,7 @@ export function SubjectColorsSettings() {
     <ul className="divide-y divide-line overflow-hidden card">
       {subjects.map(([key, { name, color }]) => (
         <li key={key}>
-          <details className="group" data-subject={key}>
+          <AnimatedDetails className="group" data-subject={key}>
             <summary className="flex min-h-touch cursor-pointer list-none items-center gap-3 px-4 py-3 hover:bg-bg [&::-webkit-details-marker]:hidden">
               <span aria-hidden className="size-6 shrink-0 rounded-full bg-(--subject)" />
               <span className="min-w-0 flex-1 truncate text-body font-medium">{name}</span>
@@ -103,7 +104,7 @@ export function SubjectColorsSettings() {
                 })}
               </div>
             </fieldset>
-          </details>
+          </AnimatedDetails>
         </li>
       ))}
     </ul>

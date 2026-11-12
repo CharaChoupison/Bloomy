@@ -5,6 +5,7 @@ import { calmShouting } from "@/lib/text-case";
 import { subjectKey } from "@/lib/subject-colors";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRightIcon } from "@/components/icons";
+import { AnimatedDetails } from "@/components/ui/animated-details";
 import { GradeFigure } from "@/components/grades";
 import { NewGradeLabel } from "@/components/new-grades";
 import { GradeSimulator } from "@/components/grade-simulator";
@@ -347,7 +348,7 @@ function SubjectCard({
 
   return (
     <li data-subject={group.key} data-subject-name={group.name} className="overflow-hidden card">
-      <details className="group">
+      <AnimatedDetails className="group">
         <summary className="flex cursor-pointer list-none gap-3 px-4 py-3.5 transition-colors duration-150 hover:bg-bg active:bg-bg [&::-webkit-details-marker]:hidden">
           <div aria-hidden className="w-1 shrink-0 self-stretch rounded-full bg-(--subject,var(--line))" />
           <div className="min-w-0 flex-1">
@@ -408,7 +409,7 @@ function SubjectCard({
           overall={overall}
           subjectCount={subjectCount}
         />
-      </details>
+      </AnimatedDetails>
     </li>
   );
 }

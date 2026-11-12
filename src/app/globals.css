@@ -302,23 +302,8 @@ html.theme-transition *::after {
  * demande moins d'animations (voir en bas du fichier).
  */
 
-/* Les blocs <details> (cartes de matière, couleurs des matières) s'ouvrent en dépliant leur hauteur.
-   Amélioration progressive : sans ::details-content, ils s'ouvrent d'un coup comme avant. */
-:root {
-  interpolate-size: allow-keywords;
-}
-
-details::details-content {
-  block-size: 0;
-  overflow: clip;
-  transition:
-    block-size 280ms var(--ease-spring),
-    content-visibility 280ms allow-discrete;
-}
-
-details[open]::details-content {
-  block-size: auto;
-}
+/* Les blocs <details> s'ouvrent en dépliant leur hauteur : voir components/ui/animated-details.tsx
+   (Web Animations, car animer jusqu'à « auto » en CSS ne marche que dans Chrome). */
 
 /* Arrivée d'un élément : fondu + légère montée. */
 @keyframes rise {

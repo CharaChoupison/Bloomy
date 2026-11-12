@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { AnimatedDetails } from "@/components/ui/animated-details";
 import { usePathname } from "next/navigation";
 import { MAX_THEME_BYTES, SAFE_MODE_PARAM, type CustomTheme } from "@/lib/custom-themes";
 import {
@@ -290,7 +291,7 @@ function QuickCssEditor({ value }: { value: string }) {
   }, [draft, synced]);
 
   return (
-    <details
+    <AnimatedDetails
       className="card"
       open={open}
       onToggle={(e) => setOpen(e.currentTarget.open)}
@@ -322,7 +323,7 @@ function QuickCssEditor({ value }: { value: string }) {
           {error ?? "S'applique en direct, après les thèmes activés. Vide le champ pour l'enlever."}
         </p>
       </div>
-    </details>
+    </AnimatedDetails>
   );
 }
 
