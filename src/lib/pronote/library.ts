@@ -3,10 +3,10 @@ import { addDays, formatShortDate } from "@/lib/format";
 import { lessonContentHref } from "@/lib/lesson-anchor";
 import type { PlainAttachment } from "./attachments";
 import { getAssignments } from "./assignments";
-import { getLessonContentsBetween } from "./resources";
+import { getCourseDataBetween } from "./resources";
 
 // « Ressources » : tous les fichiers et liens déposés par les profs, rassemblés depuis
-// le contenu des cours (sur une période) et les devoirs à venir.
+// le contenu des cours et les « autres documents » (sur une période), et les devoirs à venir.
 
 export type ResourceItem = {
   /** Clé stable (URL du fichier + origine). */
@@ -14,13 +14,12 @@ export type ResourceItem = {
   file: PlainAttachment;
   subject: string;
   color?: string;
-  /** Date de la séance, ou échéance du devoir (ISO). */
+  /** Date de la séance, échéance du devoir ou date de dépôt (ISO). */
   date: string;
-  origin: "cours" | "devoir";
-  /** "TD · Intégrales", "Devoir pour le 12 nov."… */
-  context: string;
-  /** Écran d'où vient le fichier. */
-  sourceHref: string;
+  /** « document » : déposé dans les ressources de la matière, sans séance ni devoir. */
+  origin: "cours" | "devoir" | "document";
+  /** Lien vers l'écran d'où vient le fichier ("TD · Intégrales", "Devoir pour le 12 nov."…). */
+  source?: { label: string; href: string };
 };
 
 export type ResourceLibrary = {
@@ -42,8 +41,8 @@ export const UPCOMING_WEEKS = 4;
  * Les deux sources sont lues en parallèle ; une erreur sur l'une fait échouer l'ensemble.
  */
 export async function getResourceLibrary(todayKey: string, weeks: number): Promise<ResourceLibrary> {
-  const [sessions, assignments] = await Promise.all([
-    getLessonContentsBetween(addDays(todayKey, -7 * weeks + 1), addDays(todayKey, 7 * UPCOMING_WEEKS)),
+  const [{ sessions, documents }, assignments] = await Promise.all([
+    getCourseDataBetween(addDays(todayKey, -7 * weeks + 1), addDays(todayKey, 7 * UPCOMING_WEEKS)),
     getAssignments(todayKey),
   ]);
 
@@ -64,8 +63,7 @@ export async function getResourceLibrary(todayKey: string, weeks: number): Promi
         color: a.color,
         date: a.deadline,
         origin: "devoir",
-        context: `Devoir pour le ${formatShortDate(a.deadline)}`,
-        sourceHref: "/devoirs",
+        source: { label: `Devoir pour le ${formatShortDate(a.deadline)}`, href: "/devoirs" },
       });
     }
   }
@@ -80,11 +78,17 @@ export async function getResourceLibrary(todayKey: string, weeks: number): Promi
           color: s.color,
           date: s.start,
           origin: "cours",
-          context: [c.category, c.title].filter(Boolean).join(" · ") || "Contenu du cours",
-          sourceHref: lessonContentHref(s.dateKey, s.start),
+          source: {
+            label: [c.category, c.title].filter(Boolean).join(" · ") || "Contenu du cours",
+            href: lessonContentHref(s.dateKey, s.start),
+          },
         });
       }
     }
+  }
+
+  for (const d of documents) {
+    push({ key: `document-${d.id}`, file: d.file, subject: d.subject, date: d.date, origin: "document" });
   }
 
   items.sort((a, b) => b.date.localeCompare(a.date));

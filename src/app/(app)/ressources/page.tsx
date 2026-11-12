@@ -18,7 +18,8 @@ import { ResourcesIllustration } from "@/components/illustrations";
 export const metadata: Metadata = { title: "Ressources · Bloomy" };
 
 // Tous les fichiers et liens des profs, au même endroit : ceux des devoirs à venir,
-// puis ceux du contenu des cours (séances passées et à venir), du plus récent au plus ancien.
+// puis ceux du contenu des cours (séances passées et à venir), puis les « autres documents »
+// déposés dans les ressources d'une matière sans séance, du plus récent au plus ancien.
 // ?matiere=<nom> filtre par matière ; ?semaines=<n> remonte plus loin dans le temps.
 export default function ResourcesPage({ searchParams }: PageProps<"/ressources">) {
   return (
@@ -65,6 +66,7 @@ async function Resources({ searchParams }: Pick<PageProps<"/ressources">, "searc
   const items = subject ? library.items.filter((i) => i.subject === subject) : library.items;
   const forAssignments = items.filter((i) => i.origin === "devoir");
   const fromLessons = items.filter((i) => i.origin === "cours");
+  const otherDocuments = items.filter((i) => i.origin === "document");
   const period = `les ${weeks} dernières semaines et les ${UPCOMING_WEEKS} prochaines`;
 
   return (
@@ -91,6 +93,9 @@ async function Resources({ searchParams }: Pick<PageProps<"/ressources">, "searc
           )}
           {fromLessons.length > 0 && (
             <ResourceSection id="ressources-cours" title="Contenu des cours" items={fromLessons} showSubject={!subject} />
+          )}
+          {otherDocuments.length > 0 && (
+            <ResourceSection id="ressources-documents" title="Autres documents" items={otherDocuments} showSubject={!subject} />
           )}
         </>
       )}
@@ -136,7 +141,7 @@ function ResourceSection({
 
 function ResourceRow({ item, showSubject }: { item: ResourceItem; showSubject: boolean }) {
   const { file } = item;
-  const meta = [showSubject && item.subject, item.origin === "cours" && formatShortDate(item.date)].filter(Boolean).join(" · ");
+  const meta = [showSubject && item.subject, item.origin !== "devoir" && formatShortDate(item.date)].filter(Boolean).join(" · ");
 
   return (
     <li className="flex items-center gap-3 py-2 pr-2 pl-4">
@@ -152,12 +157,17 @@ function ResourceRow({ item, showSubject }: { item: ResourceItem; showSubject: b
           <span className="min-w-0 break-words">{file.name}</span>
           <span className="sr-only"> ({file.isLink ? "lien" : "fichier"}, s&apos;ouvre dans un nouvel onglet)</span>
         </a>
-        <p className="mt-0.5 text-caption text-ink-muted">
-          {meta && `${meta} · `}
-          <Link href={item.sourceHref} className="font-medium text-accent underline-offset-2 hover:underline">
-            {item.context}
-          </Link>
-        </p>
+        {(meta || item.source) && (
+          <p className="mt-0.5 text-caption text-ink-muted">
+            {meta}
+            {meta && item.source && " · "}
+            {item.source && (
+              <Link href={item.source.href} className="font-medium text-accent underline-offset-2 hover:underline">
+                {item.source.label}
+              </Link>
+            )}
+          </p>
+        )}
       </div>
       {file.isLink ? (
         <a

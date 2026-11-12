@@ -1,6 +1,5 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
-import { resourcesFromIntervals } from "pawnote";
 import { verifySession } from "@/lib/auth/session";
 import { withPronote } from "./client";
 import { viewerTag } from "./cache-tags";
@@ -8,6 +7,7 @@ import { htmlToText } from "@/lib/html-to-text";
 import { lessonAnchor } from "@/lib/lesson-anchor";
 import { addDays, fromDateKey } from "@/lib/format";
 import { plainAttachments, type PlainAttachment } from "./attachments";
+import { resourcesWithDocuments, type SubjectDocument } from "./subject-documents";
 
 export type LessonFile = PlainAttachment;
 
@@ -82,6 +82,24 @@ export async function getLessonContentsBetween(firstDay: string, lastDay: string
 }
 
 export async function getLessonContentsBetweenFor(viewerId: string, firstDay: string, lastDay: string): Promise<LessonSession[]> {
+  return (await getCourseDataFor(viewerId, firstDay, lastDay)).sessions;
+}
+
+export type CourseData = {
+  /** Séances qui ont un contenu, de la plus récente à la plus ancienne. */
+  sessions: LessonSession[];
+  /** « Autres documents » déposés sur la période, hors séance, du plus récent au plus ancien. */
+  documents: SubjectDocument[];
+};
+
+/** Contenu des cours et « autres documents » entre deux jours, pour l'élève connecté. */
+export async function getCourseDataBetween(firstDay: string, lastDay: string): Promise<CourseData> {
+  const viewer = await verifySession();
+  return getCourseDataFor(viewer.id, firstDay, lastDay);
+}
+
+// Une seule requête Pronote sert les deux : séances et autres documents sont dans la même réponse.
+async function getCourseDataFor(viewerId: string, firstDay: string, lastDay: string): Promise<CourseData> {
   "use cache";
   cacheLife("minutes");
   cacheTag(viewerTag(viewerId));
@@ -90,9 +108,9 @@ export async function getLessonContentsBetweenFor(viewerId: string, firstDay: st
   const end = fromDateKey(lastDay);
   const to = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59, 999);
 
-  const raw = await withPronote(viewerId, (session) => resourcesFromIntervals(session, from, to));
+  const { resources: raw, documents } = await withPronote(viewerId, (session) => resourcesWithDocuments(session, from, to));
 
-  return raw
+  const sessions = raw
     .map((r) => ({
       id: r.id,
       anchor: lessonAnchor(r.startDate.toISOString()),
@@ -115,4 +133,6 @@ export async function getLessonContentsBetweenFor(viewerId: string, firstDay: st
     }))
     .filter((s) => s.contents.length > 0)
     .sort((a, b) => b.start.localeCompare(a.start));
+
+  return { sessions, documents: documents.sort((a, b) => b.date.localeCompare(a.date)) };
 }
