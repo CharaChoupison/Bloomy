@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { ACCENTS, THEMES } from "@/lib/preferences";
 import { setAccent, setThemePreference, useAccent, useThemePreference } from "@/lib/preferences-client";
 import { CheckIcon } from "@/components/icons";
+import { segmentedItem, segmentedPill, segmentedTrack } from "@/components/ui/segmented";
 
 /**
  * Nuancier des couleurs d'accent : un vrai groupe radio (flèches du clavier),
@@ -49,21 +51,40 @@ export function AccentPicker() {
   );
 }
 
-/** Contrôle segmenté Automatique / Clair / Sombre. */
+/**
+ * Contrôle segmenté Automatique / Clair / Sombre, avec la même pastille glissante que les autres
+ * contrôles segmentés. Les colonnes ont la même largeur : la pastille se place en CSS, sans mesure.
+ */
 export function ThemePicker() {
   const current = useThemePreference();
+  const index = Math.max(0, THEMES.findIndex((t) => t.id === current));
+  const pillRef = useRef<HTMLSpanElement>(null);
+
+  // La préférence n'est connue qu'au montage : on évite que la pastille glisse depuis « Automatique ».
+  useEffect(() => {
+    const id = requestAnimationFrame(() => pillRef.current?.setAttribute("data-ready", ""));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   return (
     <fieldset>
       <legend className="mb-2.5 text-callout font-medium">Thème</legend>
-      <div className="grid grid-cols-3 gap-[3px] rounded-md bg-surface-sunken p-[3px]">
+      <div className={`grid grid-cols-3 ${segmentedTrack}`}>
+        <span
+          ref={pillRef}
+          aria-hidden="true"
+          className={`${segmentedPill} left-[3px]`}
+          style={{
+            width: `calc((100% - ${(THEMES.length + 1) * 3}px) / ${THEMES.length})`,
+            translate: `calc(${index} * (100% + 3px)) 0`,
+          }}
+        />
         {THEMES.map(({ id, label }) => {
           const checked = current === id;
           return (
             <label
               key={id}
-              className={`flex min-h-10 cursor-pointer items-center justify-center rounded-[9px] text-callout transition-colors duration-200 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent ${
-                checked ? "bg-surface font-semibold text-ink shadow-float" : "font-medium text-ink-muted hover:text-ink"
-              }`}
+              className={`${segmentedItem(checked)} cursor-pointer justify-center has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent`}
             >
               <input
                 type="radio"

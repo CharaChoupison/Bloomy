@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
+import { segmentedItem, segmentedPill, segmentedTrack } from "@/components/ui/segmented";
 
 /**
  * Contrôle segmenté fait de liens (filtre dans l'URL) : défile horizontalement sur téléphone.
@@ -71,11 +72,11 @@ export function SegmentedLinks({
 
   return (
     <nav ref={scrollerRef} aria-label={label} className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-      <ul ref={listRef} className="relative flex w-max gap-[3px] rounded-md bg-surface-sunken p-[3px]">
+      <ul ref={listRef} className={`flex w-max ${segmentedTrack}`}>
         <span
           ref={pillRef}
           aria-hidden="true"
-          className="pointer-events-none absolute inset-y-[3px] left-0 rounded-[9px] bg-surface opacity-0 motion-safe:data-ready:transition-[translate,width,opacity] motion-safe:data-ready:duration-[450ms,450ms,200ms] motion-safe:data-ready:ease-(--ease-bounce)"
+          className={`${segmentedPill} left-0 opacity-0`}
         />
         {items.map((item) => {
           const active = item.key === activeKey;
@@ -87,9 +88,7 @@ export function SegmentedLinks({
                 href={item.href}
                 onNavigate={() => setPending({ key: item.key, from: currentKey })}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-10 items-center rounded-[9px] px-4 text-callout font-semibold whitespace-nowrap transition-colors duration-200 ${
-                  active ? "text-ink" : "text-ink-muted hover:text-ink"
-                }`}
+                className={`${segmentedItem(active)} px-4 whitespace-nowrap`}
               >
                 {item.label}
               </Link>
