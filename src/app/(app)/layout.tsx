@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Sidebar, SidebarView, TabBar, TabBarView } from "@/components/app-nav";
+import { InterruptPageTransition } from "@/components/interrupt-page-transition";
 import { OfflineBanner } from "@/components/offline";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { SubjectColorsSync } from "@/components/subject-colors";
@@ -22,6 +23,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <TabBar />
       </Suspense>
       <SubjectColorsSync />
+      <InterruptPageTransition />
     </div>
   );
 }

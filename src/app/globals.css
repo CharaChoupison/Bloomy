@@ -419,12 +419,26 @@ details:not([open]) :is(.grow-x, .reveal-x) {
   animation: none;
 }
 
+/*
+ * Racine (fond de page, hors écran et hors barres) : identique avant et après, son fondu par
+ * défaut (250 ms) ne se voyait pas mais prolongeait chaque transition, et React attend la fin
+ * d'une transition avant d'afficher la suite (navigation suivante, données qui arrivent).
+ */
+::view-transition-old(root) {
+  display: none;
+}
+
+::view-transition-new(root) {
+  animation: none;
+}
+
+/* Durées courtes : l'écran doit sembler répondre au toucher, pas jouer une animation. */
 ::view-transition-old(.page-out) {
-  animation: page-out 140ms ease both;
+  animation: page-out 100ms ease both;
 }
 
 ::view-transition-new(.page-in) {
-  animation: page-in 220ms var(--ease-page) both;
+  animation: page-in 180ms var(--ease-page) both;
 }
 
 @keyframes page-out {
