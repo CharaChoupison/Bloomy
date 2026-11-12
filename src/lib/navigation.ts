@@ -40,7 +40,7 @@ export const MORE_ITEMS: NavItem[] = [
   { href: "/messagerie", label: "Messagerie", Icon: MailIcon, hint: "Tes discussions avec les profs" },
   { href: "/vie-scolaire", label: "Vie scolaire", Icon: ClipboardListIcon, hint: "Absences, retards, observations" },
   { href: "/compte", label: "Compte", Icon: UserIcon, hint: "Identité, coordonnées, INE" },
-  { href: "/reglages", label: "Réglages", Icon: SettingsIcon, hint: "Couleur, thème, déconnexion" },
+  { href: "/reglages", label: "Réglages", Icon: SettingsIcon, hint: "Personnalisation, notifications, compte" },
 ];
 
 export const PLUS_ITEM: NavItem = { href: "/plus", label: "Plus", Icon: EllipsisIcon };

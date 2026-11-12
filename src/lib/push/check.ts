@@ -131,7 +131,7 @@ export async function checkViewer(viewerId: string): Promise<number> {
     messages.push({
       title: "Ta session Bloomy expire bientôt",
       body: `Reconnecte-toi avant le ${expiryFmt.format(new Date(expiresAt))} pour garder les notifications.`,
-      url: "/reglages",
+      url: "/reglages/compte",
       tag: "session",
     });
     expiryWarnedFor = expiresAt;

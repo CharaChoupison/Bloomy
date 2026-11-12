@@ -1,94 +1,31 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { AccentPicker, ThemePicker } from "@/components/appearance-pickers";
-import { CustomThemesSettings } from "@/components/custom-themes";
-import { SubjectColorsSettings } from "@/components/subject-colors";
-import { BellIcon, ChevronRightIcon, LogOutIcon, SmartphoneIcon } from "@/components/icons";
-import { ReloadAppButton } from "@/components/reload-app-button";
+import { BellIcon, InfoIcon, PaletteIcon, SmartphoneIcon, UserIcon } from "@/components/icons";
+import { LinkList } from "@/components/link-list";
 import { Screen } from "@/components/screen";
-import { buttonClasses } from "@/components/ui/button";
-import { logout } from "../../login/actions";
+import type { NavItem } from "@/lib/navigation";
 
 export const metadata: Metadata = { title: "Réglages · Bloomy" };
+
+// Les réglages sont rangés en dossiers : chaque écran reste court et on trouve vite
+// ce qu'on cherche (divulgation progressive, plutôt qu'une longue page à faire défiler).
+const APP_FOLDERS: NavItem[] = [
+  { href: "/reglages/personnalisation", label: "Personnalisation", Icon: PaletteIcon, hint: "Couleur, thème, couleurs des matières" },
+  { href: "/reglages/notifications", label: "Notifications", Icon: BellIcon, hint: "Nouvelles notes, devoirs et cours annulés" },
+  { href: "/reglages/widget", label: "Widget iPhone", Icon: SmartphoneIcon, hint: "Ton prochain cours sur l'écran d'accueil" },
+];
+
+const ACCOUNT_FOLDERS: NavItem[] = [
+  { href: "/reglages/compte", label: "Compte", Icon: UserIcon, hint: "Profil, confidentialité, déconnexion" },
+  { href: "/reglages/application", label: "Application", Icon: InfoIcon, hint: "Mise à jour et version" },
+];
 
 export default function SettingsPage() {
   return (
     <Screen title="Réglages" back={{ href: "/plus", label: "Plus" }}>
-      <div className="flex flex-col gap-8">
-        <section aria-labelledby="apparence" className="flex flex-col gap-6">
-          <h2 id="apparence" className="text-headline">
-            Apparence
-          </h2>
-          <AccentPicker />
-          <ThemePicker />
-        </section>
-
-        <section aria-labelledby="matieres" className="flex flex-col gap-3">
-          <div>
-            <h2 id="matieres" className="text-headline">
-              Couleurs des matières
-            </h2>
-            <p className="mt-1 text-caption text-ink-muted">
-              Chaque matière reçoit sa couleur automatiquement. Touche-en une pour la changer.
-            </p>
-          </div>
-          <SubjectColorsSettings />
-        </section>
-
-        <section aria-labelledby="themes-perso" className="flex flex-col gap-3">
-          <h2 id="themes-perso" className="text-headline">
-            Thèmes personnalisés
-          </h2>
-          <CustomThemesSettings />
-        </section>
-
-        <section aria-labelledby="application" className="flex flex-col gap-3">
-          <h2 id="application" className="text-headline">
-            Application
-          </h2>
-          <Link href="/reglages/notifications" className="flex min-h-touch items-center gap-3 card px-4 py-3 pressable hover:bg-bg">
-            <BellIcon className="text-ink-muted" />
-            <span className="min-w-0 flex-1">
-              <span className="block text-body font-medium">Notifications</span>
-              <span className="block text-caption text-ink-muted">Nouvelles notes, devoirs et cours annulés</span>
-            </span>
-            <ChevronRightIcon size={16} className="text-ink-muted" />
-          </Link>
-          <Link href="/reglages/widget" className="flex min-h-touch items-center gap-3 card px-4 py-3 pressable hover:bg-bg">
-            <SmartphoneIcon className="text-ink-muted" />
-            <span className="min-w-0 flex-1">
-              <span className="block text-body font-medium">Widget iPhone</span>
-              <span className="block text-caption text-ink-muted">Ton prochain cours et tes devoirs sur l&apos;écran d&apos;accueil</span>
-            </span>
-            <ChevronRightIcon size={16} className="text-ink-muted" />
-          </Link>
-          <ReloadAppButton />
-          <p className="text-caption text-ink-muted">
-            Récupère la dernière mise à jour, utile si l&apos;app est sur ton écran d&apos;accueil.
-          </p>
-          <p className="text-caption text-ink-muted tabular-nums">Version v{process.env.APP_VERSION}</p>
-        </section>
-
-        <section aria-labelledby="compte" className="flex flex-col gap-3">
-          <h2 id="compte" className="text-headline">
-            Compte
-          </h2>
-          <form action={logout}>
-            <button type="submit" className={buttonClasses("secondary")}>
-              <LogOutIcon />
-              Se déconnecter
-            </button>
-          </form>
-          <p className="text-caption text-ink-muted">
-            Supprime ta session de Bloomy sur cet appareil.{" "}
-            <Link
-              href="/confidentialite"
-              className="rounded-sm font-medium text-accent underline underline-offset-2"
-            >
-              Données et confidentialité
-            </Link>
-          </p>
-        </section>
+      <div className="flex flex-col gap-6">
+        <LinkList items={APP_FOLDERS} label="Préférences" />
+        <LinkList items={ACCOUNT_FOLDERS} label="Compte et application" />
+        <p className="text-center text-caption text-ink-muted tabular-nums">Bloomy v{process.env.APP_VERSION}</p>
       </div>
     </Screen>
   );

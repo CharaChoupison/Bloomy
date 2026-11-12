@@ -182,7 +182,7 @@ export function CustomThemesSettings() {
       </a>
       <p className="-mt-3 text-caption text-ink-muted">
         Un thème cache l&apos;app ? Ouvre{" "}
-        <span className="font-mono text-ink">/reglages?{SAFE_MODE_PARAM}</span> pour la retrouver sans thème.
+        <span className="font-mono text-ink">/reglages/personnalisation?{SAFE_MODE_PARAM}</span> pour la retrouver sans thème.
       </p>
     </div>
   );
