@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { addDays, deadlineLabel, formatWeekRange } from "./format";
+import { addDays, deadlineLabel, formatFileSize, formatWeekRange } from "./format";
 import { calmShouting } from "./text-case";
 
 describe("dates", () => {
@@ -26,5 +26,15 @@ describe("calmShouting", () => {
   it("remet en casse de phrase en gardant les sigles", () => {
     assert.equal(calmShouting("CALENDRIER DST - MASTERS"), "Calendrier DST - masters");
     assert.equal(calmShouting("Déjà en minuscules"), "Déjà en minuscules");
+  });
+});
+
+describe("formatFileSize", () => {
+  it("affiche Ko puis Mo", () => {
+    assert.equal(formatFileSize(300), "1 Ko");
+    assert.equal(formatFileSize(512 * 1024), "512 Ko");
+    assert.equal(formatFileSize(4 * 1024 * 1024), "4 Mo");
+    assert.equal(formatFileSize(2.5 * 1024 * 1024), "2,5 Mo");
+    assert.equal(formatFileSize(20 * 1024 * 1024), "20 Mo");
   });
 });

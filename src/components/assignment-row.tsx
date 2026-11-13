@@ -4,6 +4,7 @@ import { useOptimistic, useState, useTransition } from "react";
 import { setAssignmentDone } from "@/app/(app)/devoirs/actions";
 import type { AssignmentItem } from "@/lib/pronote/assignments";
 import { AttachmentLink } from "@/components/attachment-link";
+import { AssignmentSubmission } from "@/components/assignment-submission";
 import { AlertCircleIcon, CheckIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { SubjectBar } from "@/components/grades";
@@ -59,7 +60,10 @@ export function AssignmentRow({
 
   const returnLabel = RETURN_LABELS[a.returnKind];
   const difficulty = DIFFICULTY_LABELS[a.difficulty];
-  const hasMeta = returnLabel || a.hasUploadedFile || a.length || difficulty || a.attachments.length > 0;
+  // Dépôt en ligne possible ou copie déjà déposée : le bloc « copie » remplace la pastille de rendu.
+  const showSubmission = a.canUpload || !!a.uploadedFile;
+  const returnBadge = showSubmission ? undefined : a.hasUploadedFile ? "Fichier déposé" : returnLabel;
+  const hasMeta = returnBadge || a.length || difficulty || a.attachments.length > 0;
 
   return (
     <li className="flex gap-3 px-4 py-3">
@@ -101,11 +105,7 @@ export function AssignmentRow({
 
         {hasMeta && (
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            {a.hasUploadedFile ? (
-              <Badge tone="success">Fichier déposé</Badge>
-            ) : (
-              returnLabel && <Badge tone="neutral">{returnLabel}</Badge>
-            )}
+            {returnBadge && <Badge tone={a.hasUploadedFile ? "success" : "neutral"}>{returnBadge}</Badge>}
             {a.length && <Badge tone="neutral">{formatLength(a.length)}</Badge>}
             {difficulty && <Badge tone="neutral">{difficulty}</Badge>}
             {a.attachments.map((f) => (
@@ -113,6 +113,8 @@ export function AssignmentRow({
             ))}
           </div>
         )}
+
+        {showSubmission && <AssignmentSubmission a={a} />}
 
         {error && (
           <p id={`${inputId}-error`} role="alert" className="mt-2 flex items-start gap-1 text-caption text-danger">

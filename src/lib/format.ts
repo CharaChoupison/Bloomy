@@ -56,3 +56,10 @@ export function deadlineLabel(key: string, todayKey: string): string {
   if (key === addDays(todayKey, 1)) return "Pour demain";
   return `Pour ${dayFmt.format(fromDateKey(key))}`;
 }
+
+/** Taille de fichier lisible, en unités françaises (« 512 Ko », « 4 Mo », « 2,5 Mo »). */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} Ko`;
+  const mo = bytes / (1024 * 1024);
+  return `${mo.toLocaleString("fr-FR", { maximumFractionDigits: mo < 10 ? 1 : 0 })} Mo`;
+}

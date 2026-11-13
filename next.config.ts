@@ -26,6 +26,12 @@ const nextConfig: NextConfig = {
   },
   // Pawnote (et sa crypto node-forge) est chargé tel quel par Node, sans passer par le bundler.
   serverExternalPackages: ["pawnote"],
+  // Dépôt de copie (server action uploadAssignmentFile) : la limite réelle est celle de Pronote,
+  // vérifiée côté client et côté serveur ; ces plafonds doivent simplement rester au-dessus.
+  experimental: {
+    serverActions: { bodySizeLimit: "25mb" },
+    proxyClientMaxBodySize: "25mb",
+  },
   turbopack: {
     rules: {
       "*.css": {
