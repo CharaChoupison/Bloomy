@@ -22,9 +22,16 @@ export function parsePrefs(value: unknown): PushPrefs {
 /**
  * Dernier état connu : identifiants des notes et devoirs, et état de chaque cours à venir.
  * `gradeIds: 2` : identifiants de notes stables (lib/grade-key.ts). Un instantané plus ancien porte
- * les identifiants Pronote, qui ne se comparent pas aux nouveaux.
+ * les identifiants Pronote, qui ne se comparent pas aux nouveaux. Idem pour `assignmentIds: 2`
+ * (lib/assignment-key.ts).
  */
-export type Snapshot = { grades: string[]; assignments: string[]; classes: Record<string, string>; gradeIds?: 2 };
+export type Snapshot = {
+  grades: string[];
+  assignments: string[];
+  classes: Record<string, string>;
+  gradeIds?: 2;
+  assignmentIds?: 2;
+};
 
 /** Identifiants gardés en mémoire : plus qu'une année de notes ou de devoirs, mais borné. */
 const KEEP = 1000;
@@ -70,13 +77,17 @@ export function computeChanges(
   prefs: PushPrefs,
 ): { messages: PushMessage[]; snapshot: Snapshot } {
   const comparableGrades = prev?.gradeIds === 2;
+  const comparableAssignments = prev?.assignmentIds === 2;
   const snapshot: Snapshot = {
     // On garde aussi ce qui est déjà connu : une note ou un devoir qui disparaît un moment (changement
     // de période, fenêtre de dates, réponse partielle de Pronote) puis revient n'est pas « nouveau ».
     grades: [...new Set([...(comparableGrades ? prev.grades : []), ...input.grades.map((g) => g.id)])].slice(-KEEP),
-    assignments: [...new Set([...(prev?.assignments ?? []), ...input.assignments.map((a) => a.id)])].slice(-KEEP),
+    assignments: [
+      ...new Set([...(comparableAssignments ? prev.assignments : []), ...input.assignments.map((a) => a.id)]),
+    ].slice(-KEEP),
     classes: Object.fromEntries(input.classes.map((c) => [c.id, classState(c)])),
     gradeIds: 2,
+    assignmentIds: 2,
   };
   if (!prev) return { messages: [], snapshot };
 
@@ -104,7 +115,7 @@ export function computeChanges(
     }
   }
 
-  if (prefs.assignments) {
+  if (prefs.assignments && comparableAssignments) {
     const known = new Set(prev.assignments);
     const fresh = input.assignments.filter((a) => !known.has(a.id) && !a.done && a.deadlineKey >= input.todayKey);
     if (fresh.length >= GROUP_FROM) {

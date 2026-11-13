@@ -3,6 +3,7 @@ import "server-only";
 // Vérification périodique : pour chaque session abonnée, on relit Pronote (sans cache), on compare
 // à l'instantané précédent et on envoie les notifications. Lancée par /api/push/tick (voir instrumentation.ts).
 
+import { stableAssignmentIds } from "@/lib/assignment-key";
 import { rememberKey } from "@/lib/auth/keyring";
 import { storedSessionExpiry } from "@/lib/auth/session-store";
 import { formatPoints } from "@/lib/grades-format";
@@ -64,7 +65,11 @@ async function collect(viewerId: string): Promise<CheckInput> {
       const max = formatPoints(g.outOf);
       return { id: g.id, subject: g.subject, value: points ? `${points}/${max ?? "20"}` : undefined };
     }),
-    assignments: assignments.map((a) => ({ id: a.id, subject: a.subject, deadlineKey: a.deadlineKey, done: a.done })),
+    // Identifiants stables : celui de Pronote change à chaque session (voir lib/assignment-key.ts).
+    assignments: stableAssignmentIds(assignments).map((id, i) => {
+      const a = assignments[i];
+      return { id, subject: a.subject, deadlineKey: a.deadlineKey, done: a.done };
+    }),
     classes,
   };
 }

@@ -16,8 +16,8 @@ export type GradeIdentity = {
   isOptional: boolean;
 };
 
-/** Hachage 53 bits (cyrb53) : court, déterministe, sans dépendance. */
-function hash(text: string): string {
+/** Hachage 53 bits (cyrb53) : court, déterministe, sans dépendance. Partagé avec lib/assignment-key.ts. */
+export function stableHash(text: string): string {
   let h1 = 0xdeadbeef;
   let h2 = 0x41c6ce57;
   for (let i = 0; i < text.length; i++) {
@@ -37,7 +37,7 @@ function hash(text: string): string {
 export function stableGradeIds(grades: readonly GradeIdentity[]): string[] {
   const seen = new Map<string, number>();
   return grades.map((g) => {
-    const base = hash(
+    const base = stableHash(
       [
         g.date.slice(0, 10),
         g.subject.trim().toLowerCase(),
